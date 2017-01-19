@@ -91,24 +91,32 @@ names(checks)[length(checks)]<-msg
 #3.2) 
 #Check if some lines from the adult DB are not associated with a line that do not 
 #correspond to a TRSW in the couvee file
-which(adulte2$codesp != 1)
-check3.2 <- adulte2[which(adulte2$codesp != 1),]
-#Those individuals might have been found dead. Check condition.
-which(check3.2$condition != 1)
+#Not sure what that means!!!
+msg<-"Adults in the adult DB that are not in the couvee DB"
+w<-which(x$codesp != 1 & x$condition == 1)
+res <- x[w,]
+checks[length(checks)+1]<-if(nrow(res)){res}else{list(NULL)}
+names(checks)[length(checks)]<-msg
+
 
 #3.3)
-which(adulte2$jjulien > adulte2$denvomin | adulte2$jjulien > adulte2$denvomax)
-check3.3.1 <- adulte2[which(adulte2$jjulien > adulte2$denvomin | adulte2$jjulien > adulte2$denvomax), ]
+msg<-"Capture date is later than the min or max departure date from the nest"
+w<-which((x$jjulien > x$denvomin) | (x$jjulien > x$denvomax))
+res<-x[w,]
+checks[length(checks)+1]<-if(nrow(res)){res}else{list(NULL)}
+names(checks)[length(checks)]<-msg
+
+
 
 #3.3.2) Theses cases should be checked thoroughly as date of abandonment is tracked back to the first day when the eggs were cold.
 # e.g. Incubation is declared on day 145. 147 and 149 eggs are cold but female is caught anyway on day 149. On field, we consider that 
 # the nest was abandonned on day 151 (if incubation was declared previously and eggs are cold for 3 consecutive visits) and stop 
 # following this nest (i.e. adult manipulations) from this date. However, in the data base, dabanmin = 146 and dabanmax = 147. 
 # That is, the first day when the eggs were cold during that 3 visits sequence of cold eggs... probably not clear...
-which(adulte2$jjulien > adulte2$dabanmin | adulte2$jjulien > adulte2$dabanmax)
-check3.3.2 <- adulte2[which(adulte2$jjulien > adulte2$dabanmin | adulte2$jjulien > adulte2$dabanmax), ]
-#again, check for condition and comments
-which(check3.3.2$condition != 1)
-check3.3.2.2 <- check3.3.2[which(check3.3.2$condition != 1), ]
+msg<-"Capture date is later than the min or max date of nest abandonment"
+w<-which(((x$jjulien > x$dabanmin) | (x$jjulien > x$dabanmax)) & x$condition == 1)
+res<-x[w, ]
+checks[length(checks)+1]<-if(nrow(res)){res}else{list(NULL)}
+names(checks)[length(checks)]<-msg
 
 
