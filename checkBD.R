@@ -13,7 +13,22 @@ library(plyr)
 
 path<-"C:/Users/God/Documents/UdeS/Hiver2017/ELefol/Doc/BD 2004-2015"
 
-checks<-list(NULL)
+
+cond<-list(
+  c01="Females without matches in the couvee file",
+  c02="Adult females wwrongly assigned to couvee",
+  c03="Males without matches in the couvee file",
+  c04="Adult males wwrongly assigned to couvee",
+  c05="Capture date is lower than the laying date and the individual has not been found dead",
+  c06="Adults in the adult DB that are not in the couvee DB",
+  c07="Capture date is later than the min or max departure date from the nest",
+  c08="Capture date is later than the min or max date of nest abandonment",
+  c09="Capture date of young is later than the minimal abandonment date if nest was abandoned",
+  c10="Capture date of young is before the laying date"
+)
+
+checks<-vector(mode="list",length=length(cond))
+
 
 
 
