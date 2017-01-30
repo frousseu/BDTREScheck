@@ -28,6 +28,7 @@ cond<-list(
 )
 
 checks<-vector(mode="list",length=length(cond))
+names(checks)<-names(cond)
 
 
 
@@ -64,18 +65,23 @@ oisillon<-checkNArows(oisillon)
 
 x<-merge(couvee[,c("idcouvee","idF1")],adulte[adulte$sexe_morpho=="F",c("idcouvee", "idadult")],by="idcouvee",all.x=TRUE)
 
-
+###C01
 w<-which(is.na(x$idF1) & !is.na(x$idadult))
 res<-x[w, ]
 msg<-c("Females without matches in the couvee file")
-checks[[length(checks)]]<-res
-names(checks)[length(checks)]<-msg
+if(nrow(res)){
+  checks["c01"]<-list(res)
+}
 
+
+###C02
 w<-which(x$idF1!=x$idadult)
 res<-x[w, ]
 msg<-c("Adult females wwrongly assigned to couvee")
-checks[[length(checks)+1]]<-res
-names(checks)[length(checks)]<-msg
+if(nrow(res)){
+  checks["c02"]<-list(res)
+}
+
 
 
 ################################################
@@ -84,18 +90,23 @@ names(checks)[length(checks)]<-msg
 
 x<-merge(couvee[,c("idcouvee","idM1")],adulte[adulte$sexe_morpho=="F",c("idcouvee", "idadult")],by="idcouvee",all.x=TRUE)
 
-
+###C03
 msg<-c("Males without matches in the couvee file")
 w<-which(is.na(x$idM1) & !is.na(x$idadult))
 res<-x[w, ]
-checks[[length(checks)]]<-res
-names(checks)[length(checks)]<-msg
+if(nrow(res)){
+  checks["c03"]<-list(res)
+}
 
+
+###C04
 msg<-c("Adult males wwrongly assigned to couvee")
 w<-which(x$idM1!=x$idadult)
 res<-x[w, ]
-checks[[length(checks)+1]]<-res
-names(checks)[length(checks)]<-msg
+if(nrow(res)){
+  checks["c04"]<-list(res)
+}
+
 
 
 ##########################################################
@@ -104,14 +115,17 @@ names(checks)[length(checks)]<-msg
 
 x<-merge(adulte,couvee[couvee$codesp==1,c("idcouvee","codesp", "abandon", "dponte", "declomin", "declomax", "denvomin", "denvomax", "dabanmin","dabanmax")],by="idcouvee",all.x = TRUE)
 
-
+###C05
 msg<-"Capture date is lower than the laying date and the individual has not been found dead"
 w<-which(x$jjulien < x$dponte & x$condition == 1)
 res<-x[w, ]
 checks[length(checks)+1]<-if(nrow(res)){res}else{list(NULL)}
-names(checks)[length(checks)]<-msg
+if(nrow(res)){
+  checks["c05"]<-list(res)
+}
 
 
+###C06
 #3.2) 
 #Check if some lines from the adult DB are not associated with a line that do not 
 #correspond to a TRSW in the couvee file
@@ -119,18 +133,20 @@ names(checks)[length(checks)]<-msg
 msg<-"Adults in the adult DB that are not in the couvee DB"
 w<-which(x$codesp != 1 & x$condition == 1)
 res <- x[w,]
-checks[length(checks)+1]<-if(nrow(res)){res}else{list(NULL)}
-names(checks)[length(checks)]<-msg
+if(nrow(res)){
+  checks["c06"]<-list(res)
+}
 
-
+###C07
 #3.3)
 msg<-"Capture date is later than the min or max departure date from the nest"
 w<-which((x$jjulien > x$denvomin) | (x$jjulien > x$denvomax))
 res<-x[w,]
-checks[length(checks)+1]<-if(nrow(res)){res}else{list(NULL)}
-names(checks)[length(checks)]<-msg
+if(nrow(res)){
+  checks["c07"]<-list(res)
+}
 
-
+###C08
 #3.3.2) Theses cases should be checked thoroughly as date of abandonment is tracked back to the first day when the eggs were cold.
 # e.g. Incubation is declared on day 145. 147 and 149 eggs are cold but female is caught anyway on day 149. On field, we consider that 
 # the nest was abandonned on day 151 (if incubation was declared previously and eggs are cold for 3 consecutive visits) and stop 
@@ -139,8 +155,9 @@ names(checks)[length(checks)]<-msg
 msg<-"Capture date is later than the min or max date of nest abandonment"
 w<-which(((x$jjulien > x$dabanmin) | (x$jjulien > x$dabanmax)) & x$condition == 1)
 res<-x[w, ]
-checks[length(checks)+1]<-if(nrow(res)){res}else{list(NULL)}
-names(checks)[length(checks)]<-msg
+if(nrow(res)){
+  checks["c08"]<-list(res)
+}
 
 
 ############################################## 
@@ -149,36 +166,71 @@ names(checks)[length(checks)]<-msg
 
 x<-merge(oisillon,couvee[couvee$codesp==1,c("idcouvee","dponte","dincub","declomin","declomax","dabanmin","dabanmax")],by="idcouvee",all.x=TRUE)
 
-
+###C09
 msg<-"Capture date of young is later than the minimal abandonment date if nest was abandoned"
 w<-which(x$jjulien > (x$dabanmin + 1))
 res <- x[w, ]
-checks[length(checks)+1]<-if(nrow(res)){res}else{list(NULL)}
-names(checks)[length(checks)]<-msg
+if(nrow(res)){
+  checks["c09"]<-list(res)
+}
 
+###C10
 msg<-"Capture date of young is before the laying date"
 w<-which(x$jjulien < x$dponte)
 res<-x[w,]
-checks[length(checks)+1]<-if(nrow(res)){res}else{list(NULL)}
-names(checks)[length(checks)]<-msg
+if(nrow(res)){
+  checks["c10"]<-list(res)
+}
 
 
 ##########################################################
 ### Summarize brood information
 ##########################################################
 
+x<-ddply(oisillon,.(idcouvee),function(i){
+  #browser()
+  Nois<-length(unique(i$numero_oisillon))
+  Nenvol<-length(unique(i$numero_oisillon[i$envol==1]))
+  Ndead<-length(unique(i$numero_oisillon[i$condition%in%"mort"]))
+  Ndispa<-length(unique(i$numero_oisillon[i$condition%in%"disparu"]))
+  ans<-data.frame(idcouvee=i$idcouvee[1],Nois,Nenvol,Ndead,Ndispa)
+  ans
+    
+})
+
+
+
+### hatching detected in brood but no nestlings in chicks
+# check possible erreur dans le script original avec le min et la max de declo
+
+w<-which(is.na(x$declomin) | is.na(x$declomax) & !is.na(x$Nois)) #if this does not output intger(0), Needs to be cheked
+res<-x[w, ]
+
+
+
+
+
+
+
+
+
+
+################################
+################################
+
+
 
 ## Summarise nestling informations ==> idcouvee, number of nestlings, number of fledglings, number of dead nestlings, number of nestling dispareared
 
 SumOis <- data.frame(idcouvee = character(0), Nois = numeric(0), Nenvol = numeric(0),  NDead = numeric(0) , NDispa = numeric(0))
 
-z <- unique(oisillons$idcouvee)
+z <- unique(oisillon$idcouvee)
 
 for(i in z){
   
   # i = z[1]
   
-  id <- subset(oisillons, idcouvee == i)
+  id <- subset(oisillon, idcouvee == i)
   
   Nois <- length(unique(id$numero_oisillon))
   
@@ -211,12 +263,13 @@ couveeOis <-  couveeOis[!is.na(couveeOis$idcouvee), ]
 couveeOis$OisEqual <- as.numeric(couveeOis$noisnes == couveeOis$Nois) 
 couveeOis$EnvolEqual <- as.numeric(couveeOis$noisenvol == couveeOis$Nenvol)
 
-Errors4 <- couveeOis[0,]
+Errors4 <- couveeOis[0,] ### JE NE COMPREND PAS CETTE PARTIE ET L'UTILISATION DES ERRORS4 et 5
 Errors4$ErrorType <- character(0)
 
 # #####################
 Errors5 <- couveeOis[0,]
 Errors5$ErrorType <- character(0)
+
 
 #Check 5.1: hatching was detected in couvee but no nestlings in oisillons
 which(is.na(couveeOis$declomin) & !is.na(couveeOis$Nois)) #if this does not output intger(0), Needs to be cheked
