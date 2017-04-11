@@ -3,6 +3,9 @@ library(readxl)
 library(plyr)
 
 
+
+
+
 ########################################################################################
 ########################################################################################
 #This script is intended to cross validate the different data bases for the TRSW project
@@ -11,20 +14,33 @@ library(plyr)
 ########################################################################################
 
 
-path<-"C:/Users/God/Documents/UdeS/Hiver2017/ELefol/Doc/BD 2004-2015"
+path<-"C:/Users/rouf1703/Documents/UdeS/Consultation/ELefol/Doc/BD 2004-2015"
 
 
 cond<-list(
   c01="Females without matches in the couvee file",
-  c02="Adult females wwrongly assigned to couvee",
+  c02="Adult females wrongly assigned to couvee",
   c03="Males without matches in the couvee file",
-  c04="Adult males wwrongly assigned to couvee",
+  c04="Adult males wrongly assigned to couvee",
   c05="Capture date is lower than the laying date and the individual has not been found dead",
   c06="Adults in the adult DB that are not in the couvee DB",
   c07="Capture date is later than the min or max departure date from the nest",
   c08="Capture date is later than the min or max date of nest abandonment",
   c09="Capture date of young is later than the minimal abandonment date if nest was abandoned",
-  c10="Capture date of young is before the laying date"
+  c10="Capture date of young is before the laying date",
+  c11="Sex/age incoherencies",
+  c12="Capture time outside x and y",
+  c13="Some colors not in the list of possible values",
+  c14="Wing measurement outside the range of likely values",
+  c15="Weight measurement outside the range of likely values",
+  c16="Tarsus measurement outside the range of likely values",
+  c17="Male with brood patch",
+  c18="New installed band found in the previous years",
+  c19="Visits are not all 2 days apart for the following farms in the adult DB",
+  c20="Visits are not all 2 days apart for the following farms in the oisillon DB",
+  c21="Check for spaces in ferme ids",
+  c22="",
+  c23=""
 )
 
 checks<-vector(mode="list",length=length(cond))
@@ -53,10 +69,41 @@ checkNArows<-function(x){
   res<-x[!is.na(x$ferme),]
   res
 }
+
 warning("All entries are assumed to have a \"ferme\" id")
 couvee<-checkNArows(couvee)
 adulte<-checkNArows(adulte)
 oisillon<-checkNArows(oisillon)
+
+### function for checking if visits are all 2 days appart at the 
+vis2days<-function(dat){
+  x<-unique(dat[,c("ferme","jjulien")])
+  x<-x[order(x$ferme,x$jjulien),]
+  vis<-ddply(x,.(ferme),function(i){
+    i$vis<-length(unique(i$jjulien%%2))>1
+    i
+  })$vis
+  if(any(vis)){
+    res<-sapply(unique(x$ferme[vis]),function(i){
+      sort(unique(dat$jjulien[dat$ferme==i]))
+    },simplify=FALSE)
+  }else{
+    res<-NULL
+  }  
+  res
+}
+
+### function for getting out all duplicated lines
+dup<-function(x){
+  duplicated(x) | duplicated(x,fromLast=TRUE)
+}
+
+
+
+
+
+
+
 
 
 ################################################
@@ -184,6 +231,191 @@ if(nrow(res)){
 
 
 ##########################################################
+### check julian dates for 2-days visits
+##########################################################
+
+
+### C19
+checks["c19"]<-list(vis2days(adulte))
+checks["c20"]<-list(vis2days(couvee))
+
+
+
+
+
+### C21 find spaces in the different ids of ferme or else
+adulte[grep(" ",adulte$ferme),]
+
+
+
+
+### c22 doublon général
+res<-adulte[dup(adulte),] #doublon global
+if(nrow(res)>0){
+  res<-res[order(res$idadult,res$jjulien),]
+}else{
+  res<-NULL
+}
+checks["cxxx"]<-list(res)
+
+
+### id retrouvé à plus d'un jour julien
+x<-paste(adulte$idadult,adulte$jjulien)
+ids<-x[dup(x)]
+if(length(ids)){
+  res<-adulte[paste(adulte$idadult,adulte$jjulien)%in%ids,] 
+  res<-res[order(res$idadult,res$jjulien,res$heure),]
+}else{
+  res<-NULL
+}
+checks["cxxx"]<-list(res)
+
+
+### id retrouvé à plus d'une ferme  
+x<-unique(adulte[,c("idadult","ferme")])
+ids<-x$idadult[dup(x$idadult)]
+if(length(ids)){
+  res<-adulte[adulte$idadult%in%ids,] 
+  res<-res[order(res$idadult,res$jjulien,res$ferme),]
+}else{
+  res<-NULL
+}
+checks["cxxx"]<-list(res)
+
+
+
+### id retrouvé à plus d'un nichoir 
+x<-unique(adulte[,c("idadult","ferme","nichoir")])
+ids<-x$idadult[dup(x$idadult)]
+if(length(ids)){
+  res<-adulte[adulte$idadult%in%ids,] 
+  res<-res[order(res$idadult,res$jjulien,res$ferme,res$nichoir),]
+}else{
+  res<-NULL
+}
+checks["cxxx"]<-list(res)
+
+
+
+### dans BD oisillon vérifier que les types de conditions admises
+adm_cond<-c("vivant","disparu","mort")
+w<-which(!oisillon$condition%in%adm_cond)
+if(any(w)){
+  res<-oisillon[w,]
+}else{
+  res<-NULL
+}
+checks["cxxx"]<-list(res)
+
+
+### dans BD oisillon les morts ou disparus doivent avoir 0 come code d'envol
+w<-which(oisillon$condition%in%c("disparu","mort") & oisillon$envol==1)
+if(any(w)){
+  res<-oisillon[w,]
+}else{
+  res<-NULL
+}
+checks["cxxx"]<-list(res)
+
+
+### dans BD oisillon les vivants avec un code d'envol 0 doivent éventuellement être morts ou disparus
+w<-which(oisillon$condition%in%c("vivant") & oisillon$envol==0)
+ids<-unique(oisillon$idois2[w])
+if(any(w)){
+  x<-oisillon[oisillon$idois2%in%ids,]
+  x<-x[order(x$idois2,x$jjulien),]
+  x<-ddply(x,.(idois2),function(i){!tail(i$condition,1)%in%c("mort","disparu")})
+  ids2<-x$idois2[x$V1]
+  res<-oisillon[oisillon$idois2%in%ids2,]
+  res<-res[order(res$idois2,res$jjulien),]
+}else{
+  res<-NULL
+}
+checks["cxxx"]<-list(res)
+
+
+
+### check if any chick comes back to life
+x<-oisillon[order(oisillon$idois2,oisillon$jjulien,oisillon$heure),]
+res<-ddply(x,.(idois2),function(i){
+  w1<-which(i$condition%in%c("mort","disparu"))
+  if(any(w1)){
+    w2<-which(i$condition%in%c("vivant"))
+    if(any(w2)){
+      res<-any(w2>min(w1))
+    }else{
+      res<-FALSE
+    }
+  }else{
+    res<-FALSE
+  }
+})
+ids<-res$idois2[res$V1]
+if(length(ids)){
+  res<-oisillon[oisillon$idois2%in%ids,]
+  res<-res[order(res$idois2,res$jjulien,res$heure),]
+}else{
+  res<-NULL
+}
+checks["cxxx"]<-list(res)
+
+
+### recherche les doublons sur la base de id et jjulien
+x<-paste(oisillon$idois2,oisillon$jjulien)
+ids<-x[dup(x)]
+if(length(ids)){
+  res<-oisillon[paste(oisillon$idois2,oisillon$jjulien)%in%ids,] 
+  res<-res[order(res$idois2,res$jjulien,res$heure),]
+}else{
+  res<-NULL
+}
+checks["cxxx"]<-list(res)
+
+
+### vérif 2 days apart visits in chicks
+checks["cxxxx"]<-list(vis2days(oisillon))
+
+
+### find chicks for which id is not the band number despite having been followed after their 12e days
+x<-oisillon
+x$idois<-paste0(x$ferme,x$nichoir,x$annee,x$nnich,x$numero_oisillon)
+x<-ddply(x,.(idois),function(i){
+     sup<-any(which(i$jour_suivi>=12))
+     if(sup){
+       res<-all(i$idois2==paste0(i$prefixe,i$suffixe))
+     }else{
+       res<-all(i$idois2==i$i$idois)
+     }
+     res 
+})
+ids<-x$idois[!x$V1]
+if(length(ids)){
+  res<-oisillon[oisillon$idois2%in%ids,] 
+  res<-res[order(res$idois2,res$jjulien,res$heure),]
+}else{
+  res<-NULL
+}
+checks["cxxx"]<-list(res)
+
+
+### find chicks for which there is a band number but it does not corespond to the id of the chick
+x<-oisillon
+x$idois<-paste0(x$ferme,x$nichoir,x$annee,x$nnich,x$numero_oisillon)
+w<-which(!is.na(x$prefixe) & !is.na(x$suffixe) & x$idois2!=paste0(x$prefixe,x$suffixe))
+ids<-x$idois2[w]
+if(length(ids)){
+  res<-oisillon[oisillon$idois2%in%ids,] 
+  res<-res[order(res$idois2,res$jjulien,res$heure),]
+}else{
+  res<-NULL
+}
+checks["cxxx"]<-list(res)
+
+
+
+
+
+##########################################################
 ### Summarize brood information
 ##########################################################
 
@@ -200,6 +432,9 @@ x<-ddply(oisillon,.(idcouvee),function(i){
 
 
 
+
+
+
 ### hatching detected in brood but no nestlings in chicks
 # check possible erreur dans le script original avec le min et la max de declo
 
@@ -209,7 +444,10 @@ res<-x[w, ]
 
 
 
-
+invisible(sapply(names(checks),function(i){
+  cat("\n","\n",paste(i,toupper(cond[[i]]),sep=" - "),"\n","\n","\n")
+  print(checks[[i]])
+}))
 
 
 
