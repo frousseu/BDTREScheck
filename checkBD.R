@@ -50,15 +50,17 @@ names(checks)<-names(cond)
 
 
 ###############################################
-### Build coloumn types
+### Build column types
 ###############################################
 
 couv_col<-c(rep("text",4),rep("numeric",19),rep("text",6),"text")
-adul_col<-c(rep("text",3),"numeric","numeric","text","numeric","numeric",rep("text",3),"numeric",rep("text",5),rep("numeric",10),rep("text",3))
+adul_col<-c(rep("text",3),"numeric","numeric","text","date","numeric",rep("text",3),"numeric",rep("text",5),rep("numeric",10),rep("text",3))
 
 couvee<-read_excel(file.path(path,"Couvee2016.xlsx"),sheet=1,na="NA",col_types=couv_col)
 adulte<-read_excel(file.path(path,"Adulte2016.xlsx"),sheet="Adultes2016",na="NA",col_types=adul_col)
 oisillon<-read_excel(file.path(path,"oisillons2016.xlsx"),sheet=1,na="NA") 
+
+adulte$heure<-substr(adulte$heure,12,16)
 
 
 ##########################################################################################
@@ -99,11 +101,24 @@ dup<-function(x){
 }
 
 
+########################################################################
+### First check for good column names
+########################################################################
 
 
 
 
 
+########################################################################
+### Second check for unique values in columns with few non-numeric values
+########################################################################
+
+x<-adulte
+col<-c("ferme","nichoir","id","annee","nnich","jjulien","condition","sexe_morpho","age_morpho","couleur","age_exact","trougauche","troudroite","pararectrice","plaqueincu","Cause_recapt")
+res<-sapply(col,function(i){
+  sort(unique(x[,i]),na.last=TRUE)
+})
+checks["Values"]<-list(res)
 
 
 ################################################
@@ -228,6 +243,87 @@ res<-x[w,]
 if(nrow(res)){
   checks["c10"]<-list(res)
 }
+
+
+### C11 Sex/age incoherencies
+x<-adulte
+w<-which((x$sexe_morpho%in%c("F") & !x$age_morpho%in%c("SY","ASY",NA)) | (x$sexe_morpho%in%c("M") & !x$age_morpho%in%c("AHY",NA)) | (x$sexe_morpho%in%c(NA) & !x$age_morpho%in%c(NA)))
+if(any(w)){
+  res<-x[w,]
+}else{
+  res<-NULL
+}
+checks["c11"]<-list(res)
+
+
+### C12 Capture time must be between 07:00 and 20:00 otherwise may be wrong
+x<-adulte
+w<-which(x$heure<"07:00" | x$heure>"20:00")
+if(any(w)){
+  res<-x[w,]
+}else{
+  res<-NULL
+}
+checks["c12"]<-list(res)
+
+
+### c13 Some colors not in the list of possible values
+x<-adulte
+w<-which(!x$couleur%in%c("B","V","BV","BR",NA))
+if(any(w)){
+  res<-x[w,]
+}else{
+  res<-NULL
+}
+checks["c13"]<-list(res)
+
+
+### c14 Wing measurement outside the range of likely values
+x<-adulte
+val<-c(104,127)
+w<-which(x$laile<val[1] | x$laile2<val[1] | x$laile>val[2] | x$laile2>val[2])
+if(any(w)){
+  res<-x[w,]
+}else{
+  res<-NULL
+}
+checks["c14"]<-list(res)
+
+
+### c15 Weight measurement outside the range of likely values
+x<-adulte
+val<-c(10,14)
+w<-which(x$masse<val[1] | x$masse>val[2])
+if(any(w)){
+  res<-x[w,]
+}else{
+  res<-NULL
+}
+checks["c15"]<-list(res)
+
+
+### c16 Tarsus measurement outside the range of likely values
+x<-adulte
+val<-c(10,14)
+w<-which(x$tarse1<val[1] | x$tarse2<val[1] | x$tarse1>val[2] | x$tarse2>val[2])
+if(any(w)){
+  res<-x[w,]
+}else{
+  res<-NULL
+}
+checks["c16"]<-list(res)
+
+
+### c17 Male with brood patch  
+x<-adulte
+val<-c(10,14)
+w<-which(x$sexe_morpho%in%c("M") & !x$plaqueincu%in%c(0,NA))
+if(any(w)){
+  res<-x[w,]
+}else{
+  res<-NULL
+}
+checks["c17"]<-list(res)
 
 
 ##########################################################
