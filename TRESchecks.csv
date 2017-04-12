@@ -1,26 +1,26 @@
-number;check
-;Are column names in each db are consistant?
-;Are number of characters constant for id-type columns?
-;Show all unique values in columns for which the number of possible values is restricted
-;
-1;Females without matches in the couvee file
-2;Adult females wrongly assigned to couvee
-3;Males without matches in the couvee file
-4;Adult males wrongly assigned to couvee
-5;Capture date is lower than the laying date and the individual has not been found dead
-6;Adults in the adult DB that are not in the couvee DB
-7;Capture date is later than the min or max departure date from the nest
-8;Capture date is later than the min or max date of nest abandonment
-9;Capture date of young is later than the minimal abandonment date if nest was abandoned
-10;Capture date of young is before the laying date
-11;Sex/age incoherencies
-12;Capture time outside x and y
-13;Some colors not in the list of possible values
-14;Wing measurement outside the range of likely values
-15;Weight measurement outside the range of likely values
-16;Tarsus measurement outside the range of likely values
-17;Male with brood patch
-18;New installed band found in the previous years
-19;Visits are not all 2 days apart for the following farms in the adult DB
-20;Visits are not all 2 days apart for the following farms in the oisillon DB
-21;Check for spaces in ferme ids
+number;temp_number;type;outcome;check
+;1;general;stop;Are column names in each db consistant?
+;2;general;stop;Are number of characters consistant for id-type columns?
+;3;general;nostop;Show all unique values in columns for which the number of possible values is restricted
+;4;;nostop;
+1;5;;nostop;Females without matches in the couvee file
+2;6;;nostop;Adult females wrongly assigned to couvee
+3;7;;nostop;Males without matches in the couvee file
+4;8;;nostop;Adult males wrongly assigned to couvee
+5;9;;nostop;Capture date is lower than the laying date and the individual has not been found dead
+6;10;;nostop;Adults in the adult DB that are not in the couvee DB
+7;11;;nostop;Capture date is later than the min or max departure date from the nest
+8;12;;nostop;Capture date is later than the min or max date of nest abandonment
+9;13;;nostop;Capture date of young is later than the minimal abandonment date if nest was abandoned
+10;14;;nostop;Capture date of young is before the laying date
+11;15;;nostop;Sex/age incoherencies
+12;16;;nostop;Capture time outside x and y
+13;17;;nostop;Some colors not in the list of possible values
+14;18;;nostop;Wing measurement outside the range of likely values
+15;19;;nostop;Weight measurement outside the range of likely values
+16;20;;nostop;Tarsus measurement outside the range of likely values
+17;21;;nostop;Male with brood patch
+18;22;;nostop;New installed band found in the previous years
+19;23;;nostop;Visits are not all 2 days apart for the following farms in the adult DB
+20;24;;nostop;Visits are not all 2 days apart for the following farms in the oisillon DB
+21;25;;nostop;Check for spaces in ferme ids
