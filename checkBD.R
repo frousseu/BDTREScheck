@@ -3,20 +3,49 @@ library(readxl)
 library(plyr)
 
 
-
-
-
-########################################################################################
-########################################################################################
-#This script is intended to cross validate the different data bases for the TRSW project
-#
-########################################################################################
-########################################################################################
-
-
 path<-"C:/Users/rouf1703/Documents/UdeS/Consultation/ELefol/Doc/BD 2004-2015"
+dsn<-path
+
+checkBD<-function(dsn=".",adulte=NULL,couvee=NULL,oisillon=NULL){
+  
+}
+
+###########################################################################################
+###########################################################################################
+### This script is intended to cross validate the different data bases for the TRSW project
+###########################################################################################
+###########################################################################################
+
+###############################################
+### Build column types
+###############################################
+
+couv_col<-c(rep("text",4),rep("numeric",19),rep("text",6),"text")
+adul_col<-c(rep("text",3),"numeric","numeric","text","date","numeric",rep("text",3),"numeric",rep("text",5),rep("numeric",10),rep("text",3))
+
+couvee<-read_excel(file.path(dsn,"Couvee2016.xlsx"),sheet=1,na="NA",col_types=couv_col)
+adulte<-read_excel(file.path(dsn,"Adulte2016.xlsx"),sheet="Adultes2016",na="NA",col_types=adul_col)
+oisillon<-read_excel(file.path(dsn,"oisillons2016.xlsx"),sheet=1,na="NA") 
+
+adulte$heure<-substr(adulte$heure,12,16)
 
 
+##########################################################################################
+### delete empty lines included in the excel file by assuming all entries have a ferme id
+##########################################################################################
+
+checkNArows<-function(x){
+  res<-x[!is.na(x$ferme),]
+  res
+}
+
+warning("All entries are assumed to have a \"ferme\" id")
+couvee<-checkNArows(couvee)
+adulte<-checkNArows(adulte)
+oisillon<-checkNArows(oisillon)
+
+
+### list of elements that are checked
 cond<-list(
   c01="Females without matches in the couvee file",
   c02="Adult females wrongly assigned to couvee",
@@ -47,35 +76,37 @@ checks<-vector(mode="list",length=length(cond))
 names(checks)<-names(cond)
 
 
+########################################################################
+### First check for good column names
+########################################################################
+
+#cat(paste(paste0("\"",names(couvee),"\""),collapse=","))
+
+adulte_names<-c("ferme","nichoir","id","annee","nnich","idcouvee","heure","jjulien","prefixe","suffixe","idadult","condition","sexe_morpho","age_morpho","sexe_gen","locus_sexe_gen","couleur","age_exact","laile1","laile2","masse","tarse1","tarse2","trougauche","troudroite","pararectrice","plaqueincu","Cause_recapt","commentaire","observateur")
+
+oisillon_names<-c("ferm","nichoir","id","annee","nnich","idcouvee","heure","jjulien","prefixe","suffixe","idois2","sexe_gen","locus_sexe_gen","condition","numero_oisillon","jour_suivi","envol","masse","9primaires1","9primaires2","tarse1","tarse2","commentaires","manipulateur")
+
+couvee_names<-c("idcouvee","id","ferme","nichoir","annee","codesp","nnich","noeufs","noisnes","noisenvol","noismort","dispa_ois","dispa_oeufs","abandon","pred_pot","dponte","dincub","declomin","declomax","denvomin","denvomax","dabanmin","dabanmax","idF1","idM1","idF2","idF3","idM2","idM3","Commentaires")
 
 
-###############################################
-### Build column types
-###############################################
-
-couv_col<-c(rep("text",4),rep("numeric",19),rep("text",6),"text")
-adul_col<-c(rep("text",3),"numeric","numeric","text","date","numeric",rep("text",3),"numeric",rep("text",5),rep("numeric",10),rep("text",3))
-
-couvee<-read_excel(file.path(path,"Couvee2016.xlsx"),sheet=1,na="NA",col_types=couv_col)
-adulte<-read_excel(file.path(path,"Adulte2016.xlsx"),sheet="Adultes2016",na="NA",col_types=adul_col)
-oisillon<-read_excel(file.path(path,"oisillons2016.xlsx"),sheet=1,na="NA") 
-
-adulte$heure<-substr(adulte$heure,12,16)
-
-
-##########################################################################################
-### delete empty lines included in the excel file by assuming all entries have a ferme id
-##########################################################################################
-
-checkNArows<-function(x){
-  res<-x[!is.na(x$ferme),]
-  res
+check_names<-function(x){
+  bd<-deparse(substitute(x))
+  m<-switch(bd,
+    adulte=which(is.na(match(adulte_names,names(x)))),
+    oisillon=which(is.na(match(oisillon_names,names(x)))),
+    couvee=which(is.na(match(couvee_names,names(x))))
+  )
+  if(any(m)){
+    stop(paste0("No matches for following names in ",bd,": ",paste(names(x)[m],collapse=", ")))
+  }
 }
+check_names(adulte)
+check_names(oisillon)
+check_names(couvee)
 
-warning("All entries are assumed to have a \"ferme\" id")
-couvee<-checkNArows(couvee)
-adulte<-checkNArows(adulte)
-oisillon<-checkNArows(oisillon)
+
+
+
 
 ### function for checking if visits are all 2 days appart at the 
 vis2days<-function(dat){
@@ -101,11 +132,39 @@ dup<-function(x){
 }
 
 
-########################################################################
-### First check for good column names
-########################################################################
 
 
+
+####################################################################################
+### Check the number of characters which shoudl always be fixed in the different ids
+####################################################################################
+
+
+x<-adulte
+
+# function for checking ythe number of characters in specific columns
+check_nchar<-function(x){
+  obj<-deparse(substitute(x))
+  n<-list(ferme=2,nichoir=2,id=4,annee=4,nnich=1,idcouvee=9,prefixe=4,suffixe=5)
+  w<-sort(unlist(lapply(seq_along(n),function(i){
+    if(is.na(match(names(n)[i],names(x)))){
+      warning(paste0("No match for ","\"",names(n)[i],"\""," in ",obj,": column not checked"))
+    }else{
+      which(nchar(x[,names(n)[i]])!=n[[i]])
+    }
+  })))
+}
+w<-check_nchar(adulte)
+w<-check_nchar(oisillon)
+w<-check_nchar(couvee)
+
+if(any(w)){
+  res<-x[w,]
+}else{
+  res<-NULL
+}
+
+checks["cxxxxx"]<-list(res)
 
 
 
