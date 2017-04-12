@@ -1,12 +1,19 @@
 
 library(readxl)
 library(plyr)
+library(RCurl)
 
 
 path<-"C:/Users/rouf1703/Documents/UdeS/Consultation/ELefol/Doc/BD 2004-2015"
 dsn<-path
 
-checkBD<-function(dsn=".",adulte=NULL,couvee=NULL,oisillon=NULL,stop=FALSE){
+checkBD<-function(dsn=".",
+           adulte="Adulte2016.xlsx",
+           couvee="Couvee2016.xlsx",
+           oisillon="oisillons2016.xlsx",stop=FALSE)
+{
+  
+  
   
 }
 
@@ -22,96 +29,10 @@ checkBD<-function(dsn=".",adulte=NULL,couvee=NULL,oisillon=NULL,stop=FALSE){
 ###########################################################################################
 ###########################################################################################
 
-###############################################
-### Build column types
-###############################################
 
-couv_col<-c(rep("text",4),rep("numeric",19),rep("text",6),"text")
-adul_col<-c(rep("text",3),"numeric","numeric","text","date","numeric",rep("text",3),"numeric",rep("text",5),rep("numeric",10),rep("text",3))
-
-couvee<-read_excel(file.path(dsn,"Couvee2016.xlsx"),sheet=1,na="NA",col_types=couv_col)
-adulte<-read_excel(file.path(dsn,"Adulte2016.xlsx"),sheet="Adultes2016",na="NA",col_types=adul_col)
-oisillon<-read_excel(file.path(dsn,"oisillons2016.xlsx"),sheet=1,na="NA") 
-
-adulte$heure<-substr(adulte$heure,12,16)
-
-
-##########################################################################################
-### delete empty lines included in the excel file by assuming all entries have a ferme id
-##########################################################################################
-
-checkNArows<-function(x){
-  res<-x[!is.na(x$ferme),]
-  res
-}
-
-warning("All entries are assumed to have a \"ferme\" id")
-couvee<-checkNArows(couvee)
-adulte<-checkNArows(adulte)
-oisillon<-checkNArows(oisillon)
-
-
-### list of elements that are checked
-cond<-list(
-  c01="Females without matches in the couvee file",
-  c02="Adult females wrongly assigned to couvee",
-  c03="Males without matches in the couvee file",
-  c04="Adult males wrongly assigned to couvee",
-  c05="Capture date is lower than the laying date and the individual has not been found dead",
-  c06="Adults in the adult DB that are not in the couvee DB",
-  c07="Capture date is later than the min or max departure date from the nest",
-  c08="Capture date is later than the min or max date of nest abandonment",
-  c09="Capture date of young is later than the minimal abandonment date if nest was abandoned",
-  c10="Capture date of young is before the laying date",
-  c11="Sex/age incoherencies",
-  c12="Capture time outside x and y",
-  c13="Some colors not in the list of possible values",
-  c14="Wing measurement outside the range of likely values",
-  c15="Weight measurement outside the range of likely values",
-  c16="Tarsus measurement outside the range of likely values",
-  c17="Male with brood patch",
-  c18="New installed band found in the previous years",
-  c19="Visits are not all 2 days apart for the following farms in the adult DB",
-  c20="Visits are not all 2 days apart for the following farms in the oisillon DB",
-  c21="Check for spaces in ferme ids",
-  c22="",
-  c23=""
-)
-
-checks<-vector(mode="list",length=length(cond))
-names(checks)<-names(cond)
-
-
-########################################################################
-### First check for good column names
-########################################################################
-
-#cat(paste(paste0("\"",names(couvee),"\""),collapse=","))
-
-adulte_names<-c("ferme","nichoir","id","annee","nnich","idcouvee","heure","jjulien","prefixe","suffixe","idadult","condition","sexe_morpho","age_morpho","sexe_gen","locus_sexe_gen","couleur","age_exact","laile1","laile2","masse","tarse1","tarse2","trougauche","troudroite","pararectrice","plaqueincu","Cause_recapt","commentaire","observateur")
-
-oisillon_names<-c("ferme","nichoir","id","annee","nnich","idcouvee","heure","jjulien","prefixe","suffixe","idois2","sexe_gen","locus_sexe_gen","condition","numero_oisillon","jour_suivi","envol","masse","9primaires1","9primaires2","tarse1","tarse2","commentaires","manipulateur")
-
-couvee_names<-c("idcouvee","id","ferme","nichoir","annee","codesp","nnich","noeufs","noisnes","noisenvol","noismort","dispa_ois","dispa_oeufs","abandon","pred_pot","dponte","dincub","declomin","declomax","denvomin","denvomax","dabanmin","dabanmax","idF1","idM1","idF2","idF3","idM2","idM3","Commentaires")
-
-
-check_names<-function(x){
-  bd<-deparse(substitute(x))
-  m<-switch(bd,
-    adulte=which(is.na(match(adulte_names,names(x)))),
-    oisillon=which(is.na(match(oisillon_names,names(x)))),
-    couvee=which(is.na(match(couvee_names,names(x))))
-  )
-  if(any(m)){
-    stop(paste0("No matches for following names in ",bd,": ",paste(names(x)[m],collapse=", ")))
-  }
-}
-check_names(adulte)
-check_names(oisillon)
-check_names(couvee)
-
-
-
+#############################################
+### internal functions
+#############################################
 
 
 ### function for checking if visits are all 2 days appart at the 
@@ -137,18 +58,98 @@ dup<-function(x){
   duplicated(x) | duplicated(x,fromLast=TRUE)
 }
 
+### function for deleting false rows in excel files
+checkNArows<-function(x){
+  res<-x[!is.na(x$ferme),]
+  res
+}
+
+### function for checking if column names are valid in each db
+check_names<-function(x){
+  bd<-deparse(substitute(x))
+  m<-switch(bd,
+            adulte=which(is.na(match(adulte_names,names(x)))),
+            oisillon=which(is.na(match(oisillon_names,names(x)))),
+            couvee=which(is.na(match(couvee_names,names(x))))
+  )
+  if(any(m)){
+    stop(paste0("No matches for following names in ",bd,": ",paste(names(x)[m],collapse=", ")))
+  }
+}
+
+### function for finding duplicates based on certain columns
+check_dup<-function(x,col=NULL){
+  if(is.null(col)){
+    col<-names(x)
+  }
+  res<-x[dup(x[,col]),]
+  if(nrow(res)>0){
+    res<-res[order(apply(res[,col],1,paste0,collapse="")),]
+  }else{
+    res<-NULL
+  }
+  res
+}
 
 
 
 
-####################################################################################
-### Check the number of characters which shoudl always be fixed in the different ids
-####################################################################################
+###############################################
+### Build column types
+###############################################
+
+couv_col<-c(rep("text",4),rep("numeric",19),rep("text",6),"text")
+adul_col<-c(rep("text",3),"numeric","numeric","text","date","numeric",rep("text",3),"numeric",rep("text",5),rep("numeric",10),rep("text",3))
+
+couvee<-read_excel(file.path(dsn,"Couvee2016.xlsx"),sheet=1,na="NA",col_types=couv_col)
+adulte<-read_excel(file.path(dsn,"Adulte2016.xlsx"),sheet="Adultes2016",na="NA",col_types=adul_col)
+oisillon<-read_excel(file.path(dsn,"oisillons2016.xlsx"),sheet=1,na="NA") 
+
+#TRESchecks<-read_excel(file.path(dsn,"oisillons2016.xlsx"),sheet=1,na="NA") 
+
+adulte$heure<-substr(adulte$heure,12,16)
 
 
-x<-adulte
+##########################################################################################
+### delete empty lines included in the excel file by assuming all entries have a ferme id
+##########################################################################################
 
-# function for checking the number of characters in specific columns
+couvee<-checkNArows(couvee)
+adulte<-checkNArows(adulte)
+oisillon<-checkNArows(oisillon)
+warning("All entries are assumed to have a non-NA \"ferme\" id")
+
+
+### list of elements that are checked
+cond<-getURL("https://raw.githubusercontent.com/frousseu/BDTREScheck/master/TRESchecks.csv") # Ce fichier est sur mon github
+cond<-read.csv(text=cond,header=TRUE,stringsAsFactors=FALSE,sep=";")
+
+### build list of resultst to checks
+checks<-vector(mode="list",length=nrow(cond))
+names(checks)<-paste0("C",formatC(cond$temp_number,width=2,flag=0))
+
+
+########################################################################
+### C01 # First check for good column names
+########################################################################
+
+#cat(paste(paste0("\"",names(couvee),"\""),collapse=","))
+
+adulte_names<-c("ferme","nichoir","id","annee","nnich","idcouvee","heure","jjulien","prefixe","suffixe","idadult","condition","sexe_morpho","age_morpho","sexe_gen","locus_sexe_gen","couleur","age_exact","laile1","laile2","masse","tarse1","tarse2","trougauche","troudroite","pararectrice","plaqueincu","Cause_recapt","commentaire","observateur")
+
+oisillon_names<-c("ferme","nichoir","id","annee","nnich","idcouvee","heure","jjulien","prefixe","suffixe","idois2","sexe_gen","locus_sexe_gen","condition","numero_oisillon","jour_suivi","envol","masse","9primaires1","9primaires2","tarse1","tarse2","commentaires","manipulateur")
+
+couvee_names<-c("idcouvee","id","ferme","nichoir","annee","codesp","nnich","noeufs","noisnes","noisenvol","noismort","dispa_ois","dispa_oeufs","abandon","pred_pot","dponte","dincub","declomin","declomax","denvomin","denvomax","dabanmin","dabanmax","idF1","idM1","idF2","idF3","idM2","idM3","Commentaires")
+
+check_names(adulte)
+check_names(oisillon)
+check_names(couvee)
+
+
+######################################
+### C02 # Check the number of characters which shoudl always be fixed in the different ids
+######################################
+
 check_nchar<-function(x){
   obj<-deparse(substitute(x))
   n<-list(ferme=2,nichoir=2,id=4,annee=4,nnich=1,idcouvee=9,prefixe=4,suffixe=5)
@@ -175,7 +176,7 @@ checks["cxxxxx"]<-list(res)
 
 
 ########################################################################
-### Second check for unique values in columns with few non-numeric values
+### C03 # Second check for unique values in columns with few non-numeric values
 ########################################################################
 
 
@@ -195,7 +196,7 @@ checks["Values"]<-list(adulte=check_val(adulte),couvee=check_val(couvee),oisillo
 
 
 ################################################
-### Check for females and brood assignment
+### C05 # Check for females and brood assignment
 ################################################
 
 x<-merge(couvee[,c("idcouvee","idF1")],adulte[adulte$sexe_morpho=="F",c("idcouvee", "idadult")],by="idcouvee",all.x=TRUE)
@@ -208,8 +209,10 @@ if(nrow(res)){
   checks["c01"]<-list(res)
 }
 
+################################################
+### C06 # 
+################################################
 
-###C02
 w<-which(x$idF1!=x$idadult)
 res<-x[w, ]
 msg<-c("Adult females wwrongly assigned to couvee")
@@ -220,12 +223,11 @@ if(nrow(res)){
 
 
 ################################################
-### Check for males and brood assignment
+### C07 
 ################################################
 
 x<-merge(couvee[,c("idcouvee","idM1")],adulte[adulte$sexe_morpho=="F",c("idcouvee", "idadult")],by="idcouvee",all.x=TRUE)
 
-###C03
 msg<-c("Males without matches in the couvee file")
 w<-which(is.na(x$idM1) & !is.na(x$idadult))
 res<-x[w, ]
@@ -233,8 +235,10 @@ if(nrow(res)){
   checks["c03"]<-list(res)
 }
 
+###################################################
+### C08
+###################################################
 
-###C04
 msg<-c("Adult males wwrongly assigned to couvee")
 w<-which(x$idM1!=x$idadult)
 res<-x[w, ]
@@ -250,7 +254,10 @@ if(nrow(res)){
 
 x<-merge(adulte,couvee[couvee$codesp==1,c("idcouvee","codesp", "abandon", "dponte", "declomin", "declomax", "denvomin", "denvomax", "dabanmin","dabanmax")],by="idcouvee",all.x = TRUE)
 
-###C05
+###########################################################
+### C09
+###########################################################
+
 msg<-"Capture date is lower than the laying date and the individual has not been found dead"
 w<-which(x$jjulien < x$dponte & x$condition == 1)
 res<-x[w, ]
@@ -259,8 +266,10 @@ if(nrow(res)){
   checks["c05"]<-list(res)
 }
 
+###################################################################
+### C10
+###################################################################
 
-###C06
 #3.2) 
 #Check if some lines from the adult DB are not associated with a line that do not 
 #correspond to a TRSW in the couvee file
@@ -272,7 +281,11 @@ if(nrow(res)){
   checks["c06"]<-list(res)
 }
 
-###C07
+
+###################################################################
+###C11
+###################################################################
+
 #3.3)
 msg<-"Capture date is later than the min or max departure date from the nest"
 w<-which((x$jjulien > x$denvomin) | (x$jjulien > x$denvomax))
@@ -281,12 +294,16 @@ if(nrow(res)){
   checks["c07"]<-list(res)
 }
 
-###C08
+######################################################################
+###C12
+######################################################################
+
 #3.3.2) Theses cases should be checked thoroughly as date of abandonment is tracked back to the first day when the eggs were cold.
 # e.g. Incubation is declared on day 145. 147 and 149 eggs are cold but female is caught anyway on day 149. On field, we consider that 
 # the nest was abandonned on day 151 (if incubation was declared previously and eggs are cold for 3 consecutive visits) and stop 
 # following this nest (i.e. adult manipulations) from this date. However, in the data base, dabanmin = 146 and dabanmax = 147. 
 # That is, the first day when the eggs were cold during that 3 visits sequence of cold eggs... probably not clear...
+
 msg<-"Capture date is later than the min or max date of nest abandonment"
 w<-which(((x$jjulien > x$dabanmin) | (x$jjulien > x$dabanmax)) & x$condition == 1)
 res<-x[w, ]
@@ -301,7 +318,10 @@ if(nrow(res)){
 
 x<-merge(oisillon,couvee[couvee$codesp==1,c("idcouvee","dponte","dincub","declomin","declomax","dabanmin","dabanmax")],by="idcouvee",all.x=TRUE)
 
-###C09
+###############################################################
+### C13
+###############################################################
+
 msg<-"Capture date of young is later than the minimal abandonment date if nest was abandoned"
 w<-which(x$jjulien > (x$dabanmin + 1))
 res <- x[w, ]
@@ -309,7 +329,10 @@ if(nrow(res)){
   checks["c09"]<-list(res)
 }
 
-###C10
+###############################################################
+### C14
+###############################################################
+
 msg<-"Capture date of young is before the laying date"
 w<-which(x$jjulien < x$dponte)
 res<-x[w,]
@@ -318,7 +341,10 @@ if(nrow(res)){
 }
 
 
-### C11 Sex/age incoherencies
+###############################################################
+### C15
+###############################################################
+
 x<-adulte
 w<-which((x$sexe_morpho%in%c("F") & !x$age_morpho%in%c("SY","ASY",NA)) | (x$sexe_morpho%in%c("M") & !x$age_morpho%in%c("AHY",NA)) | (x$sexe_morpho%in%c(NA) & !x$age_morpho%in%c(NA)))
 if(any(w)){
@@ -329,7 +355,10 @@ if(any(w)){
 checks["c11"]<-list(res)
 
 
-### C12 Capture time must be between 07:00 and 20:00 otherwise may be wrong
+###############################################################
+### C16
+###############################################################
+
 x<-adulte
 w<-which(x$heure<"07:00" | x$heure>"20:00")
 if(any(w)){
@@ -340,7 +369,10 @@ if(any(w)){
 checks["c12"]<-list(res)
 
 
-### c13 Some colors not in the list of possible values
+###############################################################
+### C17
+###############################################################
+
 x<-adulte
 w<-which(!x$couleur%in%c("B","V","BV","BR",NA))
 if(any(w)){
@@ -350,8 +382,10 @@ if(any(w)){
 }
 checks["c13"]<-list(res)
 
+###############################################################
+### C18
+###############################################################
 
-### c14 Wing measurement outside the range of likely values
 x<-adulte
 val<-c(104,127)
 w<-which(x$laile<val[1] | x$laile2<val[1] | x$laile>val[2] | x$laile2>val[2])
@@ -363,7 +397,10 @@ if(any(w)){
 checks["c14"]<-list(res)
 
 
-### c15 Weight measurement outside the range of likely values
+###############################################################
+### C19
+###############################################################
+
 x<-adulte
 val<-c(10,14)
 w<-which(x$masse<val[1] | x$masse>val[2])
@@ -375,7 +412,10 @@ if(any(w)){
 checks["c15"]<-list(res)
 
 
-### c16 Tarsus measurement outside the range of likely values
+###############################################################
+### C20
+###############################################################
+
 x<-adulte
 val<-c(10,14)
 w<-which(x$tarse1<val[1] | x$tarse2<val[1] | x$tarse1>val[2] | x$tarse2>val[2])
@@ -387,7 +427,10 @@ if(any(w)){
 checks["c16"]<-list(res)
 
 
-### c17 Male with brood patch  
+###############################################################
+### C21
+###############################################################
+
 x<-adulte
 val<-c(10,14)
 w<-which(x$sexe_morpho%in%c("M") & !x$plaqueincu%in%c(0,NA))
@@ -400,44 +443,82 @@ checks["c17"]<-list(res)
 
 
 ##########################################################
-### check julian dates for 2-days visits
+### C22
 ##########################################################
 
 
-### C19
-checks["c19"]<-list(vis2days(adulte))
-checks["c20"]<-list(vis2days(couvee))
+###############################################################
+### C23
+###############################################################
+
+checks["C23"]<-list(vis2days(adulte))
+
+
+###############################################################
+### C24
+###############################################################
+
+checks["C24"]<-list(vis2days(couvee))
 
 
 
 
 
-### C21 find spaces in the different ids of ferme or else
+###############################################################
+### C25
+###############################################################
+
 adulte[grep(" ",adulte$ferme),]
 
 
 
+###############################################################
+### C26 # doublons globaux
+###############################################################
 
-### c22 doublon général
-res<-adulte[dup(adulte),] #doublon global
-if(nrow(res)>0){
-  res<-res[order(res$idadult,res$jjulien),]
-}else{
-  res<-NULL
+
+checks["C26"]<-list(
+  adulte=check_dup(adulte),
+  couvee=check_dup(couvee),
+  oisillon=check_dup(oisillon)
+)
+
+
+###############################################################
+### C27
+###############################################################
+
+### id retrouvé à plus d'un jour julien pour adulte et couvee
+
+checks["C27"]<-list(
+  adulte=check_dup(adulte,col=c("idadult","jjulien")),
+  oisillon=check_dup(oisillon,col=c("idois2","jjulien"))
+)
+
+
+
+
+
+###############################################################
+### C28
+###############################################################
+
+#### here!!!!!!!! do.call with dynamic ordering
+
+check_id_dup<-function(x,col){ # the first element of col is an id and the second and or third the farm and or nuest box
+  id<-col[1]
+  res<-unique(x[,col])
+  ids<-res[,id][dup(res[,id])]
+  if(length(ids)){
+    res<-x[x[,id]%in%ids,] 
+    res<-res[do.call(order,res[col]),]
+  }else{
+    res<-NULL
+  }
+  res
 }
-checks["cxxx"]<-list(res)
 
 
-### id retrouvé à plus d'un jour julien
-x<-paste(adulte$idadult,adulte$jjulien)
-ids<-x[dup(x)]
-if(length(ids)){
-  res<-adulte[paste(adulte$idadult,adulte$jjulien)%in%ids,] 
-  res<-res[order(res$idadult,res$jjulien,res$heure),]
-}else{
-  res<-NULL
-}
-checks["cxxx"]<-list(res)
 
 
 ### id retrouvé à plus d'une ferme  
@@ -450,6 +531,9 @@ if(length(ids)){
   res<-NULL
 }
 checks["cxxx"]<-list(res)
+
+check_id_dup(adulte,col=c("idadult","ferme"))
+
 
 
 
