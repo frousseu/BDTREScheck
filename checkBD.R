@@ -6,9 +6,15 @@ library(plyr)
 path<-"C:/Users/rouf1703/Documents/UdeS/Consultation/ELefol/Doc/BD 2004-2015"
 dsn<-path
 
-checkBD<-function(dsn=".",adulte=NULL,couvee=NULL,oisillon=NULL){
+checkBD<-function(dsn=".",adulte=NULL,couvee=NULL,oisillon=NULL,stop=FALSE){
   
 }
+
+# adulte = base de données des adultes
+# oisillon = base de données des oisillons
+# couvee = base de données des couvées
+# stop = FALSE arrêter la fonction dès qu'une erreur de base données est trouvée
+# skip = un vecteur donnant une list des checks à ignorer
 
 ###########################################################################################
 ###########################################################################################
@@ -84,7 +90,7 @@ names(checks)<-names(cond)
 
 adulte_names<-c("ferme","nichoir","id","annee","nnich","idcouvee","heure","jjulien","prefixe","suffixe","idadult","condition","sexe_morpho","age_morpho","sexe_gen","locus_sexe_gen","couleur","age_exact","laile1","laile2","masse","tarse1","tarse2","trougauche","troudroite","pararectrice","plaqueincu","Cause_recapt","commentaire","observateur")
 
-oisillon_names<-c("ferm","nichoir","id","annee","nnich","idcouvee","heure","jjulien","prefixe","suffixe","idois2","sexe_gen","locus_sexe_gen","condition","numero_oisillon","jour_suivi","envol","masse","9primaires1","9primaires2","tarse1","tarse2","commentaires","manipulateur")
+oisillon_names<-c("ferme","nichoir","id","annee","nnich","idcouvee","heure","jjulien","prefixe","suffixe","idois2","sexe_gen","locus_sexe_gen","condition","numero_oisillon","jour_suivi","envol","masse","9primaires1","9primaires2","tarse1","tarse2","commentaires","manipulateur")
 
 couvee_names<-c("idcouvee","id","ferme","nichoir","annee","codesp","nnich","noeufs","noisnes","noisenvol","noismort","dispa_ois","dispa_oeufs","abandon","pred_pot","dponte","dincub","declomin","declomax","denvomin","denvomax","dabanmin","dabanmax","idF1","idM1","idF2","idF3","idM2","idM3","Commentaires")
 
@@ -142,7 +148,7 @@ dup<-function(x){
 
 x<-adulte
 
-# function for checking ythe number of characters in specific columns
+# function for checking the number of characters in specific columns
 check_nchar<-function(x){
   obj<-deparse(substitute(x))
   n<-list(ferme=2,nichoir=2,id=4,annee=4,nnich=1,idcouvee=9,prefixe=4,suffixe=5)
@@ -172,12 +178,20 @@ checks["cxxxxx"]<-list(res)
 ### Second check for unique values in columns with few non-numeric values
 ########################################################################
 
-x<-adulte
-col<-c("ferme","nichoir","id","annee","nnich","jjulien","condition","sexe_morpho","age_morpho","couleur","age_exact","trougauche","troudroite","pararectrice","plaqueincu","Cause_recapt")
-res<-sapply(col,function(i){
-  sort(unique(x[,i]),na.last=TRUE)
-})
-checks["Values"]<-list(res)
+
+col_val<-c("ferme","nichoir","id","annee","nnich","jjulien","condition","sexe_morpho","age_morpho","couleur","age_exact","trougauche","troudroite","pararectrice","plaqueincu","Cause_recapt")
+
+# function for checking unique values
+check_val<-function(x){
+  n<-col_val[!is.na(match(col_val,names(x)))]
+  res<-sapply(n,function(i){
+    sort(unique(x[,i]),na.last=TRUE)
+  })
+  res
+}
+
+checks["Values"]<-list(adulte=check_val(adulte),couvee=check_val(couvee),oisillon=check_val(oisillon))
+
 
 
 ################################################
