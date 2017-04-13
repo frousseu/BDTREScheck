@@ -91,6 +91,33 @@ check_dup<-function(x,col=NULL){
   res
 }
 
+### function for checking for duplicate ids according to chosen columns
+check_id_dup<-function(x,col){ # the first element of col is an id and the second and or third the farm and or nuest box
+  id<-col[1]
+  res<-unique(x[,col])
+  ids<-res[,id][dup(res[,id])]
+  if(length(ids)){
+    res<-x[x[,id]%in%ids,] 
+    res<-res[do.call(order,res[col]),]
+  }else{
+    res<-NULL
+  }
+  res
+}
+
+### function for checking the number of characters in different columns
+check_nchar<-function(x){
+  obj<-deparse(substitute(x))
+  n<-list(ferme=2,nichoir=2,id=4,annee=4,nnich=1,idcouvee=9,prefixe=4,suffixe=5)
+  w<-sort(unlist(lapply(seq_along(n),function(i){
+    if(is.na(match(names(n)[i],names(x)))){
+      warning(paste0("No match for ","\"",names(n)[i],"\""," in ",obj,": column not checked"))
+    }else{
+      which(nchar(x[,names(n)[i]])!=n[[i]])
+    }
+  })))
+}
+
 
 
 
@@ -150,17 +177,7 @@ check_names(couvee)
 ### C02 # Check the number of characters which shoudl always be fixed in the different ids
 ######################################
 
-check_nchar<-function(x){
-  obj<-deparse(substitute(x))
-  n<-list(ferme=2,nichoir=2,id=4,annee=4,nnich=1,idcouvee=9,prefixe=4,suffixe=5)
-  w<-sort(unlist(lapply(seq_along(n),function(i){
-    if(is.na(match(names(n)[i],names(x)))){
-      warning(paste0("No match for ","\"",names(n)[i],"\""," in ",obj,": column not checked"))
-    }else{
-      which(nchar(x[,names(n)[i]])!=n[[i]])
-    }
-  })))
-}
+
 w<-check_nchar(adulte)
 w<-check_nchar(oisillon)
 w<-check_nchar(couvee)
@@ -171,7 +188,7 @@ if(any(w)){
   res<-NULL
 }
 
-checks["cxxxxx"]<-list(res)
+checks["C02"]<-list(res)
 
 
 
@@ -191,7 +208,7 @@ check_val<-function(x){
   res
 }
 
-checks["Values"]<-list(adulte=check_val(adulte),couvee=check_val(couvee),oisillon=check_val(oisillon))
+checks["C03"]<-list(adulte=check_val(adulte),couvee=check_val(couvee),oisillon=check_val(oisillon))
 
 
 
@@ -458,7 +475,7 @@ checks["C23"]<-list(vis2days(adulte))
 ### C24
 ###############################################################
 
-checks["C24"]<-list(vis2days(couvee))
+checks["C24"]<-list(vis2days(oisillon))
 
 
 
@@ -488,7 +505,6 @@ checks["C26"]<-list(
 ### C27
 ###############################################################
 
-### id retrouvé à plus d'un jour julien pour adulte et couvee
 
 checks["C27"]<-list(
   adulte=check_dup(adulte,col=c("idadult","jjulien")),
@@ -497,60 +513,31 @@ checks["C27"]<-list(
 
 
 
-
-
 ###############################################################
 ### C28
 ###############################################################
 
-#### here!!!!!!!! do.call with dynamic ordering
-
-check_id_dup<-function(x,col){ # the first element of col is an id and the second and or third the farm and or nuest box
-  id<-col[1]
-  res<-unique(x[,col])
-  ids<-res[,id][dup(res[,id])]
-  if(length(ids)){
-    res<-x[x[,id]%in%ids,] 
-    res<-res[do.call(order,res[col]),]
-  }else{
-    res<-NULL
-  }
-  res
-}
+checks["C28"]<-list(
+  adulte=check_id_dup(adulte,col=c("idadult","ferme")),
+  oisillon=check_id_dup(adulte,col=c("idois2","ferme"))
+)
 
 
+###############################################################
+### C29
+###############################################################
 
-
-### id retrouvé à plus d'une ferme  
-x<-unique(adulte[,c("idadult","ferme")])
-ids<-x$idadult[dup(x$idadult)]
-if(length(ids)){
-  res<-adulte[adulte$idadult%in%ids,] 
-  res<-res[order(res$idadult,res$jjulien,res$ferme),]
-}else{
-  res<-NULL
-}
-checks["cxxx"]<-list(res)
-
-check_id_dup(adulte,col=c("idadult","ferme"))
+checks["C29"]<-list(
+  adulte=check_id_dup(adulte,col=c("idadult","ferme","nichoir")),
+  oisillon=check_id_dup(adulte,col=c("idois2","ferme","nichoir"))
+)
 
 
 
+###############################################################
+### C30
+###############################################################
 
-### id retrouvé à plus d'un nichoir 
-x<-unique(adulte[,c("idadult","ferme","nichoir")])
-ids<-x$idadult[dup(x$idadult)]
-if(length(ids)){
-  res<-adulte[adulte$idadult%in%ids,] 
-  res<-res[order(res$idadult,res$jjulien,res$ferme,res$nichoir),]
-}else{
-  res<-NULL
-}
-checks["cxxx"]<-list(res)
-
-
-
-### dans BD oisillon vérifier que les types de conditions admises
 adm_cond<-c("vivant","disparu","mort")
 w<-which(!oisillon$condition%in%adm_cond)
 if(any(w)){
@@ -558,20 +545,26 @@ if(any(w)){
 }else{
   res<-NULL
 }
-checks["cxxx"]<-list(res)
+checks["C30"]<-list(res)
 
 
-### dans BD oisillon les morts ou disparus doivent avoir 0 come code d'envol
+###############################################################
+### C31
+###############################################################
+
 w<-which(oisillon$condition%in%c("disparu","mort") & oisillon$envol==1)
 if(any(w)){
   res<-oisillon[w,]
 }else{
   res<-NULL
 }
-checks["cxxx"]<-list(res)
+checks["C31"]<-list(res)
 
 
-### dans BD oisillon les vivants avec un code d'envol 0 doivent éventuellement être morts ou disparus
+###############################################################
+### C32
+###############################################################
+
 w<-which(oisillon$condition%in%c("vivant") & oisillon$envol==0)
 ids<-unique(oisillon$idois2[w])
 if(any(w)){
@@ -587,8 +580,10 @@ if(any(w)){
 checks["cxxx"]<-list(res)
 
 
+###############################################################
+### C33
+###############################################################
 
-### check if any chick comes back to life
 x<-oisillon[order(oisillon$idois2,oisillon$jjulien,oisillon$heure),]
 res<-ddply(x,.(idois2),function(i){
   w1<-which(i$condition%in%c("mort","disparu"))
@@ -613,21 +608,9 @@ if(length(ids)){
 checks["cxxx"]<-list(res)
 
 
-### recherche les doublons sur la base de id et jjulien
-x<-paste(oisillon$idois2,oisillon$jjulien)
-ids<-x[dup(x)]
-if(length(ids)){
-  res<-oisillon[paste(oisillon$idois2,oisillon$jjulien)%in%ids,] 
-  res<-res[order(res$idois2,res$jjulien,res$heure),]
-}else{
-  res<-NULL
-}
-checks["cxxx"]<-list(res)
-
-
-### vérif 2 days apart visits in chicks
-checks["cxxxx"]<-list(vis2days(oisillon))
-
+###############################################################
+### C34
+###############################################################
 
 ### find chicks for which id is not the band number despite having been followed after their 12e days
 x<-oisillon
@@ -648,10 +631,13 @@ if(length(ids)){
 }else{
   res<-NULL
 }
-checks["cxxx"]<-list(res)
+checks["C34"]<-list(res)
 
 
-### find chicks for which there is a band number but it does not corespond to the id of the chick
+###############################################################
+### C35
+###############################################################
+
 x<-oisillon
 x$idois<-paste0(x$ferme,x$nichoir,x$annee,x$nnich,x$numero_oisillon)
 w<-which(!is.na(x$prefixe) & !is.na(x$suffixe) & x$idois2!=paste0(x$prefixe,x$suffixe))
@@ -662,7 +648,7 @@ if(length(ids)){
 }else{
   res<-NULL
 }
-checks["cxxx"]<-list(res)
+checks["C35"]<-list(res)
 
 
 
