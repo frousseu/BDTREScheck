@@ -7,6 +7,8 @@ A package for doing checks on the Tree Swallow databases
 
 ```
 
+## List of checks
+
 <table class='gmisc_table' style='border-collapse: collapse; margin-top: 1em; margin-bottom: 1em;' >
 <thead>
 <tr>
