@@ -2,10 +2,15 @@
 # BDTREScheck
 A package for doing checks on the Tree Swallow databases
 
-```r
 
+## Column names required
 
-```
+**adulte**: ferme, nichoir, id, annee, nnich, idcouvee, heure, jjulien, prefixe, suffixe, idadult, condition, sexe_morpho, age_morpho, sexe_gen, locus_sexe_gen, couleur, age_exact, laile1, laile2, masse, tarse1, tarse2, trougauche, troudroite, pararectrice, plaqueincu, Cause_recapt, commentaire, observateur
+
+**oisillon**: ferme, nichoir, id, annee, nnich, idcouvee, heure, jjulien, prefixe, suffixe, idois2, sexe_gen, locus_sexe_gen, condition, numero_oisillon, jour_suivi, envol, masse, 9primaires1, 9primaires2, tarse1, tarse2, commentaires, manipulateur
+
+**couvee**: idcouvee, id, ferme, nichoir, annee, codesp, nnich, noeufs, noisnes, noisenvol, noismort, dispa_ois, dispa_oeufs, abandon, pred_pot, dponte, dincub, declomin, declomax, denvomin, denvomax, dabanmin, dabanmax, idF1, idM1, idF2, idF3, idM2, idM3, Commentaires
+
 
 ## List of checks
 
