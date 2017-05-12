@@ -2,15 +2,22 @@
 library(readxl)
 library(plyr)
 library(RCurl)
+library(htmlTable)
 
 
 path<-"C:/Users/rouf1703/Documents/UdeS/Consultation/ELefol/Doc/BD 2004-2015"
+cc<-read.csv("C:/Users/rouf1703/Documents/UdeS/Consultation/ELefol/GitHub/BDTREScheck/TRESchecks.csv",header=TRUE,stringsAsFactors=FALSE,sep=";")
+htmlTable(cc[,c("temp_number","check")],rnames=FALSE)
 dsn<-path
 
 checkBD<-function(dsn=".",
            adulte="Adulte2016.xlsx",
            couvee="Couvee2016.xlsx",
-           oisillon="oisillons2016.xlsx",stop=FALSE)
+           oisillon="oisillons2016.xlsx",
+           adulte_old="Adulte_2004_2015.xlsx",
+           couvee_old="Couvee_2004-2015.xlsx",
+           oisillon_old="Oisillons_2004-2015.xlsx",
+           stop=FALSE)
 {
   
   
@@ -33,7 +40,6 @@ checkBD<-function(dsn=".",
 #############################################
 ### internal functions
 #############################################
-
 
 ### function for checking if visits are all 2 days appart at the 
 vis2days<-function(dat){
@@ -132,6 +138,11 @@ couvee<-read_excel(file.path(dsn,"Couvee2016.xlsx"),sheet=1,na="NA",col_types=co
 adulte<-read_excel(file.path(dsn,"Adulte2016.xlsx"),sheet="Adultes2016",na="NA",col_types=adul_col)
 oisillon<-read_excel(file.path(dsn,"oisillons2016.xlsx"),sheet=1,na="NA") 
 
+couvee_p<-read_excel(file.path(dsn,"Couvee_2004-2015.xlsx"),sheet=1,na="NA")
+adulte_p<-read_excel(file.path(dsn,"Adultes_2004-2015.xlsx"),sheet=1,na="NA",col_types=adul_col)
+oisillon_p<-read_excel(file.path(dsn,"Oisillons_2004-2015.xls"),sheet=1,na="NA") 
+
+
 #TRESchecks<-read_excel(file.path(dsn,"oisillons2016.xlsx"),sheet=1,na="NA") 
 
 adulte$heure<-substr(adulte$heure,12,16)
@@ -151,13 +162,14 @@ warning("All entries are assumed to have a non-NA \"ferme\" id")
 cond<-getURL("https://raw.githubusercontent.com/frousseu/BDTREScheck/master/TRESchecks.csv") # Ce fichier est sur mon github
 cond<-read.csv(text=cond,header=TRUE,stringsAsFactors=FALSE,sep=";")
 
-### build list of resultst to checks
+### build list of results to checks
 checks<-vector(mode="list",length=nrow(cond))
 names(checks)<-paste0("C",formatC(cond$temp_number,width=2,flag=0))
 
 
+
 ########################################################################
-### C01 # First check for good column names
+### C01 # First check for good column names in recent database
 ########################################################################
 
 #cat(paste(paste0("\"",names(couvee),"\""),collapse=","))
@@ -168,9 +180,38 @@ oisillon_names<-c("ferme","nichoir","id","annee","nnich","idcouvee","heure","jju
 
 couvee_names<-c("idcouvee","id","ferme","nichoir","annee","codesp","nnich","noeufs","noisnes","noisenvol","noismort","dispa_ois","dispa_oeufs","abandon","pred_pot","dponte","dincub","declomin","declomax","denvomin","denvomax","dabanmin","dabanmax","idF1","idM1","idF2","idF3","idM2","idM3","Commentaires")
 
+
 check_names(adulte)
 check_names(oisillon)
 check_names(couvee)
+
+
+
+#####################################################
+### C0X check if names are consistant across years
+#####################################################
+
+res<-list()
+res[[1]]<-c(setdiff(names(couvee),names(couvee_p)),setdiff(names(couvee_p),names(couvee)))
+res[[2]]<-c(setdiff(names(adulte),names(adulte_p)),setdiff(names(adulte_p),names(adulte)))
+res[[3]]<-c(setdiff(names(oisillon),names(oisillon_p)),setdiff(names(oisillon_p),names(oisillon)))
+res<-lapply(res,function(i){if(length(i)==0){NULL}else{i}})
+names(res)<-c("couvee","adulte","oisillon")
+
+if(any(!sapply(res,is.null))){
+  print(res)
+  stop("Preceding column names not consistant across old and new databases")
+}else{
+  res<-NULL
+}
+checks["C0X"]<-list(res)
+
+
+
+
+
+
+
 
 
 ######################################
@@ -651,6 +692,31 @@ if(length(ids)){
 checks["C35"]<-list(res)
 
 
+###############################################################
+### C36
+###############################################################
+
+temp<-setdiff(oisillon$idcouvee,couvee$idcouvee)
+if(length(temp)>0){
+  res<-temp
+}else{
+  res<-NULL
+}
+checks["C36"]<-list(res)
+
+
+###############################################################
+### C37
+###############################################################
+
+temp<-setdiff(couvee$idcouvee,oisillon$idcouvee)
+if(length(temp)>0){
+  res<-temp
+}else{
+  res<-NULL
+}
+checks["C37"]<-list(res)
+
 
 
 
@@ -658,7 +724,7 @@ checks["C35"]<-list(res)
 ### Summarize brood information
 ##########################################################
 
-x<-ddply(oisillon,.(idcouvee),function(i){
+y<-ddply(oisillon,.(idcouvee),function(i){
   #browser()
   Nois<-length(unique(i$numero_oisillon))
   Nenvol<-length(unique(i$numero_oisillon[i$envol==1]))
@@ -671,13 +737,10 @@ x<-ddply(oisillon,.(idcouvee),function(i){
 
 
 
-
-
-
 ### hatching detected in brood but no nestlings in chicks
 # check possible erreur dans le script original avec le min et la max de declo
-
-w<-which(is.na(x$declomin) | is.na(x$declomax) & !is.na(x$Nois)) #if this does not output intger(0), Needs to be cheked
+x<-couvee
+w<-which(is.na(x$declomin) | is.na(x$declomax) & !is.na(y$Nois)) #if this does not output intger(0), Needs to be cheked
 res<-x[w, ]
 
 
@@ -778,7 +841,13 @@ rm(check5.3)
 write.csv(Errors5, "Errors5.csv", row.names = FALSE, quote = TRUE)
 
 
+plot(eff.pres)
+trellis.focus("panel", 1, 1)
+panel.points(50, 50)
+panel.xyplot(50, 50)
+trellis.unfocus()
 
+xyplot(1:10,1:10)
 
 
 

@@ -1,5 +1,6 @@
 number;temp_number;type;outcome;pass;check
 ;1;general;stop;;Are column names in each db consistant?
+;;;;;Are column names consistant across old and new databases
 ;2;general;stop;;Are number of characters consistant for id-type columns?
 ;3;general;nostop;;Show all unique values in columns for which the number of possible values is restricted
 ;4;;nostop;;
@@ -31,11 +32,11 @@ number;temp_number;type;outcome;pass;check
 ;30;;;;Make sure that chick conditions are from 3 possible values
 ;31;;;;Make sure that dead or disappeared chicks have 0 for flight code
 ;32;;;;Make sure that living chicks with a 0 flight code are eventually dead or disappeared
-;33;;;;Make sur that no chick comes back to life
+;33;;;;Make sure that no chick comes back to life
 ;34;;;;Chicks which were followed for 12 days or more should have a band number as id and otherwise they should have a farm/brood id
 ;35;;;;Chicks for which there is a band number but it does not correspond to the id of the chick
-;36;;;;
-;37;;;;
+;36;;;;Broods that are in chicks db but not in broods db
+;37;;;;Broods that are in broods db but not in chicks db
 ;38;;;;
 ;39;;;;
 ;40;;;;

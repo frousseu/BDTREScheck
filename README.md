@@ -1,6 +1,6 @@
 
 # BDTREScheck
-A package for doing checks on the Tree Swallow databases
+A package for doing checks on the Tree Swallow databases. Will print a list with the results (problematic lines) of the different checks executed.
 
 
 ## Column names required
