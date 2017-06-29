@@ -10,7 +10,8 @@ cc<-read.csv("C:/Users/rouf1703/Documents/UdeS/Consultation/ELefol/GitHub/BDTRES
 htmlTable(cc[,c("temp_number","check")],rnames=FALSE)
 dsn<-path
 
-# Je test
+
+# Je retest maintenant
 
 checkBD<-function(dsn=".",
            adulte="Adulte2016.xlsx",
