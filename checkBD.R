@@ -10,6 +10,12 @@ cc<-read.csv("C:/Users/rouf1703/Documents/UdeS/Consultation/ELefol/GitHub/BDTRES
 htmlTable(cc[,c("temp_number","check")],rnames=FALSE)
 dsn<-path
 
+<<<<<<< HEAD
+=======
+
+# Je retest maintenant
+
+>>>>>>> 8fc695cf7b3d39b17279c85577de6f0acd163d1c
 checkBD<-function(dsn=".",
            adulte="Adulte2016.xlsx",
            couvee="Couvee2016.xlsx",
