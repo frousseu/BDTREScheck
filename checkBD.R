@@ -8,34 +8,37 @@ library(plyr)
 library(RCurl)
 library(htmlTable)
 
-
-#path <- "./Databases" # Will work if a "Databases" folder exist within the working directory 
-#cc <- read.csv("TRESchecks.csv",header=TRUE,stringsAsFactors=FALSE,sep=";") # Already present in the working directory?
+### produces html table to put in readme
+#r<-readLines(file.path(getwd(),"checkBD.R"))
+#g<-setdiff(grep("msg<-",r),grep("\"msg<-",r))
+#cc<-data.frame(ID=seq_along(g),Checks=gsub("msg<-","",r[g]),stringsAsFactors=FALSE)
+#htmlTable(cc,rnames=FALSE)
 
 path<-"C:/Users/rouf1703/Documents/UdeS/Consultation/ELefol/Doc/BD 2004-2015"
-cc<-read.csv("C:/Users/rouf1703/Documents/UdeS/Consultation/ELefol/GitHub/BDTREScheck/TRESchecks.csv",header=TRUE,stringsAsFactors=FALSE,sep=";")
-htmlTable(cc[,c("temp_number","check")],rnames=FALSE)
+
 dsn<-path
 
 checkBD<-function(dsn=".",
-           adulte="Adulte2016.xlsx",
-           couvee="Couvee2016.xlsx",
-           oisillon="oisillons2016.xlsx",
-           adulte_old="Adulte_2004_2015.xlsx",
-           couvee_old="Couvee_2004-2015.xlsx",
-           oisillon_old="Oisillons_2004-2015.xlsx",
+           adults="Adulte2016.xlsx",
+           broods="Couvee2016.xlsx",
+           chicks="oisillons2016.xlsx",
+           adults_old="Adulte_2004_2015.xlsx",
+           broods_old="Couvee_2004-2015.xlsx",
+           chicks_old="Oisillons_2004-2015.xlsx",
+           sheet=1,
            stop=FALSE)
 {
   
-  
-  
-}
 
-# adulte = base de données des adultes
-# oisillon = base de données des oisillons
-# couvee = base de données des couvées
+# adults = base de données des adultes
+# chicks = base de données des oisillons
+# broods = base de données des couvées
+# adults_old = base de données des adultes (vieille)
+# chicks_old = base de données des oisillons (vieille)
+# broods_old = base de données des couvées (vieille)
 # stop = FALSE arrêter la fonction dès qu'une erreur de base données est trouvée
 # skip = un vecteur donnant une list des checks à ignorer
+# sheet = sheet is assumed to be first one  
 
 ###########################################################################################
 ###########################################################################################
@@ -53,7 +56,10 @@ checkBD<-function(dsn=".",
 # a = thing to append
 # msg = the name of the check that will be used as a name
 lappend<-function(x,a,msg){
-  ans<-c(x,list(a))
+  if(!is.list(a) || is.data.frame(a)){
+    a<-list(a)  
+  }
+  ans<-c(x,a)
   names(ans)[length(ans)]<-msg
   ans
 }
@@ -86,23 +92,10 @@ dup<-function(x){
 checkNArows<-function(x){
   k<-!is.na(x$ferme)
   if(!all(k)){
-    warning(paste("Removing",sum(!k),"rows with a NA \"ferme\" id"))
+    warning(paste("Removing",sum(!k),"rows with NA \"ferme\" id"))
     x<-x[k,]
   }
   x
-}
-
-### function for checking if column names are valid in each db
-check_names<-function(x){
-  bd<-deparse(substitute(x))
-  m<-switch(bd,
-            adulte=which(is.na(match(adulte_names,names(x)))),
-            oisillon=which(is.na(match(oisillon_names,names(x)))),
-            couvee=which(is.na(match(couvee_names,names(x))))
-  )
-  if(any(m)){
-    stop(paste0("No matches for following names in ",bd,": ",paste(names(x)[m],collapse=", ")))
-  }
 }
 
 ### function for finding duplicates based on certain columns
@@ -144,6 +137,7 @@ check_nchar<-function(x){
       which(nchar(x[,names(n)[i]])!=n[[i]])
     }
   })))
+  w
 }
 
 
@@ -156,58 +150,89 @@ check_nchar<-function(x){
 couv_col<-c(rep("text",4),rep("numeric",19),rep("text",6),"text")
 adul_col<-c(rep("text",3),"numeric","numeric","text","date","numeric",rep("text",3),"numeric",rep("text",5),rep("numeric",10),rep("text",3))
 
-couvee<-read_excel(file.path(dsn,"Couvee2016.xlsx"),sheet=1,na="NA",col_types=couv_col)
-adulte<-read_excel(file.path(dsn,"Adulte2016.xlsx"),sheet="Adultes2016",na="NA",col_types=adul_col)
-oisillon<-read_excel(file.path(dsn,"oisillons2016.xlsx"),sheet=1,na="NA") 
+couvee<-as.data.frame(read_excel(file.path(dsn,broods),sheet=1,na="NA",col_types=couv_col))
+adulte<-as.data.frame(read_excel(file.path(dsn,adults),sheet="Adultes2016",na="NA",col_types=adul_col))
+oisillon<-as.data.frame(read_excel(file.path(dsn,chicks),sheet=1,na="NA")) 
 
-couvee_p<-read_excel(file.path(dsn,"Couvee_2004-2015.xlsx"),sheet=1,na="NA")
-adulte_p<-read_excel(file.path(dsn,"Adultes_2004-2015.xlsx"),sheet=1,na="NA",col_types=adul_col)
-oisillon_p<-read_excel(file.path(dsn,"Oisillons_2004-2015.xls"),sheet=1,na="NA") 
+couvee_p<-as.data.frame(read_excel(file.path(dsn,broods_old),sheet=1,na="NA"))
+adulte_p<-as.data.frame(read_excel(file.path(dsn,adults_old),sheet=1,na="NA",col_types=adul_col))
+oisillon_p<-as.data.frame(read_excel(file.path(dsn,chicks_old),sheet=1,na="NA")) 
 
 
-#TRESchecks<-read_excel(file.path(dsn,"oisillons2016.xlsx"),sheet=1,na="NA") 
-
+### make certain changes to columns and column names
 adulte$heure<-substr(adulte$heure,12,16)
+
+### temporarily change the names for the code to run !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+names(oisillon)[which(names(oisillon)=="idois2")]<-"idois"
+names(adulte_p)[which(names(adulte_p)=="laile")]<-"laile1"
+names(adulte_p)[which(names(adulte_p)=="sufixe")]<-"suffixe"
+
+
+### build list of results to checks
+checks<-list()
 
 
 ##########################################################################################
 ### delete empty lines included in the excel file by assuming all entries have a ferme id
 ##########################################################################################
 
+msg<-"Remove rows with NA id's in couvee"
+ini<-nrow(couvee)
 couvee<-checkNArows(couvee)
+res<-paste("Removed",ini-nrow(couvee),"rows with NA ferme id's")
+checks<-lappend(checks,res,msg)
+
+msg<-"Remove rows with NA id's in adulte"
+ini<-nrow(adulte)
 adulte<-checkNArows(adulte)
+res<-paste("Removed",ini-nrow(adulte),"rows with NA ferme id's")
+checks<-lappend(checks,res,msg)
+
+msg<-"Remove rows with NA id's in oisillon"
+ini<-nrow(oisillon)
 oisillon<-checkNArows(oisillon)
-warning("All entries are assumed to have a non-NA \"ferme\" id")
+res<-paste("Removed",ini-nrow(oisillon),"rows with NA ferme id's")
+checks<-lappend(checks,res,msg)
 
-
-### list of elements that are checked
-cond<-getURL("https://raw.githubusercontent.com/frousseu/BDTREScheck/master/TRESchecks.csv") # Ce fichier est sur mon github
-cond<-read.csv(text=cond,header=TRUE,stringsAsFactors=FALSE,sep=";")
-
-### build list of results to checks
-checks<-list()
-#names(checks)<-paste0("C",formatC(cond$temp_number,width=2,flag=0))
-
+#warning("All entries are assumed to have a non-NA \"ferme\" id")
 
 
 ########################################################################
-### C01 # First check for good column names in recent database
+### First check for good column names in recent database
 ########################################################################
 
-#cat(paste(paste0("\"",names(couvee),"\""),collapse=","))
+### function for checking if column names are valid in each db
+check_names<-function(x){
+  bd<-deparse(substitute(x))
+  m<-switch(bd,
+            adulte=which(is.na(match(adulte_names,names(x)))),
+            oisillon=which(is.na(match(oisillon_names,names(x)))),
+            couvee=which(is.na(match(couvee_names,names(x))))
+  )
+  if(any(m)){
+    stop(paste0("No matches for following names in ",bd,": ",paste(names(x)[m],collapse=", ")))
+  }
+}
 
+### column names
 adulte_names<-c("ferme","nichoir","id","annee","nnich","idcouvee","heure","jjulien","prefixe","suffixe","idadult","condition","sexe_morpho","age_morpho","sexe_gen","locus_sexe_gen","couleur","age_exact","laile1","laile2","masse","tarse1","tarse2","trougauche","troudroite","pararectrice","plaqueincu","Cause_recapt","commentaire","observateur")
 
-oisillon_names<-c("ferme","nichoir","id","annee","nnich","idcouvee","heure","jjulien","prefixe","suffixe","idois2","sexe_gen","locus_sexe_gen","condition","numero_oisillon","jour_suivi","envol","masse","9primaires1","9primaires2","tarse1","tarse2","commentaires","manipulateur")
+oisillon_names<-c("ferme","nichoir","id","annee","nnich","idcouvee","heure","jjulien","prefixe","suffixe","idois","sexe_gen","locus_sexe_gen","condition","numero_oisillon","jour_suivi","envol","masse","9primaires1","9primaires2","tarse1","tarse2","commentaires","manipulateur")
 
 couvee_names<-c("idcouvee","id","ferme","nichoir","annee","codesp","nnich","noeufs","noisnes","noisenvol","noismort","dispa_ois","dispa_oeufs","abandon","pred_pot","dponte","dincub","declomin","declomax","denvomin","denvomax","dabanmin","dabanmax","idF1","idM1","idF2","idF3","idM2","idM3","Commentaires")
 
 
-msg<-"Are column names in each db consistant?"
-
+msg<-"Are column names in adult consistent?"
 check_names(adulte)
+checks<-lappend(checks,NULL,msg)
+
+msg<-"Are column names in oisillon consistent?"
 check_names(oisillon)
+checks<-lappend(checks,NULL,msg)
+
+msg<-"Are column names in couvee consistent?"
 check_names(couvee)
+checks<-lappend(checks,NULL,msg)
 
 
 
@@ -229,33 +254,31 @@ names(res)<-c("couvee","adulte","oisillon")
 if(any(!sapply(res,is.null))){
   print(res)
   stop("Preceding column names not consistent across old and new databases")
-}else{
-  res<-NULL
 }
 
-checks<-lappend(checks,res,msg)
+checks<-lappend(checks,NULL,msg)
 
 
 
 
-######################################
-### C02 # Check the number of characters which shoudl always be fixed in the different ids
-######################################
+##########################################################################################
+### Check the number of characters which shoudl always be fixed in the different ids
+##########################################################################################
 
-msg<-"Are number of characters consistant for id-type columns?"
-
+msg<-"Are number of characters consistent for id-type columns in adulte db?"
 w<-check_nchar(adulte)
-w<-check_nchar(oisillon)
-w<-check_nchar(couvee)
-
-if(any(w)){
-  res<-x[w,]
-}else{
-  res<-NULL
-}
-
+res<-x[w,]
 checks<-lappend(checks,res,msg)
 
+msg<-"Are number of characters consistent for id-type columns in oisillon db?"
+w<-check_nchar(oisillon)
+res<-x[w,]
+checks<-lappend(checks,res,msg)
+
+msg<-"Are number of characters consistent for id-type columns in couvee db?"
+w<-check_nchar(couvee)
+res<-x[w,]
+checks<-lappend(checks,res,msg)
 
 
 ########################################################################
@@ -290,7 +313,6 @@ x<-merge(couvee[,c("idcouvee","idF1")],adulte[adulte$sexe_morpho=="F",c("idcouve
 ###C01
 w<-which(is.na(x$idF1) & !is.na(x$idadult))
 res<-x[w, ]
-msg<-c("Females without matches in the couvee file")
 checks<-lappend(checks,res,msg)
 
 
@@ -302,7 +324,6 @@ msg<-"Adult females wrongly assigned to couvee"
 
 w<-which(x$idF1!=x$idadult)
 res<-x[w, ]
-msg<-c("Adult females wwrongly assigned to couvee")
 checks<-lappend(checks,res,msg)
 
 
@@ -551,7 +572,9 @@ checks<-lappend(checks,list(vis2days(oisillon)),msg)
 
 msg<-"Check for spaces in ferme ids"
 
-adulte[grep(" ",adulte$ferme),]
+x<-adulte
+res<-x[grep(" ",x$ferme),]
+checks<-lappend(checks,res,msg)
 
 
 
@@ -576,7 +599,7 @@ msg<-"Check for adults or chicks with more than one entry for a single date"
 
 checks<-lappend(checks,list(
   adulte=check_dup(adulte,col=c("idadult","jjulien")),
-  oisillon=check_dup(oisillon,col=c("idois2","jjulien"))
+  oisillon=check_dup(oisillon,col=c("idois","jjulien"))
 ),msg)
 
 
@@ -589,7 +612,7 @@ msg<-"Check for adults or chicks found at more than one farm"
 
 checks<-lappend(checks,list(
   adulte=check_id_dup(adulte,col=c("idadult","ferme")),
-  oisillon=check_id_dup(adulte,col=c("idois2","ferme"))
+  oisillon=check_id_dup(oisillon,col=c("idois","ferme"))
 ),msg)
 
 
@@ -601,7 +624,7 @@ msg<-"Check for adults or chicks found at more than one nestbox"
 
 checks<-lappend(checks,list(
   adulte=check_id_dup(adulte,col=c("idadult","ferme","nichoir")),
-  oisillon=check_id_dup(adulte,col=c("idois2","ferme","nichoir"))
+  oisillon=check_id_dup(oisillon,col=c("idois","ferme","nichoir"))
 ),msg)
 
 
@@ -636,14 +659,14 @@ checks<-lappend(checks,res,msg)
 msg<-"Make sure that living chicks with a 0 flight code are eventually dead or disappeared"
 
 w<-which(oisillon$condition%in%c("vivant") & oisillon$envol==0)
-ids<-unique(oisillon$idois2[w])
+ids<-unique(oisillon$idois[w])
 if(any(w)){
-  x<-oisillon[oisillon$idois2%in%ids,]
-  x<-x[order(x$idois2,x$jjulien),]
-  x<-ddply(x,.(idois2),function(i){!tail(i$condition,1)%in%c("mort","disparu")})
-  ids2<-x$idois2[x$V1]
-  res<-oisillon[oisillon$idois2%in%ids2,]
-  res<-res[order(res$idois2,res$jjulien),]
+  x<-oisillon[oisillon$idois%in%ids,]
+  x<-x[order(x$idois,x$jjulien),]
+  x<-ddply(x,.(idois),function(i){!tail(i$condition,1)%in%c("mort","disparu")})
+  ids2<-x$idois[x$V1]
+  res<-oisillon[oisillon$idois%in%ids2,]
+  res<-res[order(res$idois,res$jjulien),]
 }else{
   res<-NULL
 }
@@ -656,8 +679,8 @@ checks<-lappend(checks,res,msg)
 
 msg<-"Make sure that no chick comes back to life"
 
-x<-oisillon[order(oisillon$idois2,oisillon$jjulien,oisillon$heure),]
-res<-ddply(x,.(idois2),function(i){
+x<-oisillon[order(oisillon$idois,oisillon$jjulien,oisillon$heure),]
+res<-ddply(x,.(idois),function(i){
   w1<-which(i$condition%in%c("mort","disparu"))
   if(any(w1)){
     w2<-which(i$condition%in%c("vivant"))
@@ -670,10 +693,10 @@ res<-ddply(x,.(idois2),function(i){
     res<-FALSE
   }
 })
-ids<-res$idois2[res$V1]
+ids<-res$idois[res$V1]
 if(length(ids)){
-  res<-oisillon[oisillon$idois2%in%ids,]
-  res<-res[order(res$idois2,res$jjulien,res$heure),]
+  res<-oisillon[oisillon$idois%in%ids,]
+  res<-res[order(res$idois,res$jjulien,res$heure),]
 }else{
   res<-NULL
 }
@@ -692,16 +715,16 @@ x$idois<-paste0(x$ferme,x$nichoir,x$annee,x$nnich,x$numero_oisillon)
 x<-ddply(x,.(idois),function(i){
      sup<-any(which(i$jour_suivi>=12))
      if(sup){
-       res<-all(i$idois2==paste0(i$prefixe,i$suffixe))
+       res<-all(i$idois==paste0(i$prefixe,i$suffixe))
      }else{
-       res<-all(i$idois2==i$i$idois)
+       res<-all(i$idois==i$i$idois)
      }
      res 
 })
 ids<-x$idois[!x$V1]
 if(length(ids)){
-  res<-oisillon[oisillon$idois2%in%ids,] 
-  res<-res[order(res$idois2,res$jjulien,res$heure),]
+  res<-oisillon[oisillon$idois%in%ids,] 
+  res<-res[order(res$idois,res$jjulien,res$heure),]
 }else{
   res<-NULL
 }
@@ -716,11 +739,11 @@ msg<-"Chicks for which there is a band number but it does not correspond to the 
 
 x<-oisillon
 x$idois<-paste0(x$ferme,x$nichoir,x$annee,x$nnich,x$numero_oisillon)
-w<-which(!is.na(x$prefixe) & !is.na(x$suffixe) & x$idois2!=paste0(x$prefixe,x$suffixe))
-ids<-x$idois2[w]
+w<-which(!is.na(x$prefixe) & !is.na(x$suffixe) & x$idois!=paste0(x$prefixe,x$suffixe))
+ids<-x$idois[w]
 if(length(ids)){
-  res<-oisillon[oisillon$idois2%in%ids,] 
-  res<-res[order(res$idois2,res$jjulien,res$heure),]
+  res<-oisillon[oisillon$idois%in%ids,] 
+  res<-res[order(res$idois,res$jjulien,res$heure),]
 }else{
   res<-NULL
 }
@@ -764,7 +787,6 @@ checks<-lappend(checks,res,msg)
 ##########################################################
 
 y<-ddply(oisillon,.(idcouvee),function(i){
-  #browser()
   Nois<-length(unique(i$numero_oisillon))
   Nenvol<-length(unique(i$numero_oisillon[i$envol==1]))
   Ndead<-length(unique(i$numero_oisillon[i$condition%in%"mort"]))
@@ -778,18 +800,39 @@ y<-ddply(oisillon,.(idcouvee),function(i){
 
 ### hatching detected in brood but no nestlings in chicks
 # check possible erreur dans le script original avec le min et la max de declo
+
+### checks on hatch dates and brood stuff
+
 x<-couvee
-w<-which(is.na(x$declomin) | is.na(x$declomax) & !is.na(y$Nois)) #if this does not output intger(0), Needs to be cheked
-res<-x[w, ]
-checks<-lappend(checks,res,msg)
+#w<-which(is.na(x$declomin) | is.na(x$declomax) & !is.na(y$Nois)) #if this does not output integer(0), Needs to be checked
+#res<-x[w, ]
+#checks<-lappend(checks,res,msg)
 
 
+################################################################
+### PRINT RESULTS and replace empty data.frames with NULLs
+################################################################
 
+### replace empty data.frames with NULLs
+nchecks<-names(checks)
+checks<-lapply(checks,function(i){
+  if(is.data.frame(i) && nrow(i)==0L){
+    NULL
+  }else{
+    i  
+  }  
+})
+names(checks)<-nchecks
 
-invisible(sapply(names(checks),function(i){
-  cat("\n","\n",paste(i,toupper(cond[[i]]),sep=" - "),"\n","\n","\n")
+### print check results
+invisible(sapply(seq_along(checks),function(i){
+  cat("\n","\n",paste("_______",paste("Check",formatC(i,width=3,flag=0),names(checks)[i],sep=" - "),"_______"),"\n","\n","\n")
   print(checks[[i]])
 }))
+
+checks
+
+}
 
 
 
