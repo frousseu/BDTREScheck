@@ -1,7 +1,7 @@
-if(!require(readxl))   {install.packages("readxl")}
-if(!require(plyr))     {install.packages("plyr")}
-if(!require(RCurl))    {install.packages("RCurl")}
-if(!require(htmlTable)){install.packages("htmlTable")}
+#if(!require(readxl))   {install.packages("readxl")}
+#if(!require(plyr))     {install.packages("plyr")}
+#if(!require(RCurl))    {install.packages("RCurl")}
+#if(!require(htmlTable)){install.packages("htmlTable")}
 
 library(readxl)
 library(plyr)
@@ -48,7 +48,15 @@ checkBD<-function(dsn=".",
 ### internal functions
 #############################################
 
-### function to list all checks
+### function to append a list with a check and a message
+# x = initial list
+# a = thing to append
+# msg = the name of the check that will be used as a name
+lappend<-function(x,a,msg){
+  ans<-c(x,list(a))
+  names(ans)[length(ans)]<-msg
+  ans
+}
 
 
 ### function for checking if visits are all 2 days appart at the 
@@ -195,15 +203,21 @@ oisillon_names<-c("ferme","nichoir","id","annee","nnich","idcouvee","heure","jju
 couvee_names<-c("idcouvee","id","ferme","nichoir","annee","codesp","nnich","noeufs","noisnes","noisenvol","noismort","dispa_ois","dispa_oeufs","abandon","pred_pot","dponte","dincub","declomin","declomax","denvomin","denvomax","dabanmin","dabanmax","idF1","idM1","idF2","idF3","idM2","idM3","Commentaires")
 
 
+msg<-"Are column names in each db consistant?"
+
 check_names(adulte)
 check_names(oisillon)
 check_names(couvee)
 
 
 
+
+
 #####################################################
 ### C0X check if names are consistant across years
 #####################################################
+
+msg<-"Are column names consistant across old and new databases"
 
 res<-list()
 res[[1]]<-c(setdiff(names(couvee),names(couvee_p)),setdiff(names(couvee_p),names(couvee)))
@@ -218,13 +232,17 @@ if(any(!sapply(res,is.null))){
 }else{
   res<-NULL
 }
-checks<-c(checks,list(res))
+
+checks<-lappend(checks,res,msg)
+
+
 
 
 ######################################
 ### C02 # Check the number of characters which shoudl always be fixed in the different ids
 ######################################
 
+msg<-"Are number of characters consistant for id-type columns?"
 
 w<-check_nchar(adulte)
 w<-check_nchar(oisillon)
@@ -236,7 +254,7 @@ if(any(w)){
   res<-NULL
 }
 
-checks<-c(checks,list(res))
+checks<-lappend(checks,res,msg)
 
 
 
@@ -244,6 +262,7 @@ checks<-c(checks,list(res))
 ### C03 # Second check for unique values in columns with few non-numeric values
 ########################################################################
 
+msg<-"Show all unique values in columns for which the number of possible values is restricted"
 
 col_val<-c("ferme","nichoir","id","annee","nnich","jjulien","condition","sexe_morpho","age_morpho","couleur","age_exact","trougauche","troudroite","pararectrice","plaqueincu","Cause_recapt")
 
@@ -256,7 +275,7 @@ check_val<-function(x){
   res
 }
 
-checks<-c(checks,list(adulte=check_val(adulte),couvee=check_val(couvee),oisillon=check_val(oisillon)))
+checks<-lappend(checks,list(adulte=check_val(adulte),couvee=check_val(couvee),oisillon=check_val(oisillon)),msg)
 
 
 
@@ -264,23 +283,27 @@ checks<-c(checks,list(adulte=check_val(adulte),couvee=check_val(couvee),oisillon
 ### C05 # Check for females and brood assignment
 ################################################
 
+msg<-"Females without matches in the couvee file"
+
 x<-merge(couvee[,c("idcouvee","idF1")],adulte[adulte$sexe_morpho=="F",c("idcouvee", "idadult")],by="idcouvee",all.x=TRUE)
 
 ###C01
 w<-which(is.na(x$idF1) & !is.na(x$idadult))
 res<-x[w, ]
 msg<-c("Females without matches in the couvee file")
-checks<-c(checks,list(res))
+checks<-lappend(checks,res,msg)
 
 
 ################################################
 ### C06 # 
 ################################################
 
+msg<-"Adult females wrongly assigned to couvee"
+
 w<-which(x$idF1!=x$idadult)
 res<-x[w, ]
 msg<-c("Adult females wwrongly assigned to couvee")
-checks<-c(checks,list(res))
+checks<-lappend(checks,res,msg)
 
 
 
@@ -289,22 +312,23 @@ checks<-c(checks,list(res))
 ### C07 
 ################################################
 
-x<-merge(couvee[,c("idcouvee","idM1")],adulte[adulte$sexe_morpho=="F",c("idcouvee", "idadult")],by="idcouvee",all.x=TRUE)
+msg<-"Males without matches in the couvee file"
 
-msg<-c("Males without matches in the couvee file")
+x<-merge(couvee[,c("idcouvee","idM1")],adulte[adulte$sexe_morpho=="F",c("idcouvee", "idadult")],by="idcouvee",all.x=TRUE)
 w<-which(is.na(x$idM1) & !is.na(x$idadult))
 res<-x[w, ]
-checks<-c(checks,list(res))
+checks<-lappend(checks,res,msg)
 
 
 ###################################################
 ### C08
 ###################################################
 
-msg<-c("Adult males wwrongly assigned to couvee")
+msg<-c("Adult males wrongly assigned to couvee")
+
 w<-which(x$idM1!=x$idadult)
 res<-x[w, ]
-checks<-c(checks,list(res))
+checks<-lappend(checks,res,msg)
 
 
 
@@ -320,9 +344,10 @@ x<-merge(adulte,couvee[couvee$codesp==1,c("idcouvee","codesp", "abandon", "dpont
 ###########################################################
 
 msg<-"Capture date is lower than the laying date and the individual has not been found dead"
+
 w<-which(x$jjulien < x$dponte & x$condition == 1)
 res<-x[w, ]
-checks<-c(checks,list(res))
+checks<-lappend(checks,res,msg)
 
 
 ###################################################################
@@ -333,10 +358,12 @@ checks<-c(checks,list(res))
 #Check if some lines from the adult DB are not associated with a line that do not 
 #correspond to a TRSW in the couvee file
 #Not sure what that means!!!
+
 msg<-"Adults in the adult DB that are not in the couvee DB"
+
 w<-which(x$codesp != 1 & x$condition == 1)
 res <- x[w,]
-checks<-c(checks,list(res))
+checks<-lappend(checks,res,msg)
 
 
 
@@ -345,10 +372,12 @@ checks<-c(checks,list(res))
 ###################################################################
 
 #3.3)
+
 msg<-"Capture date is later than the min or max departure date from the nest"
+
 w<-which((x$jjulien > x$denvomin) | (x$jjulien > x$denvomax))
 res<-x[w,]
-checks["c07"]<-list(res)
+checks<-lappend(checks,res,msg)
 
 
 ######################################################################
@@ -362,9 +391,10 @@ checks["c07"]<-list(res)
 # That is, the first day when the eggs were cold during that 3 visits sequence of cold eggs... probably not clear...
 
 msg<-"Capture date is later than the min or max date of nest abandonment"
+
 w<-which(((x$jjulien > x$dabanmin) | (x$jjulien > x$dabanmax)) & x$condition == 1)
 res<-x[w, ]
-checks<-c(checks,list(res))
+checks<-lappend(checks,res,msg)
 
 
 
@@ -379,9 +409,10 @@ x<-merge(oisillon,couvee[couvee$codesp==1,c("idcouvee","dponte","dincub","declom
 ###############################################################
 
 msg<-"Capture date of young is later than the minimal abandonment date if nest was abandoned"
+
 w<-which(x$jjulien > (x$dabanmin + 1))
 res <- x[w, ]
-checks<-c(checks,list(res))
+checks<-lappend(checks,res,msg)
 
 
 ###############################################################
@@ -389,9 +420,10 @@ checks<-c(checks,list(res))
 ###############################################################
 
 msg<-"Capture date of young is before the laying date"
+
 w<-which(x$jjulien < x$dponte)
 res<-x[w,]
-checks<-c(checks,list(res))
+checks<-lappend(checks,res,msg)
 
 
 
@@ -399,20 +431,25 @@ checks<-c(checks,list(res))
 ### C15
 ###############################################################
 
+msg<-"Sex/age incoherencies"
+
 x<-adulte
 w<-which((x$sexe_morpho%in%c("F") & !x$age_morpho%in%c("SY","ASY",NA)) | (x$sexe_morpho%in%c("M") & !x$age_morpho%in%c("AHY",NA)) | (x$sexe_morpho%in%c(NA) & !x$age_morpho%in%c(NA)))
 res<-x[w,]
-checks<-c(checks,list(res))
+checks<-lappend(checks,res,msg)
 
 
 ###############################################################
 ### C16
 ###############################################################
 
+mmh<-c("07:00","20:00")
+msg<-paste("Capture time outside",mmh[1],"and",mmh[2])
+
 x<-adulte
-w<-which(x$heure<"07:00" | x$heure>"20:00")
+w<-which(x$heure<mmh[1] | x$heure>mmh[2])
 res<-x[w,]
-checks<-c(checks,list(res))
+checks<-lappend(checks,res,msg)
 
 
 
@@ -420,64 +457,79 @@ checks<-c(checks,list(res))
 ### C17
 ###############################################################
 
+msg<-"Some colors not in the list of possible values"
+
 x<-adulte
 w<-which(!x$couleur%in%c("B","V","BV","BR",NA))
 res<-x[w,]
-checks<-c(checks,list(res))
+checks<-lappend(checks,res,msg)
 
 ###############################################################
 ### C18
 ###############################################################
 
+msg<-"Wing measurement outside the range of likely values"
+
 x<-adulte
 val<-c(104,127)
 w<-which(x$laile<val[1] | x$laile2<val[1] | x$laile>val[2] | x$laile2>val[2])
 res<-x[w,]
-checks<-c(checks,list(res))
+checks<-lappend(checks,res,msg)
 
 
 ###############################################################
 ### C19
 ###############################################################
 
+msg<-"Weight measurement outside the range of likely values"
+
 x<-adulte
 val<-c(10,14)
 w<-which(x$masse<val[1] | x$masse>val[2])
 res<-x[w,]
-checks<-c(checks,list(res))
+checks<-lappend(checks,res,msg)
 
 
 ###############################################################
 ### C20
 ###############################################################
 
+msg<-"Tarsus measurement outside the range of likely values"
+
 x<-adulte
 val<-c(10,14)
 w<-which(x$tarse1<val[1] | x$tarse2<val[1] | x$tarse1>val[2] | x$tarse2>val[2])
 res<-x[w,]
-checks<-c(checks,list(res))
+checks<-lappend(checks,res,msg)
 
 
 ###############################################################
 ### C21
 ###############################################################
 
+msg<-"Male with brood patch"
+
 x<-adulte
 val<-c(10,14)
 w<-which(x$sexe_morpho%in%c("M") & !x$plaqueincu%in%c(0,NA))
 res<-x[w,]
-checks<-c(checks,list(res))
+checks<-lappend(checks,res,msg)
 
 
 ##########################################################
 ### C22
 ##########################################################
 
+msg<-"Newly installed band found in the previous years"
 
 ###############################################################
 ### C23
 ###############################################################
-checks<-c(checks,list(vis2days(adulte)))
+
+msg<-"Visits are not all 2 days apart for the following farms in the adult DB
+"
+
+checks<-lappend(checks,list(vis2days(adulte)),msg)
 
 
 
@@ -485,7 +537,9 @@ checks<-c(checks,list(vis2days(adulte)))
 ### C24
 ###############################################################
 
-checks<-c(checks,list(vis2days(oisillon)))
+msg<-"Visits are not all 2 days apart for the following farms in the oisillon DB"
+
+checks<-lappend(checks,list(vis2days(oisillon)),msg)
 
 
 
@@ -495,6 +549,8 @@ checks<-c(checks,list(vis2days(oisillon)))
 ### C25
 ###############################################################
 
+msg<-"Check for spaces in ferme ids"
+
 adulte[grep(" ",adulte$ferme),]
 
 
@@ -503,23 +559,25 @@ adulte[grep(" ",adulte$ferme),]
 ### C26 # doublons globaux
 ###############################################################
 
+msg<-"Check for duplicates using all columns in each database"
 
-checks<-c(checks,list(
+checks<-lappend(checks,list(
   adulte=check_dup(adulte),
   couvee=check_dup(couvee),
   oisillon=check_dup(oisillon)
-))
+),msg)
 
 
 ###############################################################
 ### C27
 ###############################################################
 
+msg<-"Check for adults or chicks with more than one entry for a single date"
 
-checks<-c(checks,list(
+checks<-lappend(checks,list(
   adulte=check_dup(adulte,col=c("idadult","jjulien")),
   oisillon=check_dup(oisillon,col=c("idois2","jjulien"))
-))
+),msg)
 
 
 
@@ -527,20 +585,24 @@ checks<-c(checks,list(
 ### C28
 ###############################################################
 
-checks<-c(checks,list(
+msg<-"Check for adults or chicks found at more than one farm"
+
+checks<-lappend(checks,list(
   adulte=check_id_dup(adulte,col=c("idadult","ferme")),
   oisillon=check_id_dup(adulte,col=c("idois2","ferme"))
-))
+),msg)
 
 
 ###############################################################
 ### C29
 ###############################################################
 
-checks<-c(checks,list(
+msg<-"Check for adults or chicks found at more than one nestbox"
+
+checks<-lappend(checks,list(
   adulte=check_id_dup(adulte,col=c("idadult","ferme","nichoir")),
   oisillon=check_id_dup(adulte,col=c("idois2","ferme","nichoir"))
-))
+),msg)
 
 
 
@@ -548,24 +610,30 @@ checks<-c(checks,list(
 ### C30
 ###############################################################
 
+msg<-"Make sure that chick conditions are from 3 possible values"
+
 adm_cond<-c("vivant","disparu","mort")
 w<-which(!oisillon$condition%in%adm_cond)
 res<-oisillon[w,]
-checks<-c(checks,list(res))
+checks<-lappend(checks,res,msg)
 
 
 ###############################################################
 ### C31
 ###############################################################
 
+msg<-"Make sure that dead or disappeared chicks have 0 for flight code"
+
 w<-which(oisillon$condition%in%c("disparu","mort") & oisillon$envol==1)
 res<-oisillon[w,]
-checks<-c(checks,list(res))
+checks<-lappend(checks,res,msg)
 
 
 ###############################################################
 ### C32
 ###############################################################
+
+msg<-"Make sure that living chicks with a 0 flight code are eventually dead or disappeared"
 
 w<-which(oisillon$condition%in%c("vivant") & oisillon$envol==0)
 ids<-unique(oisillon$idois2[w])
@@ -579,12 +647,14 @@ if(any(w)){
 }else{
   res<-NULL
 }
-checks<-c(checks,list(res))
+checks<-lappend(checks,res,msg)
 
 
 ###############################################################
 ### C33
 ###############################################################
+
+msg<-"Make sure that no chick comes back to life"
 
 x<-oisillon[order(oisillon$idois2,oisillon$jjulien,oisillon$heure),]
 res<-ddply(x,.(idois2),function(i){
@@ -607,12 +677,14 @@ if(length(ids)){
 }else{
   res<-NULL
 }
-checks<-c(checks,list(res))
+checks<-lappend(checks,res,msg)
 
 
 ###############################################################
 ### C34
 ###############################################################
+
+msg<-"Chicks which were followed for 12 days or more should have a band number as id and otherwise they should have a farm/brood id"
 
 ### find chicks for which id is not the band number despite having been followed after their 12e days
 x<-oisillon
@@ -633,12 +705,14 @@ if(length(ids)){
 }else{
   res<-NULL
 }
-checks<-c(checks,list(res))
+checks<-lappend(checks,res,msg)
 
 
 ###############################################################
 ### C35
 ###############################################################
+
+msg<-"Chicks for which there is a band number but it does not correspond to the id of the chick"
 
 x<-oisillon
 x$idois<-paste0(x$ferme,x$nichoir,x$annee,x$nnich,x$numero_oisillon)
@@ -650,12 +724,14 @@ if(length(ids)){
 }else{
   res<-NULL
 }
-checks<-c(checks,list(res))
+checks<-lappend(checks,res,msg)
 
 
 ###############################################################
 ### C36
 ###############################################################
+
+msg<-"Broods that are in chicks db but not in broods db"
 
 temp<-setdiff(oisillon$idcouvee,couvee$idcouvee)
 if(length(temp)>0){
@@ -663,12 +739,14 @@ if(length(temp)>0){
 }else{
   res<-NULL
 }
-checks<-c(checks,list(res))
+checks<-lappend(checks,res,msg)
 
 
 ###############################################################
 ### C37
 ###############################################################
+
+msg<-"Broods that are in broods db but not in chicks db"
 
 temp<-setdiff(couvee$idcouvee,oisillon$idcouvee)
 if(length(temp)>0){
@@ -676,7 +754,7 @@ if(length(temp)>0){
 }else{
   res<-NULL
 }
-checks<-c(checks,list(res))
+checks<-lappend(checks,res,msg)
 
 
 
@@ -703,7 +781,7 @@ y<-ddply(oisillon,.(idcouvee),function(i){
 x<-couvee
 w<-which(is.na(x$declomin) | is.na(x$declomax) & !is.na(y$Nois)) #if this does not output intger(0), Needs to be cheked
 res<-x[w, ]
-checks<-c(checks,list(res))
+checks<-lappend(checks,res,msg)
 
 
 
