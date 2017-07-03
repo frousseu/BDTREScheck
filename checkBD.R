@@ -24,9 +24,10 @@ checkBD<-function(dsn=".",
            chicks="oisillons2016.xlsx",
            adults_old="Adulte_2004_2015.xlsx",
            broods_old="Couvee_2004-2015.xlsx",
-           chicks_old="Oisillons_2004-2015.xlsx",
+           oisillon_old="Oisillons_2004-2015.xls",
            sheet=1,
            stop=FALSE)
+
 {
   
 
@@ -217,7 +218,7 @@ check_names<-function(x){
 ### column names
 adulte_names<-c("ferme","nichoir","id","annee","nnich","idcouvee","heure","jjulien","prefixe","suffixe","idadult","condition","sexe_morpho","age_morpho","sexe_gen","locus_sexe_gen","couleur","age_exact","laile1","laile2","masse","tarse1","tarse2","trougauche","troudroite","pararectrice","plaqueincu","Cause_recapt","commentaire","observateur")
 
-oisillon_names<-c("ferme","nichoir","id","annee","nnich","idcouvee","heure","jjulien","prefixe","suffixe","idois","sexe_gen","locus_sexe_gen","condition","numero_oisillon","jour_suivi","envol","masse","9primaires1","9primaires2","tarse1","tarse2","commentaires","manipulateur")
+oisillon_names<-c("ferme","nichoir","id","annee","nnich","idcouvee","heure","jjulien","prefixe","suffixe","idois2","sexe_gen","locus_sexe_gen","condition","numero_oisillon","jour_suivi","envol","masse","9primaires1","9primaires2","tarse1","tarse2","commentaires","manipulateur")
 
 couvee_names<-c("idcouvee","id","ferme","nichoir","annee","codesp","nnich","noeufs","noisnes","noisenvol","noismort","dispa_ois","dispa_oeufs","abandon","pred_pot","dponte","dincub","declomin","declomax","denvomin","denvomax","dabanmin","dabanmax","idF1","idM1","idF2","idF3","idM2","idM3","Commentaires")
 
