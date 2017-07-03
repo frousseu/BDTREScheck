@@ -9,10 +9,10 @@ library(RCurl)
 library(htmlTable)
 
 
-path <- "./Databases" # Will work if a "Databases" folder exist within the working directory 
+#path <- "./Databases" # Will work if a "Databases" folder exist within the working directory 
 #cc <- read.csv("TRESchecks.csv",header=TRUE,stringsAsFactors=FALSE,sep=";") # Already present in the working directory?
 
-#path<-"C:/Users/rouf1703/Documents/UdeS/Consultation/ELefol/Doc/BD 2004-2015"
+path<-"C:/Users/rouf1703/Documents/UdeS/Consultation/ELefol/Doc/BD 2004-2015"
 cc<-read.csv("C:/Users/rouf1703/Documents/UdeS/Consultation/ELefol/GitHub/BDTREScheck/TRESchecks.csv",header=TRUE,stringsAsFactors=FALSE,sep=";")
 htmlTable(cc[,c("temp_number","check")],rnames=FALSE)
 dsn<-path
@@ -48,6 +48,9 @@ checkBD<-function(dsn=".",
 ### internal functions
 #############################################
 
+### function to list all checks
+
+
 ### function for checking if visits are all 2 days appart at the 
 vis2days<-function(dat){
   x<-unique(dat[,c("ferme","jjulien")])
@@ -71,10 +74,14 @@ dup<-function(x){
   duplicated(x) | duplicated(x,fromLast=TRUE)
 }
 
-### function for deleting false rows in excel files
+### function for deleting false empty rows in excel files
 checkNArows<-function(x){
-  res<-x[!is.na(x$ferme),]
-  res
+  k<-!is.na(x$ferme)
+  if(!all(k)){
+    warning(paste("Removing",sum(!k),"rows with a NA \"ferme\" id"))
+    x<-x[k,]
+  }
+  x
 }
 
 ### function for checking if column names are valid in each db
@@ -170,8 +177,8 @@ cond<-getURL("https://raw.githubusercontent.com/frousseu/BDTREScheck/master/TRES
 cond<-read.csv(text=cond,header=TRUE,stringsAsFactors=FALSE,sep=";")
 
 ### build list of results to checks
-checks<-vector(mode="list",length=nrow(cond))
-names(checks)<-paste0("C",formatC(cond$temp_number,width=2,flag=0))
+checks<-list()
+#names(checks)<-paste0("C",formatC(cond$temp_number,width=2,flag=0))
 
 
 
@@ -207,11 +214,11 @@ names(res)<-c("couvee","adulte","oisillon")
 
 if(any(!sapply(res,is.null))){
   print(res)
-  stop("Preceding column names not consistant across old and new databases")
+  stop("Preceding column names not consistent across old and new databases")
 }else{
   res<-NULL
 }
-checks["C0X"]<-list(res)
+checks<-c(checks,list(res))
 
 
 ######################################
@@ -229,7 +236,7 @@ if(any(w)){
   res<-NULL
 }
 
-checks["C02"]<-list(res)
+checks<-c(checks,list(res))
 
 
 
@@ -249,7 +256,7 @@ check_val<-function(x){
   res
 }
 
-checks["C03"]<-list(adulte=check_val(adulte),couvee=check_val(couvee),oisillon=check_val(oisillon))
+checks<-c(checks,list(adulte=check_val(adulte),couvee=check_val(couvee),oisillon=check_val(oisillon)))
 
 
 
@@ -263,9 +270,8 @@ x<-merge(couvee[,c("idcouvee","idF1")],adulte[adulte$sexe_morpho=="F",c("idcouve
 w<-which(is.na(x$idF1) & !is.na(x$idadult))
 res<-x[w, ]
 msg<-c("Females without matches in the couvee file")
-if(nrow(res)){
-  checks["c01"]<-list(res)
-}
+checks<-c(checks,list(res))
+
 
 ################################################
 ### C06 # 
@@ -274,9 +280,8 @@ if(nrow(res)){
 w<-which(x$idF1!=x$idadult)
 res<-x[w, ]
 msg<-c("Adult females wwrongly assigned to couvee")
-if(nrow(res)){
-  checks["c02"]<-list(res)
-}
+checks<-c(checks,list(res))
+
 
 
 
@@ -289,9 +294,8 @@ x<-merge(couvee[,c("idcouvee","idM1")],adulte[adulte$sexe_morpho=="F",c("idcouve
 msg<-c("Males without matches in the couvee file")
 w<-which(is.na(x$idM1) & !is.na(x$idadult))
 res<-x[w, ]
-if(nrow(res)){
-  checks["c03"]<-list(res)
-}
+checks<-c(checks,list(res))
+
 
 ###################################################
 ### C08
@@ -300,9 +304,8 @@ if(nrow(res)){
 msg<-c("Adult males wwrongly assigned to couvee")
 w<-which(x$idM1!=x$idadult)
 res<-x[w, ]
-if(nrow(res)){
-  checks["c04"]<-list(res)
-}
+checks<-c(checks,list(res))
+
 
 
 
@@ -319,10 +322,8 @@ x<-merge(adulte,couvee[couvee$codesp==1,c("idcouvee","codesp", "abandon", "dpont
 msg<-"Capture date is lower than the laying date and the individual has not been found dead"
 w<-which(x$jjulien < x$dponte & x$condition == 1)
 res<-x[w, ]
-checks[length(checks)+1]<-if(nrow(res)){res}else{list(NULL)}
-if(nrow(res)){
-  checks["c05"]<-list(res)
-}
+checks<-c(checks,list(res))
+
 
 ###################################################################
 ### C10
@@ -335,9 +336,8 @@ if(nrow(res)){
 msg<-"Adults in the adult DB that are not in the couvee DB"
 w<-which(x$codesp != 1 & x$condition == 1)
 res <- x[w,]
-if(nrow(res)){
-  checks["c06"]<-list(res)
-}
+checks<-c(checks,list(res))
+
 
 
 ###################################################################
@@ -348,9 +348,8 @@ if(nrow(res)){
 msg<-"Capture date is later than the min or max departure date from the nest"
 w<-which((x$jjulien > x$denvomin) | (x$jjulien > x$denvomax))
 res<-x[w,]
-if(nrow(res)){
-  checks["c07"]<-list(res)
-}
+checks["c07"]<-list(res)
+
 
 ######################################################################
 ###C12
@@ -365,9 +364,8 @@ if(nrow(res)){
 msg<-"Capture date is later than the min or max date of nest abandonment"
 w<-which(((x$jjulien > x$dabanmin) | (x$jjulien > x$dabanmax)) & x$condition == 1)
 res<-x[w, ]
-if(nrow(res)){
-  checks["c08"]<-list(res)
-}
+checks<-c(checks,list(res))
+
 
 
 ############################################## 
@@ -383,9 +381,8 @@ x<-merge(oisillon,couvee[couvee$codesp==1,c("idcouvee","dponte","dincub","declom
 msg<-"Capture date of young is later than the minimal abandonment date if nest was abandoned"
 w<-which(x$jjulien > (x$dabanmin + 1))
 res <- x[w, ]
-if(nrow(res)){
-  checks["c09"]<-list(res)
-}
+checks<-c(checks,list(res))
+
 
 ###############################################################
 ### C14
@@ -394,9 +391,8 @@ if(nrow(res)){
 msg<-"Capture date of young is before the laying date"
 w<-which(x$jjulien < x$dponte)
 res<-x[w,]
-if(nrow(res)){
-  checks["c10"]<-list(res)
-}
+checks<-c(checks,list(res))
+
 
 
 ###############################################################
@@ -405,12 +401,8 @@ if(nrow(res)){
 
 x<-adulte
 w<-which((x$sexe_morpho%in%c("F") & !x$age_morpho%in%c("SY","ASY",NA)) | (x$sexe_morpho%in%c("M") & !x$age_morpho%in%c("AHY",NA)) | (x$sexe_morpho%in%c(NA) & !x$age_morpho%in%c(NA)))
-if(any(w)){
-  res<-x[w,]
-}else{
-  res<-NULL
-}
-checks["c11"]<-list(res)
+res<-x[w,]
+checks<-c(checks,list(res))
 
 
 ###############################################################
@@ -419,12 +411,9 @@ checks["c11"]<-list(res)
 
 x<-adulte
 w<-which(x$heure<"07:00" | x$heure>"20:00")
-if(any(w)){
-  res<-x[w,]
-}else{
-  res<-NULL
-}
-checks["c12"]<-list(res)
+res<-x[w,]
+checks<-c(checks,list(res))
+
 
 
 ###############################################################
@@ -433,12 +422,8 @@ checks["c12"]<-list(res)
 
 x<-adulte
 w<-which(!x$couleur%in%c("B","V","BV","BR",NA))
-if(any(w)){
-  res<-x[w,]
-}else{
-  res<-NULL
-}
-checks["c13"]<-list(res)
+res<-x[w,]
+checks<-c(checks,list(res))
 
 ###############################################################
 ### C18
@@ -447,12 +432,8 @@ checks["c13"]<-list(res)
 x<-adulte
 val<-c(104,127)
 w<-which(x$laile<val[1] | x$laile2<val[1] | x$laile>val[2] | x$laile2>val[2])
-if(any(w)){
-  res<-x[w,]
-}else{
-  res<-NULL
-}
-checks["c14"]<-list(res)
+res<-x[w,]
+checks<-c(checks,list(res))
 
 
 ###############################################################
@@ -462,12 +443,8 @@ checks["c14"]<-list(res)
 x<-adulte
 val<-c(10,14)
 w<-which(x$masse<val[1] | x$masse>val[2])
-if(any(w)){
-  res<-x[w,]
-}else{
-  res<-NULL
-}
-checks["c15"]<-list(res)
+res<-x[w,]
+checks<-c(checks,list(res))
 
 
 ###############################################################
@@ -477,12 +454,8 @@ checks["c15"]<-list(res)
 x<-adulte
 val<-c(10,14)
 w<-which(x$tarse1<val[1] | x$tarse2<val[1] | x$tarse1>val[2] | x$tarse2>val[2])
-if(any(w)){
-  res<-x[w,]
-}else{
-  res<-NULL
-}
-checks["c16"]<-list(res)
+res<-x[w,]
+checks<-c(checks,list(res))
 
 
 ###############################################################
@@ -492,12 +465,8 @@ checks["c16"]<-list(res)
 x<-adulte
 val<-c(10,14)
 w<-which(x$sexe_morpho%in%c("M") & !x$plaqueincu%in%c(0,NA))
-if(any(w)){
-  res<-x[w,]
-}else{
-  res<-NULL
-}
-checks["c17"]<-list(res)
+res<-x[w,]
+checks<-c(checks,list(res))
 
 
 ##########################################################
@@ -508,15 +477,15 @@ checks["c17"]<-list(res)
 ###############################################################
 ### C23
 ###############################################################
+checks<-c(checks,list(vis2days(adulte)))
 
-checks["C23"]<-list(vis2days(adulte))
 
 
 ###############################################################
 ### C24
 ###############################################################
 
-checks["C24"]<-list(vis2days(oisillon))
+checks<-c(checks,list(vis2days(oisillon)))
 
 
 
@@ -535,11 +504,11 @@ adulte[grep(" ",adulte$ferme),]
 ###############################################################
 
 
-checks["C26"]<-list(
+checks<-c(checks,list(
   adulte=check_dup(adulte),
   couvee=check_dup(couvee),
   oisillon=check_dup(oisillon)
-)
+))
 
 
 ###############################################################
@@ -547,10 +516,10 @@ checks["C26"]<-list(
 ###############################################################
 
 
-checks["C27"]<-list(
+checks<-c(checks,list(
   adulte=check_dup(adulte,col=c("idadult","jjulien")),
   oisillon=check_dup(oisillon,col=c("idois2","jjulien"))
-)
+))
 
 
 
@@ -558,20 +527,20 @@ checks["C27"]<-list(
 ### C28
 ###############################################################
 
-checks["C28"]<-list(
+checks<-c(checks,list(
   adulte=check_id_dup(adulte,col=c("idadult","ferme")),
   oisillon=check_id_dup(adulte,col=c("idois2","ferme"))
-)
+))
 
 
 ###############################################################
 ### C29
 ###############################################################
 
-checks["C29"]<-list(
+checks<-c(checks,list(
   adulte=check_id_dup(adulte,col=c("idadult","ferme","nichoir")),
   oisillon=check_id_dup(adulte,col=c("idois2","ferme","nichoir"))
-)
+))
 
 
 
@@ -581,12 +550,8 @@ checks["C29"]<-list(
 
 adm_cond<-c("vivant","disparu","mort")
 w<-which(!oisillon$condition%in%adm_cond)
-if(any(w)){
-  res<-oisillon[w,]
-}else{
-  res<-NULL
-}
-checks["C30"]<-list(res)
+res<-oisillon[w,]
+checks<-c(checks,list(res))
 
 
 ###############################################################
@@ -594,12 +559,8 @@ checks["C30"]<-list(res)
 ###############################################################
 
 w<-which(oisillon$condition%in%c("disparu","mort") & oisillon$envol==1)
-if(any(w)){
-  res<-oisillon[w,]
-}else{
-  res<-NULL
-}
-checks["C31"]<-list(res)
+res<-oisillon[w,]
+checks<-c(checks,list(res))
 
 
 ###############################################################
@@ -618,7 +579,7 @@ if(any(w)){
 }else{
   res<-NULL
 }
-checks["cxxx"]<-list(res)
+checks<-c(checks,list(res))
 
 
 ###############################################################
@@ -646,7 +607,7 @@ if(length(ids)){
 }else{
   res<-NULL
 }
-checks["cxxx"]<-list(res)
+checks<-c(checks,list(res))
 
 
 ###############################################################
@@ -672,7 +633,7 @@ if(length(ids)){
 }else{
   res<-NULL
 }
-checks["C34"]<-list(res)
+checks<-c(checks,list(res))
 
 
 ###############################################################
@@ -689,7 +650,7 @@ if(length(ids)){
 }else{
   res<-NULL
 }
-checks["C35"]<-list(res)
+checks<-c(checks,list(res))
 
 
 ###############################################################
@@ -702,7 +663,7 @@ if(length(temp)>0){
 }else{
   res<-NULL
 }
-checks["C36"]<-list(res)
+checks<-c(checks,list(res))
 
 
 ###############################################################
@@ -715,7 +676,7 @@ if(length(temp)>0){
 }else{
   res<-NULL
 }
-checks["C37"]<-list(res)
+checks<-c(checks,list(res))
 
 
 
@@ -742,6 +703,7 @@ y<-ddply(oisillon,.(idcouvee),function(i){
 x<-couvee
 w<-which(is.na(x$declomin) | is.na(x$declomax) & !is.na(y$Nois)) #if this does not output intger(0), Needs to be cheked
 res<-x[w, ]
+checks<-c(checks,list(res))
 
 
 
