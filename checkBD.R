@@ -210,13 +210,6 @@ if(any(!sapply(res,is.null))){
 checks["C0X"]<-list(res)
 
 
-
-
-
-
-
-
-
 ######################################
 ### C02 # Check the number of characters which shoudl always be fixed in the different ids
 ######################################
