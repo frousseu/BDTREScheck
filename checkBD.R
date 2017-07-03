@@ -9,9 +9,10 @@ library(RCurl)
 library(htmlTable)
 
 ### produces html table to put in readme
-#r<-readLines(file.path(getwd(),"checkBD.R"))
-#g<-setdiff(grep("msg<-",r),grep("\"msg<-",r))
-#cc<-data.frame(ID=seq_along(g),Checks=gsub("msg<-","",r[g]),stringsAsFactors=FALSE)
+##r<-readLines(file.path(getwd(),"checkBD.R"))
+#r<-deparse(checkBD)
+#g<-setdiff(grep("msg <-",r),grep("\"msg <-",r))
+#cc<-data.frame(ID=seq_along(g),Checks=gsub("msg <-|  ","",r[g]),stringsAsFactors=FALSE)
 #htmlTable(cc,rnames=FALSE)
 
 path<-"C:/Users/rouf1703/Documents/UdeS/Consultation/ELefol/Doc/BD 2004-2015"
@@ -22,11 +23,12 @@ checkBD<-function(dsn=".",
            adults="Adulte2016.xlsx",
            broods="Couvee2016.xlsx",
            chicks="oisillons2016.xlsx",
-           adults_old="Adulte_2004_2015.xlsx",
+           adults_old="Adultes_2004-2015.xlsx",
            broods_old="Couvee_2004-2015.xlsx",
-           chicks_old="Oisillons_2004-2015.xlsx",
+           chicks_old="Oisillons_2004-2015.xls",
            sheet=1,
-           stop=FALSE)
+           stop=FALSE,
+           print=FALSE)
 
 {
   
@@ -40,6 +42,7 @@ checkBD<-function(dsn=".",
 # stop = FALSE arrêter la fonction dès qu'une erreur de base données est trouvée
 # skip = un vecteur donnant une list des checks à ignorer
 # sheet = sheet is assumed to be first one  
+# print the result or not  
 
 ###########################################################################################
 ###########################################################################################
@@ -56,13 +59,17 @@ checkBD<-function(dsn=".",
 # x = initial list
 # a = thing to append
 # msg = the name of the check that will be used as a name
+# le premier if devrait être enlevé le problème vient du fait de c'er des liste qui ne marche pas comme le reste  
 lappend<-function(x,a,msg){
   if(!is.list(a) || is.data.frame(a)){
     a<-list(a)  
+    x<-c(x,a)
+    names(x)[length(x)]<-msg
+  }else{
+    x[[length(x)+1]]<-a
+    names(x)[length(x)]<-msg  
   }
-  ans<-c(x,a)
-  names(ans)[length(ans)]<-msg
-  ans
+  x
 }
 
 
@@ -151,13 +158,14 @@ check_nchar<-function(x){
 couv_col<-c(rep("text",4),rep("numeric",19),rep("text",6),"text")
 adul_col<-c(rep("text",3),"numeric","numeric","text","date","numeric",rep("text",3),"numeric",rep("text",5),rep("numeric",10),rep("text",3))
 
-couvee<-as.data.frame(read_excel(file.path(dsn,broods),sheet=1,na="NA",col_types=couv_col))
-adulte<-as.data.frame(read_excel(file.path(dsn,adults),sheet="Adultes2016",na="NA",col_types=adul_col))
-oisillon<-as.data.frame(read_excel(file.path(dsn,chicks),sheet=1,na="NA")) 
+### read_excel est sûrement utilisé temporairement et je supprime donc les warnings associés à la détection de caractères non-attendus
+couvee<-suppressWarnings(as.data.frame(read_excel(file.path(dsn,broods),sheet=1,na="NA",col_types=couv_col,guess_max=100000)))
+adulte<-suppressWarnings(as.data.frame(read_excel(file.path(dsn,adults),sheet="Adultes2016",na="NA",col_types=adul_col,guess_max=100000)))
+oisillon<-suppressWarnings(as.data.frame(read_excel(file.path(dsn,chicks),sheet=1,na="NA",guess_max=1000000))) 
 
-couvee_p<-as.data.frame(read_excel(file.path(dsn,broods_old),sheet=1,na="NA"))
-adulte_p<-as.data.frame(read_excel(file.path(dsn,adults_old),sheet=1,na="NA",col_types=adul_col))
-oisillon_p<-as.data.frame(read_excel(file.path(dsn,chicks_old),sheet=1,na="NA")) 
+couvee_p<-suppressWarnings(as.data.frame(read_excel(file.path(dsn,broods_old),sheet=1,na="NA",guess_max=100000)))
+adulte_p<-suppressWarnings(as.data.frame(read_excel(file.path(dsn,adults_old),sheet=1,na="NA",col_types=adul_col,guess_max=100000)))
+oisillon_p<-suppressWarnings(as.data.frame(read_excel(file.path(dsn,chicks_old),sheet=1,na="NA",guess_max=100000))) 
 
 
 ### make certain changes to columns and column names
@@ -268,18 +276,15 @@ checks<-lappend(checks,NULL,msg)
 
 msg<-"Are number of characters consistent for id-type columns in adulte db?"
 w<-check_nchar(adulte)
-res<-x[w,]
-checks<-lappend(checks,res,msg)
+checks<-lappend(checks,adulte[w,],msg)
 
 msg<-"Are number of characters consistent for id-type columns in oisillon db?"
 w<-check_nchar(oisillon)
-res<-x[w,]
-checks<-lappend(checks,res,msg)
+checks<-lappend(checks,oisillon[w,],msg)
 
 msg<-"Are number of characters consistent for id-type columns in couvee db?"
 w<-check_nchar(couvee)
-res<-x[w,]
-checks<-lappend(checks,res,msg)
+checks<-lappend(checks,couvee[w,],msg)
 
 
 ########################################################################
@@ -313,8 +318,7 @@ x<-merge(couvee[,c("idcouvee","idF1")],adulte[adulte$sexe_morpho=="F",c("idcouve
 
 ###C01
 w<-which(is.na(x$idF1) & !is.na(x$idadult))
-res<-x[w, ]
-checks<-lappend(checks,res,msg)
+checks<-lappend(checks,x[w, ],msg)
 
 
 ################################################
@@ -324,8 +328,7 @@ checks<-lappend(checks,res,msg)
 msg<-"Adult females wrongly assigned to couvee"
 
 w<-which(x$idF1!=x$idadult)
-res<-x[w, ]
-checks<-lappend(checks,res,msg)
+checks<-lappend(checks,x[w,],msg)
 
 
 
@@ -338,8 +341,7 @@ msg<-"Males without matches in the couvee file"
 
 x<-merge(couvee[,c("idcouvee","idM1")],adulte[adulte$sexe_morpho=="F",c("idcouvee", "idadult")],by="idcouvee",all.x=TRUE)
 w<-which(is.na(x$idM1) & !is.na(x$idadult))
-res<-x[w, ]
-checks<-lappend(checks,res,msg)
+checks<-lappend(checks,x[w,],msg)
 
 
 ###################################################
@@ -349,8 +351,7 @@ checks<-lappend(checks,res,msg)
 msg<-c("Adult males wrongly assigned to couvee")
 
 w<-which(x$idM1!=x$idadult)
-res<-x[w, ]
-checks<-lappend(checks,res,msg)
+checks<-lappend(checks,x[w,],msg)
 
 
 
@@ -368,8 +369,7 @@ x<-merge(adulte,couvee[couvee$codesp==1,c("idcouvee","codesp", "abandon", "dpont
 msg<-"Capture date is lower than the laying date and the individual has not been found dead"
 
 w<-which(x$jjulien < x$dponte & x$condition == 1)
-res<-x[w, ]
-checks<-lappend(checks,res,msg)
+checks<-lappend(checks,x[w,],msg)
 
 
 ###################################################################
@@ -384,8 +384,7 @@ checks<-lappend(checks,res,msg)
 msg<-"Adults in the adult DB that are not in the couvee DB"
 
 w<-which(x$codesp != 1 & x$condition == 1)
-res <- x[w,]
-checks<-lappend(checks,res,msg)
+checks<-lappend(checks,x[w,],msg)
 
 
 
@@ -398,8 +397,7 @@ checks<-lappend(checks,res,msg)
 msg<-"Capture date is later than the min or max departure date from the nest"
 
 w<-which((x$jjulien > x$denvomin) | (x$jjulien > x$denvomax))
-res<-x[w,]
-checks<-lappend(checks,res,msg)
+checks<-lappend(checks,x[w,],msg)
 
 
 ######################################################################
@@ -415,8 +413,7 @@ checks<-lappend(checks,res,msg)
 msg<-"Capture date is later than the min or max date of nest abandonment"
 
 w<-which(((x$jjulien > x$dabanmin) | (x$jjulien > x$dabanmax)) & x$condition == 1)
-res<-x[w, ]
-checks<-lappend(checks,res,msg)
+checks<-lappend(checks,x[w,],msg)
 
 
 
@@ -433,8 +430,7 @@ x<-merge(oisillon,couvee[couvee$codesp==1,c("idcouvee","dponte","dincub","declom
 msg<-"Capture date of young is later than the minimal abandonment date if nest was abandoned"
 
 w<-which(x$jjulien > (x$dabanmin + 1))
-res <- x[w, ]
-checks<-lappend(checks,res,msg)
+checks<-lappend(checks,x[w,],msg)
 
 
 ###############################################################
@@ -444,8 +440,7 @@ checks<-lappend(checks,res,msg)
 msg<-"Capture date of young is before the laying date"
 
 w<-which(x$jjulien < x$dponte)
-res<-x[w,]
-checks<-lappend(checks,res,msg)
+checks<-lappend(checks,x[w,],msg)
 
 
 
@@ -457,8 +452,7 @@ msg<-"Sex/age incoherencies"
 
 x<-adulte
 w<-which((x$sexe_morpho%in%c("F") & !x$age_morpho%in%c("SY","ASY",NA)) | (x$sexe_morpho%in%c("M") & !x$age_morpho%in%c("AHY",NA)) | (x$sexe_morpho%in%c(NA) & !x$age_morpho%in%c(NA)))
-res<-x[w,]
-checks<-lappend(checks,res,msg)
+checks<-lappend(checks,x[w,],msg)
 
 
 ###############################################################
@@ -470,8 +464,7 @@ msg<-paste("Capture time outside",mmh[1],"and",mmh[2])
 
 x<-adulte
 w<-which(x$heure<mmh[1] | x$heure>mmh[2])
-res<-x[w,]
-checks<-lappend(checks,res,msg)
+checks<-lappend(checks,x[w,],msg)
 
 
 
@@ -483,8 +476,7 @@ msg<-"Some colors not in the list of possible values"
 
 x<-adulte
 w<-which(!x$couleur%in%c("B","V","BV","BR",NA))
-res<-x[w,]
-checks<-lappend(checks,res,msg)
+checks<-lappend(checks,x[w,],msg)
 
 ###############################################################
 ### C18
@@ -495,8 +487,7 @@ msg<-"Wing measurement outside the range of likely values"
 x<-adulte
 val<-c(104,127)
 w<-which(x$laile<val[1] | x$laile2<val[1] | x$laile>val[2] | x$laile2>val[2])
-res<-x[w,]
-checks<-lappend(checks,res,msg)
+checks<-lappend(checks,x[w,],msg)
 
 
 ###############################################################
@@ -508,8 +499,7 @@ msg<-"Weight measurement outside the range of likely values"
 x<-adulte
 val<-c(10,14)
 w<-which(x$masse<val[1] | x$masse>val[2])
-res<-x[w,]
-checks<-lappend(checks,res,msg)
+checks<-lappend(checks,x[w,],msg)
 
 
 ###############################################################
@@ -521,8 +511,7 @@ msg<-"Tarsus measurement outside the range of likely values"
 x<-adulte
 val<-c(10,14)
 w<-which(x$tarse1<val[1] | x$tarse2<val[1] | x$tarse1>val[2] | x$tarse2>val[2])
-res<-x[w,]
-checks<-lappend(checks,res,msg)
+checks<-lappend(checks,x[w,],msg)
 
 
 ###############################################################
@@ -534,8 +523,7 @@ msg<-"Male with brood patch"
 x<-adulte
 val<-c(10,14)
 w<-which(x$sexe_morpho%in%c("M") & !x$plaqueincu%in%c(0,NA))
-res<-x[w,]
-checks<-lappend(checks,res,msg)
+checks<-lappend(checks,x[w,],msg)
 
 
 ##########################################################
@@ -548,8 +536,7 @@ msg<-"Newly installed band found in the previous years"
 ### C23
 ###############################################################
 
-msg<-"Visits are not all 2 days apart for the following farms in the adult DB
-"
+msg<-"Visits are not all 2 days apart for the following farms in the adult DB"
 
 checks<-lappend(checks,list(vis2days(adulte)),msg)
 
@@ -574,8 +561,7 @@ checks<-lappend(checks,list(vis2days(oisillon)),msg)
 msg<-"Check for spaces in ferme ids"
 
 x<-adulte
-res<-x[grep(" ",x$ferme),]
-checks<-lappend(checks,res,msg)
+checks<-lappend(checks,x[grep(" ",x$ferme),],msg)
 
 
 
@@ -638,8 +624,7 @@ msg<-"Make sure that chick conditions are from 3 possible values"
 
 adm_cond<-c("vivant","disparu","mort")
 w<-which(!oisillon$condition%in%adm_cond)
-res<-oisillon[w,]
-checks<-lappend(checks,res,msg)
+checks<-lappend(checks,oisillon[w,],msg)
 
 
 ###############################################################
@@ -649,8 +634,7 @@ checks<-lappend(checks,res,msg)
 msg<-"Make sure that dead or disappeared chicks have 0 for flight code"
 
 w<-which(oisillon$condition%in%c("disparu","mort") & oisillon$envol==1)
-res<-oisillon[w,]
-checks<-lappend(checks,res,msg)
+checks<-lappend(checks,oisillon[w,],msg)
 
 
 ###############################################################
@@ -804,7 +788,7 @@ y<-ddply(oisillon,.(idcouvee),function(i){
 
 ### checks on hatch dates and brood stuff
 
-x<-couvee
+#x<-couvee
 #w<-which(is.na(x$declomin) | is.na(x$declomax) & !is.na(y$Nois)) #if this does not output integer(0), Needs to be checked
 #res<-x[w, ]
 #checks<-lappend(checks,res,msg)
@@ -826,16 +810,18 @@ checks<-lapply(checks,function(i){
 names(checks)<-nchecks
 
 ### print check results
-invisible(sapply(seq_along(checks),function(i){
-  cat("\n","\n",paste("_______",paste("Check",formatC(i,width=3,flag=0),names(checks)[i],sep=" - "),"_______"),"\n","\n","\n")
-  print(checks[[i]])
-}))
+if(print){
+  invisible(sapply(seq_along(checks),function(i){
+    cat("\n","\n",paste("_______",paste("Check",formatC(i,width=3,flag=0),names(checks)[i],sep=" - "),"_______"),"\n","\n","\n")
+    print(checks[[i]])
+  }))
+}
 
 checks
 
 }
 
-
+x<-checkBD(dsn=path,print=FALSE)
 
 
 
