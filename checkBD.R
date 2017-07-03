@@ -1,3 +1,7 @@
+if(!require(readxl))   {install.packages("readxl")}
+if(!require(plyr))     {install.packages("plyr")}
+if(!require(RCurl))    {install.packages("RCurl")}
+if(!require(htmlTable)){install.packages("htmlTable")}
 
 library(readxl)
 library(plyr)
@@ -5,13 +9,13 @@ library(RCurl)
 library(htmlTable)
 
 
-path<-"C:/Users/rouf1703/Documents/UdeS/Consultation/ELefol/Doc/BD 2004-2015"
+path <- "./Databases" # Will work if a "Databases" folder exist within the working directory 
+#cc <- read.csv("TRESchecks.csv",header=TRUE,stringsAsFactors=FALSE,sep=";") # Already present in the working directory?
+
+#path<-"C:/Users/rouf1703/Documents/UdeS/Consultation/ELefol/Doc/BD 2004-2015"
 cc<-read.csv("C:/Users/rouf1703/Documents/UdeS/Consultation/ELefol/GitHub/BDTREScheck/TRESchecks.csv",header=TRUE,stringsAsFactors=FALSE,sep=";")
 htmlTable(cc[,c("temp_number","check")],rnames=FALSE)
 dsn<-path
-
-
-# Je retest maintenant
 
 checkBD<-function(dsn=".",
            adulte="Adulte2016.xlsx",
