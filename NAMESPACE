@@ -1,0 +1,3 @@
+export(checkBD)
+export(checkShow)
+S3method(print,TREScheck)
