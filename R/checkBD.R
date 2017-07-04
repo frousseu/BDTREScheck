@@ -280,12 +280,12 @@ checks<-lappend(checks,check_val(chicksNew),msg)
 ### Check for females and brood assignment
 ################################################
 
-msg<-"Females without matches in the broodsNew file"
+msg<-"Adult females assigned to an idcouv in adultsNEW but no female is assigned to this idcouv in broodsNEW"
 
-x<-merge(broodsNew[,c("idcouvee","idF1")],adultsNew[adultsNew$sexe_morpho=="F",c("idcouvee", "idadult")],by="idcouvee",all.x=TRUE)
+x<-merge(broodsNew[,c("idcouvee","idF1","idF2","idF3")],adultsNew[adultsNew$sexe_morpho=="F" | adultsNew$sexe_gen=="F" ,c("idcouvee", "idadult")],by="idcouvee",all.x=TRUE)
 
-###C01
-w<-which(is.na(x$idF1) & !is.na(x$idadult))
+w<-which(is.na(x$idF1) & is.na(x$idF2) & is.na(x$idF3) & !is.na(x$idadult))
+
 checks<-lappend(checks,x[w, ],msg)
 
 
@@ -293,9 +293,10 @@ checks<-lappend(checks,x[w, ],msg)
 ### 
 ################################################
 
-msg<-"Adult females wrongly assigned to broodsNew"
+msg<-"Adult females assigned to an idcouv in adultNew but not referenced in broodsNew (idF2 or idF3)"
 
-w<-which(x$idF1!=x$idadult)
+w<-which((x$idF1!=x$idadult | is.na(x$idF1) == T) & (x$idF2!=x$idadult | is.na(x$idF2) == T) & (x$idF3!=x$idadult | is.na(x$idF3) == T) & !(is.na(x$idF1)==T & is.na(x$idF2)==T & is.na(x$idF3)==T) )
+
 checks<-lappend(checks,x[w,],msg)
 
 
