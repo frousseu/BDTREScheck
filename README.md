@@ -74,6 +74,7 @@ checkShow(html=FALSE)
 - find what to do with read_excel warnings on expectation about column format
 - change default values of databases names
 - think of a way to remove warnings associated with the check on the number of characters based on column names that are not in all databases
+- think about the input db type given and arguments options (a data.frame already in the environment, a path to an excel, csv file, a remote database etc.)
 
 ## Current List Of Checks
 
