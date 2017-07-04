@@ -20,12 +20,12 @@ path<-"C:/Users/rouf1703/Documents/UdeS/Consultation/ELefol/Doc/BD 2004-2015"
 dsn<-path
 
 checkBD<-function(dsn=".",
-           adults="Adulte2016.xlsx",
-           broods="Couvee2016.xlsx",
-           chicks="oisillons2016.xlsx",
-           adults_old="Adultes_2004-2015.xlsx",
-           broods_old="Couvee_2004-2015.xlsx",
-           chicks_old="Oisillons_2004-2015.xls",
+           adultsNew="Adulte2016.xlsx",
+           broodsNew="Couvee2016.xlsx",
+           chicksNew="oisillons2016.xlsx",
+           adultsOld="Adultes_2004-2015.xlsx",
+           broodsOld="Couvee_2004-2015.xlsx",
+           chicksOld="Oisillons_2004-2015.xls",
            sheet=1,
            stop=FALSE,
            print=FALSE)
@@ -159,22 +159,22 @@ couv_col<-c(rep("text",4),rep("numeric",19),rep("text",6),"text")
 adul_col<-c(rep("text",3),"numeric","numeric","text","date","numeric",rep("text",3),"numeric",rep("text",5),rep("numeric",10),rep("text",3))
 
 ### read_excel est sûrement utilisé temporairement et je supprime donc les warnings associés à la détection de caractères non-attendus
-couvee<-suppressWarnings(as.data.frame(read_excel(file.path(dsn,broods),sheet=1,na="NA",col_types=couv_col,guess_max=100000)))
-adulte<-suppressWarnings(as.data.frame(read_excel(file.path(dsn,adults),sheet="Adultes2016",na="NA",col_types=adul_col,guess_max=100000)))
-oisillon<-suppressWarnings(as.data.frame(read_excel(file.path(dsn,chicks),sheet=1,na="NA",guess_max=1000000))) 
+broodsNew<-suppressWarnings(as.data.frame(read_excel(file.path(dsn,broodsNew),sheet=1,na="NA",col_types=couv_col,guess_max=100000)))
+adultsNew<-suppressWarnings(as.data.frame(read_excel(file.path(dsn,adultsNew),sheet="Adultes2016",na="NA",col_types=adul_col,guess_max=100000)))
+chicksNew<-suppressWarnings(as.data.frame(read_excel(file.path(dsn,chicksNew),sheet=1,na="NA",guess_max=1000000))) 
 
-couvee_p<-suppressWarnings(as.data.frame(read_excel(file.path(dsn,broods_old),sheet=1,na="NA",guess_max=100000)))
-adulte_p<-suppressWarnings(as.data.frame(read_excel(file.path(dsn,adults_old),sheet=1,na="NA",col_types=adul_col,guess_max=100000)))
-oisillon_p<-suppressWarnings(as.data.frame(read_excel(file.path(dsn,chicks_old),sheet=1,na="NA",guess_max=100000))) 
+broodsOld<-suppressWarnings(as.data.frame(read_excel(file.path(dsn,broodsOld),sheet=1,na="NA",guess_max=100000)))
+adultsOld<-suppressWarnings(as.data.frame(read_excel(file.path(dsn,adultsOld),sheet=1,na="NA",col_types=adul_col,guess_max=100000)))
+chicksOld<-suppressWarnings(as.data.frame(read_excel(file.path(dsn,chicksOld),sheet=1,na="NA",guess_max=100000))) 
 
 
 ### make certain changes to columns and column names
-adulte$heure<-substr(adulte$heure,12,16)
+adultsNew$heure<-substr(adultsNew$heure,12,16)
 
 ### temporarily change the names for the code to run !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-names(oisillon)[which(names(oisillon)=="idois2")]<-"idois"
-names(adulte_p)[which(names(adulte_p)=="laile")]<-"laile1"
-names(adulte_p)[which(names(adulte_p)=="sufixe")]<-"suffixe"
+names(chicksNew)[which(names(chicksNew)=="idois2")]<-"idois"
+names(adultsOld)[which(names(adultsOld)=="laile")]<-"laile1"
+names(adultsOld)[which(names(adultsOld)=="sufixe")]<-"suffixe"
 
 
 ### build list of results to checks
@@ -185,22 +185,22 @@ checks<-list()
 ### delete empty lines included in the excel file by assuming all entries have a ferme id
 ##########################################################################################
 
-msg<-"Remove rows with NA id's in couvee"
-ini<-nrow(couvee)
-couvee<-checkNArows(couvee)
-res<-paste("Removed",ini-nrow(couvee),"rows with NA ferme id's")
+msg<-"Remove rows with NA id's in broodsNew"
+ini<-nrow(broodsNew)
+broodsNew<-checkNArows(broodsNew)
+res<-paste("Removed",ini-nrow(broodsNew),"rows with NA ferme id's")
 checks<-lappend(checks,res,msg)
 
-msg<-"Remove rows with NA id's in adulte"
-ini<-nrow(adulte)
-adulte<-checkNArows(adulte)
-res<-paste("Removed",ini-nrow(adulte),"rows with NA ferme id's")
+msg<-"Remove rows with NA id's in adultsNew"
+ini<-nrow(adultsNew)
+adultsNew<-checkNArows(adultsNew)
+res<-paste("Removed",ini-nrow(adultsNew),"rows with NA ferme id's")
 checks<-lappend(checks,res,msg)
 
-msg<-"Remove rows with NA id's in oisillon"
-ini<-nrow(oisillon)
-oisillon<-checkNArows(oisillon)
-res<-paste("Removed",ini-nrow(oisillon),"rows with NA ferme id's")
+msg<-"Remove rows with NA id's in chicksNew"
+ini<-nrow(chicksNew)
+chicksNew<-checkNArows(chicksNew)
+res<-paste("Removed",ini-nrow(chicksNew),"rows with NA ferme id's")
 checks<-lappend(checks,res,msg)
 
 #warning("All entries are assumed to have a non-NA \"ferme\" id")
@@ -214,9 +214,9 @@ checks<-lappend(checks,res,msg)
 check_names<-function(x){
   bd<-deparse(substitute(x))
   m<-switch(bd,
-            adulte=which(is.na(match(adulte_names,names(x)))),
-            oisillon=which(is.na(match(oisillon_names,names(x)))),
-            couvee=which(is.na(match(couvee_names,names(x))))
+            adultsNew=which(is.na(match(adulte_names,names(x)))),
+            chicksNew=which(is.na(match(oisillon_names,names(x)))),
+            broodsNew=which(is.na(match(couvee_names,names(x))))
   )
   if(any(m)){
     stop(paste0("No matches for following names in ",bd,": ",paste(names(x)[m],collapse=", ")))
@@ -232,15 +232,15 @@ couvee_names<-c("idcouvee","id","ferme","nichoir","annee","codesp","nnich","noeu
 
 
 msg<-"Are column names in adult consistent?"
-check_names(adulte)
+check_names(adultsNew)
 checks<-lappend(checks,NULL,msg)
 
-msg<-"Are column names in oisillon consistent?"
-check_names(oisillon)
+msg<-"Are column names in chicksNew consistent?"
+check_names(chicksNew)
 checks<-lappend(checks,NULL,msg)
 
-msg<-"Are column names in couvee consistent?"
-check_names(couvee)
+msg<-"Are column names in broodsNew consistent?"
+check_names(broodsNew)
 checks<-lappend(checks,NULL,msg)
 
 
@@ -254,11 +254,11 @@ checks<-lappend(checks,NULL,msg)
 msg<-"Are column names consistant across old and new databases"
 
 res<-list()
-res[[1]]<-c(setdiff(names(couvee),names(couvee_p)),setdiff(names(couvee_p),names(couvee)))
-res[[2]]<-c(setdiff(names(adulte),names(adulte_p)),setdiff(names(adulte_p),names(adulte)))
-res[[3]]<-c(setdiff(names(oisillon),names(oisillon_p)),setdiff(names(oisillon_p),names(oisillon)))
+res[[1]]<-c(setdiff(names(broodsNew),names(broodsOld)),setdiff(names(broodsOld),names(broodsNew)))
+res[[2]]<-c(setdiff(names(adultsNew),names(adultsOld)),setdiff(names(adultsOld),names(adultsNew)))
+res[[3]]<-c(setdiff(names(chicksNew),names(chicksOld)),setdiff(names(chicksOld),names(chicksNew)))
 res<-lapply(res,function(i){if(length(i)==0){NULL}else{i}})
-names(res)<-c("couvee","adulte","oisillon")
+names(res)<-c("broodsNew","adultsNew","chicksNew")
 
 if(any(!sapply(res,is.null))){
   print(res)
@@ -274,17 +274,17 @@ checks<-lappend(checks,NULL,msg)
 ### Check the number of characters which shoudl always be fixed in the different ids
 ##########################################################################################
 
-msg<-"Are number of characters consistent for id-type columns in adulte db?"
-w<-check_nchar(adulte)
-checks<-lappend(checks,adulte[w,],msg)
+msg<-"Are number of characters consistent for id-type columns in adultsNew db?"
+w<-check_nchar(adultsNew)
+checks<-lappend(checks,adultsNew[w,],msg)
 
-msg<-"Are number of characters consistent for id-type columns in oisillon db?"
-w<-check_nchar(oisillon)
-checks<-lappend(checks,oisillon[w,],msg)
+msg<-"Are number of characters consistent for id-type columns in chicksNew db?"
+w<-check_nchar(chicksNew)
+checks<-lappend(checks,chicksNew[w,],msg)
 
-msg<-"Are number of characters consistent for id-type columns in couvee db?"
-w<-check_nchar(couvee)
-checks<-lappend(checks,couvee[w,],msg)
+msg<-"Are number of characters consistent for id-type columns in broodsNew db?"
+w<-check_nchar(broodsNew)
+checks<-lappend(checks,broodsNew[w,],msg)
 
 
 ########################################################################
@@ -304,7 +304,7 @@ check_val<-function(x){
   res
 }
 
-checks<-lappend(checks,list(adulte=check_val(adulte),couvee=check_val(couvee),oisillon=check_val(oisillon)),msg)
+checks<-lappend(checks,list(adultsNew=check_val(adultsNew),broodsNew=check_val(broodsNew),chicksNew=check_val(chicksNew)),msg)
 
 
 
@@ -312,9 +312,9 @@ checks<-lappend(checks,list(adulte=check_val(adulte),couvee=check_val(couvee),oi
 ### C05 # Check for females and brood assignment
 ################################################
 
-msg<-"Females without matches in the couvee file"
+msg<-"Females without matches in the broodsNew file"
 
-x<-merge(couvee[,c("idcouvee","idF1")],adulte[adulte$sexe_morpho=="F",c("idcouvee", "idadult")],by="idcouvee",all.x=TRUE)
+x<-merge(broodsNew[,c("idcouvee","idF1")],adultsNew[adultsNew$sexe_morpho=="F",c("idcouvee", "idadult")],by="idcouvee",all.x=TRUE)
 
 ###C01
 w<-which(is.na(x$idF1) & !is.na(x$idadult))
@@ -325,7 +325,7 @@ checks<-lappend(checks,x[w, ],msg)
 ### C06 # 
 ################################################
 
-msg<-"Adult females wrongly assigned to couvee"
+msg<-"Adult females wrongly assigned to broodsNew"
 
 w<-which(x$idF1!=x$idadult)
 checks<-lappend(checks,x[w,],msg)
@@ -337,9 +337,9 @@ checks<-lappend(checks,x[w,],msg)
 ### C07 
 ################################################
 
-msg<-"Males without matches in the couvee file"
+msg<-"Males without matches in the broodsNew file"
 
-x<-merge(couvee[,c("idcouvee","idM1")],adulte[adulte$sexe_morpho=="F",c("idcouvee", "idadult")],by="idcouvee",all.x=TRUE)
+x<-merge(broodsNew[,c("idcouvee","idM1")],adultsNew[adultsNew$sexe_morpho=="F",c("idcouvee", "idadult")],by="idcouvee",all.x=TRUE)
 w<-which(is.na(x$idM1) & !is.na(x$idadult))
 checks<-lappend(checks,x[w,],msg)
 
@@ -348,7 +348,7 @@ checks<-lappend(checks,x[w,],msg)
 ### C08
 ###################################################
 
-msg<-c("Adult males wrongly assigned to couvee")
+msg<-c("Adult males wrongly assigned to broodsNew")
 
 w<-which(x$idM1!=x$idadult)
 checks<-lappend(checks,x[w,],msg)
@@ -360,7 +360,7 @@ checks<-lappend(checks,x[w,],msg)
 ### Check if the nnich correspond
 ##########################################################
 
-x<-merge(adulte,couvee[couvee$codesp==1,c("idcouvee","codesp", "abandon", "dponte", "declomin", "declomax", "denvomin", "denvomax", "dabanmin","dabanmax")],by="idcouvee",all.x = TRUE)
+x<-merge(adultsNew,broodsNew[broodsNew$codesp==1,c("idcouvee","codesp", "abandon", "dponte", "declomin", "declomax", "denvomin", "denvomax", "dabanmin","dabanmax")],by="idcouvee",all.x = TRUE)
 
 ###########################################################
 ### C09
@@ -378,10 +378,10 @@ checks<-lappend(checks,x[w,],msg)
 
 #3.2) 
 #Check if some lines from the adult DB are not associated with a line that do not 
-#correspond to a TRSW in the couvee file
+#correspond to a TRSW in the broodsNew file
 #Not sure what that means!!!
 
-msg<-"Adults in the adult DB that are not in the couvee DB"
+msg<-"Adults in the adult DB that are not in the broodsNew DB"
 
 w<-which(x$codesp != 1 & x$condition == 1)
 checks<-lappend(checks,x[w,],msg)
@@ -421,7 +421,7 @@ checks<-lappend(checks,x[w,],msg)
 ### Is nnich assigned correctly
 ##############################################
 
-x<-merge(oisillon,couvee[couvee$codesp==1,c("idcouvee","dponte","dincub","declomin","declomax","dabanmin","dabanmax")],by="idcouvee",all.x=TRUE)
+x<-merge(chicksNew,broodsNew[broodsNew$codesp==1,c("idcouvee","dponte","dincub","declomin","declomax","dabanmin","dabanmax")],by="idcouvee",all.x=TRUE)
 
 ###############################################################
 ### C13
@@ -450,7 +450,7 @@ checks<-lappend(checks,x[w,],msg)
 
 msg<-"Sex/age incoherencies"
 
-x<-adulte
+x<-adultsNew
 w<-which((x$sexe_morpho%in%c("F") & !x$age_morpho%in%c("SY","ASY",NA)) | (x$sexe_morpho%in%c("M") & !x$age_morpho%in%c("AHY",NA)) | (x$sexe_morpho%in%c(NA) & !x$age_morpho%in%c(NA)))
 checks<-lappend(checks,x[w,],msg)
 
@@ -462,7 +462,7 @@ checks<-lappend(checks,x[w,],msg)
 mmh<-c("07:00","20:00")
 msg<-paste("Capture time outside",mmh[1],"and",mmh[2])
 
-x<-adulte
+x<-adultsNew
 w<-which(x$heure<mmh[1] | x$heure>mmh[2])
 checks<-lappend(checks,x[w,],msg)
 
@@ -474,7 +474,7 @@ checks<-lappend(checks,x[w,],msg)
 
 msg<-"Some colors not in the list of possible values"
 
-x<-adulte
+x<-adultsNew
 w<-which(!x$couleur%in%c("B","V","BV","BR",NA))
 checks<-lappend(checks,x[w,],msg)
 
@@ -484,7 +484,7 @@ checks<-lappend(checks,x[w,],msg)
 
 msg<-"Wing measurement outside the range of likely values"
 
-x<-adulte
+x<-adultsNew
 val<-c(104,127)
 w<-which(x$laile<val[1] | x$laile2<val[1] | x$laile>val[2] | x$laile2>val[2])
 checks<-lappend(checks,x[w,],msg)
@@ -496,7 +496,7 @@ checks<-lappend(checks,x[w,],msg)
 
 msg<-"Weight measurement outside the range of likely values"
 
-x<-adulte
+x<-adultsNew
 val<-c(10,14)
 w<-which(x$masse<val[1] | x$masse>val[2])
 checks<-lappend(checks,x[w,],msg)
@@ -508,7 +508,7 @@ checks<-lappend(checks,x[w,],msg)
 
 msg<-"Tarsus measurement outside the range of likely values"
 
-x<-adulte
+x<-adultsNew
 val<-c(10,14)
 w<-which(x$tarse1<val[1] | x$tarse2<val[1] | x$tarse1>val[2] | x$tarse2>val[2])
 checks<-lappend(checks,x[w,],msg)
@@ -520,7 +520,7 @@ checks<-lappend(checks,x[w,],msg)
 
 msg<-"Male with brood patch"
 
-x<-adulte
+x<-adultsNew
 val<-c(10,14)
 w<-which(x$sexe_morpho%in%c("M") & !x$plaqueincu%in%c(0,NA))
 checks<-lappend(checks,x[w,],msg)
@@ -538,7 +538,7 @@ msg<-"Newly installed band found in the previous years"
 
 msg<-"Visits are not all 2 days apart for the following farms in the adult DB"
 
-checks<-lappend(checks,list(vis2days(adulte)),msg)
+checks<-lappend(checks,list(vis2days(adultsNew)),msg)
 
 
 
@@ -546,9 +546,9 @@ checks<-lappend(checks,list(vis2days(adulte)),msg)
 ### C24
 ###############################################################
 
-msg<-"Visits are not all 2 days apart for the following farms in the oisillon DB"
+msg<-"Visits are not all 2 days apart for the following farms in the chicksNew DB"
 
-checks<-lappend(checks,list(vis2days(oisillon)),msg)
+checks<-lappend(checks,list(vis2days(chicksNew)),msg)
 
 
 
@@ -560,7 +560,7 @@ checks<-lappend(checks,list(vis2days(oisillon)),msg)
 
 msg<-"Check for spaces in ferme ids"
 
-x<-adulte
+x<-adultsNew
 checks<-lappend(checks,x[grep(" ",x$ferme),],msg)
 
 
@@ -572,9 +572,9 @@ checks<-lappend(checks,x[grep(" ",x$ferme),],msg)
 msg<-"Check for duplicates using all columns in each database"
 
 checks<-lappend(checks,list(
-  adulte=check_dup(adulte),
-  couvee=check_dup(couvee),
-  oisillon=check_dup(oisillon)
+  adultsNew=check_dup(adultsNew),
+  broodsNew=check_dup(broodsNew),
+  chicksNew=check_dup(chicksNew)
 ),msg)
 
 
@@ -585,8 +585,8 @@ checks<-lappend(checks,list(
 msg<-"Check for adults or chicks with more than one entry for a single date"
 
 checks<-lappend(checks,list(
-  adulte=check_dup(adulte,col=c("idadult","jjulien")),
-  oisillon=check_dup(oisillon,col=c("idois","jjulien"))
+  adultsNew=check_dup(adultsNew,col=c("idadult","jjulien")),
+  chicksNew=check_dup(chicksNew,col=c("idois","jjulien"))
 ),msg)
 
 
@@ -598,8 +598,8 @@ checks<-lappend(checks,list(
 msg<-"Check for adults or chicks found at more than one farm"
 
 checks<-lappend(checks,list(
-  adulte=check_id_dup(adulte,col=c("idadult","ferme")),
-  oisillon=check_id_dup(oisillon,col=c("idois","ferme"))
+  adultsNew=check_id_dup(adultsNew,col=c("idadult","ferme")),
+  chicksNew=check_id_dup(chicksNew,col=c("idois","ferme"))
 ),msg)
 
 
@@ -610,8 +610,8 @@ checks<-lappend(checks,list(
 msg<-"Check for adults or chicks found at more than one nestbox"
 
 checks<-lappend(checks,list(
-  adulte=check_id_dup(adulte,col=c("idadult","ferme","nichoir")),
-  oisillon=check_id_dup(oisillon,col=c("idois","ferme","nichoir"))
+  adultsNew=check_id_dup(adultsNew,col=c("idadult","ferme","nichoir")),
+  chicksNew=check_id_dup(chicksNew,col=c("idois","ferme","nichoir"))
 ),msg)
 
 
@@ -623,8 +623,8 @@ checks<-lappend(checks,list(
 msg<-"Make sure that chick conditions are from 3 possible values"
 
 adm_cond<-c("vivant","disparu","mort")
-w<-which(!oisillon$condition%in%adm_cond)
-checks<-lappend(checks,oisillon[w,],msg)
+w<-which(!chicksNew$condition%in%adm_cond)
+checks<-lappend(checks,chicksNew[w,],msg)
 
 
 ###############################################################
@@ -633,8 +633,8 @@ checks<-lappend(checks,oisillon[w,],msg)
 
 msg<-"Make sure that dead or disappeared chicks have 0 for flight code"
 
-w<-which(oisillon$condition%in%c("disparu","mort") & oisillon$envol==1)
-checks<-lappend(checks,oisillon[w,],msg)
+w<-which(chicksNew$condition%in%c("disparu","mort") & chicksNew$envol==1)
+checks<-lappend(checks,chicksNew[w,],msg)
 
 
 ###############################################################
@@ -643,14 +643,14 @@ checks<-lappend(checks,oisillon[w,],msg)
 
 msg<-"Make sure that living chicks with a 0 flight code are eventually dead or disappeared"
 
-w<-which(oisillon$condition%in%c("vivant") & oisillon$envol==0)
-ids<-unique(oisillon$idois[w])
+w<-which(chicksNew$condition%in%c("vivant") & chicksNew$envol==0)
+ids<-unique(chicksNew$idois[w])
 if(any(w)){
-  x<-oisillon[oisillon$idois%in%ids,]
+  x<-chicksNew[chicksNew$idois%in%ids,]
   x<-x[order(x$idois,x$jjulien),]
   x<-ddply(x,.(idois),function(i){!tail(i$condition,1)%in%c("mort","disparu")})
   ids2<-x$idois[x$V1]
-  res<-oisillon[oisillon$idois%in%ids2,]
+  res<-chicksNew[chicksNew$idois%in%ids2,]
   res<-res[order(res$idois,res$jjulien),]
 }else{
   res<-NULL
@@ -664,7 +664,7 @@ checks<-lappend(checks,res,msg)
 
 msg<-"Make sure that no chick comes back to life"
 
-x<-oisillon[order(oisillon$idois,oisillon$jjulien,oisillon$heure),]
+x<-chicksNew[order(chicksNew$idois,chicksNew$jjulien,chicksNew$heure),]
 res<-ddply(x,.(idois),function(i){
   w1<-which(i$condition%in%c("mort","disparu"))
   if(any(w1)){
@@ -680,7 +680,7 @@ res<-ddply(x,.(idois),function(i){
 })
 ids<-res$idois[res$V1]
 if(length(ids)){
-  res<-oisillon[oisillon$idois%in%ids,]
+  res<-chicksNew[chicksNew$idois%in%ids,]
   res<-res[order(res$idois,res$jjulien,res$heure),]
 }else{
   res<-NULL
@@ -695,7 +695,7 @@ checks<-lappend(checks,res,msg)
 msg<-"Chicks which were followed for 12 days or more should have a band number as id and otherwise they should have a farm/brood id"
 
 ### find chicks for which id is not the band number despite having been followed after their 12e days
-x<-oisillon
+x<-chicksNew
 x$idois<-paste0(x$ferme,x$nichoir,x$annee,x$nnich,x$numero_oisillon)
 x<-ddply(x,.(idois),function(i){
      sup<-any(which(i$jour_suivi>=12))
@@ -708,7 +708,7 @@ x<-ddply(x,.(idois),function(i){
 })
 ids<-x$idois[!x$V1]
 if(length(ids)){
-  res<-oisillon[oisillon$idois%in%ids,] 
+  res<-chicksNew[chicksNew$idois%in%ids,] 
   res<-res[order(res$idois,res$jjulien,res$heure),]
 }else{
   res<-NULL
@@ -722,12 +722,12 @@ checks<-lappend(checks,res,msg)
 
 msg<-"Chicks for which there is a band number but it does not correspond to the id of the chick"
 
-x<-oisillon
+x<-chicksNew
 x$idois<-paste0(x$ferme,x$nichoir,x$annee,x$nnich,x$numero_oisillon)
 w<-which(!is.na(x$prefixe) & !is.na(x$suffixe) & x$idois!=paste0(x$prefixe,x$suffixe))
 ids<-x$idois[w]
 if(length(ids)){
-  res<-oisillon[oisillon$idois%in%ids,] 
+  res<-chicksNew[chicksNew$idois%in%ids,] 
   res<-res[order(res$idois,res$jjulien,res$heure),]
 }else{
   res<-NULL
@@ -741,7 +741,7 @@ checks<-lappend(checks,res,msg)
 
 msg<-"Broods that are in chicks db but not in broods db"
 
-temp<-setdiff(oisillon$idcouvee,couvee$idcouvee)
+temp<-setdiff(chicksNew$idcouvee,broodsNew$idcouvee)
 if(length(temp)>0){
   res<-temp
 }else{
@@ -756,7 +756,7 @@ checks<-lappend(checks,res,msg)
 
 msg<-"Broods that are in broods db but not in chicks db"
 
-temp<-setdiff(couvee$idcouvee,oisillon$idcouvee)
+temp<-setdiff(broodsNew$idcouvee,chicksNew$idcouvee)
 if(length(temp)>0){
   res<-temp
 }else{
@@ -771,7 +771,7 @@ checks<-lappend(checks,res,msg)
 ### Summarize brood information
 ##########################################################
 
-y<-ddply(oisillon,.(idcouvee),function(i){
+y<-ddply(chicksNew,.(idcouvee),function(i){
   Nois<-length(unique(i$numero_oisillon))
   Nenvol<-length(unique(i$numero_oisillon[i$envol==1]))
   Ndead<-length(unique(i$numero_oisillon[i$condition%in%"mort"]))
@@ -788,7 +788,7 @@ y<-ddply(oisillon,.(idcouvee),function(i){
 
 ### checks on hatch dates and brood stuff
 
-#x<-couvee
+#x<-broodsNew
 #w<-which(is.na(x$declomin) | is.na(x$declomax) & !is.na(y$Nois)) #if this does not output integer(0), Needs to be checked
 #res<-x[w, ]
 #checks<-lappend(checks,res,msg)
@@ -834,13 +834,13 @@ x<-checkBD(dsn=path,print=FALSE)
 
 SumOis <- data.frame(idcouvee = character(0), Nois = numeric(0), Nenvol = numeric(0),  NDead = numeric(0) , NDispa = numeric(0))
 
-z <- unique(oisillon$idcouvee)
+z <- unique(chicksNew$idcouvee)
 
 for(i in z){
   
   # i = z[1]
   
-  id <- subset(oisillon, idcouvee == i)
+  id <- subset(chicksNew, idcouvee == i)
   
   Nois <- length(unique(id$numero_oisillon))
   
@@ -867,7 +867,7 @@ for(i in z){
 }
 rm(id, id2, NewLine, i, j, Nenvol, Nois, z, z2, Ndead, Ndispa)
 
-couveeOis <- merge(x = couvee, y = SumOis, by = "idcouvee", all.x = TRUE)
+couveeOis <- merge(x = broodsNew, y = SumOis, by = "idcouvee", all.x = TRUE)
 couveeOis <-  couveeOis[!is.na(couveeOis$idcouvee), ]
 
 couveeOis$OisEqual <- as.numeric(couveeOis$noisnes == couveeOis$Nois) 
@@ -881,14 +881,14 @@ Errors5 <- couveeOis[0,]
 Errors5$ErrorType <- character(0)
 
 
-#Check 5.1: hatching was detected in couvee but no nestlings in oisillons
+#Check 5.1: hatching was detected in broodsNew but no nestlings in oisillons
 which(is.na(couveeOis$declomin) & !is.na(couveeOis$Nois)) #if this does not output intger(0), Needs to be cheked
 check5.1 <- couveeOis[which(is.na(couveeOis$declomin) & !is.na(couveeOis$Nois)), ]
 check5.1$ErrorType <- "5.1"
 Errors5 <- rbind(Errors5, check5.1)
 rm(check5.1)
 
-# check 5.1.2: hatching was detected in couvee but no nestlings in oisillons
+# check 5.1.2: hatching was detected in broodsNew but no nestlings in oisillons
 which(is.na(couveeOis$declomax) & !is.na(couveeOis$Nois)) #if this does not output intger(0), Needs to be cheked
 check5.1.2 <- couveeOis[which(is.na(couveeOis$declomin) & !is.na(couveeOis$Nois)), ]
 check5.1.2$ErrorType <- "5.1.2"
@@ -896,13 +896,13 @@ Errors5 <- rbind(Errors5, check5.1.2)
 rm(check5.1.2)
 
 
-#check 5.2: number of noines in couvee != number of nestlings in oisillons
+#check 5.2: number of noines in broodsNew != number of nestlings in oisillons
 check5.2 <- couveeOis[couveeOis$OisEqual == 0 & !is.na(couveeOis$OisEqual), ]
 check5.2$ErrorType <- "5.2"
 Errors5 <- rbind(Errors5, check5.2)
 rm(check5.2)
 
-#check 5.3: number of noienvol in couvee != number of fledlings in oisillons
+#check 5.3: number of noienvol in broodsNew != number of fledlings in oisillons
 check5.3 <- couveeOis[couveeOis$EnvolEqual == 0 & !is.na(couveeOis$EnvolEqual), ]
 check5.3$ErrorType <- "5.3"
 Errors5 <- rbind(Errors5, check5.3)
