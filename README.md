@@ -29,18 +29,40 @@ library(BDTREScheck)
 
 ## How To Use
 
+Run checks:
+
 ```r
 
 library(BDTREScheck)
 
-### run checks
+
 path<-"C:/Users/rouf1703/Documents/UdeS/Consultation/ELefol/Doc/BD 2004-2015"
-x<-checkBD(dsn=path)
+
+x<-checkBD(
+  dsn=path,
+  adultsNew="Adulte2016.xlsx",
+  broodsNew="Couvee2016.xlsx",
+  chicksNew="oisillons2016.xlsx",
+  adultsOld="Adultes_2004-2015.xlsx",
+  broodsOld="Couvee_2004-2015.xlsx",
+  chicksOld="Oisillons_2004-2015.xls"
+)
+
+```
+Display results:
+
+```r
+
 x
 x[4]
 
-### Show checks
-checkShow()
+```
+
+Show the list of checks:
+
+```r
+
+checkShow(html=FALSE)
 
 ```
 
@@ -50,6 +72,8 @@ checkShow()
 - add part at the end of Nghia script
 - add a year argument to check some data in coimparison to the previous years
 - find what to do with read_excel warnings on expectation about column format
+- change default values of databases names
+- think of a way to remove warnings associated with the check on the number of characters based on column names that are not in all databases
 
 ## Current List Of Checks
 
