@@ -75,6 +75,9 @@ checkShow(html=FALSE)
 - change default values of databases names
 - think of a way to remove warnings associated with the check on the number of characters based on column names that are not in all databases
 - think about the input db type given and arguments options (a data.frame already in the environment, a path to an excel, csv file, a remote database etc.)
+- remove internal correction to wrong names idois2 and sufixe
+- make a code for newly installed bands found in previous years
+- make part about summarizing brood information and hatching
 
 ## Current List Of Checks
 
