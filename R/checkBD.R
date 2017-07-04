@@ -181,7 +181,7 @@ check_names<-function(x){
             broodsNew=which(is.na(match(couvee_names,names(x))))
   )
   if(any(m)){
-    stop(paste0("No matches for following names in ",bd,": ",paste(names(x)[m],collapse=", ")))
+    stop(paste0("No matches for following column names in ",bd,": ",paste(names(x)[m],collapse=", "),", please revise before running the checkBD function."))
   }
 }
 
