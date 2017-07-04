@@ -14,6 +14,23 @@ library(htmlTable)
 #g<-setdiff(grep("msg <-",r),grep("\"msg <-",r))
 #cc<-data.frame(ID=seq_along(g),Checks=gsub("msg <-|  ","",r[g]),stringsAsFactors=FALSE)
 #htmlTable(cc,rnames=FALSE)
+print.TREScheck<-function(x){
+  invisible(sapply(seq_along(x),function(i){
+    cat("\n","_____________________________________________________________________________","\n")
+    cat("\n",paste("Check",formatC(i,width=3,flag=0),names(x)[i],sep=" - "))
+    cat("\n","_____________________________________________________________________________","\n","\n")
+    res<-x[[i]]
+    n<-nrow(res)
+    if(is.data.frame(res)){
+      cat("Showing first",min(6,n),"lines of",n,"\n","\n","\n")
+      print(head(res))
+    }else{
+      print(head(res))
+    }
+    
+  }))
+}
+
 
 path<-"C:/Users/rouf1703/Documents/UdeS/Consultation/ELefol/Doc/BD 2004-2015"
 
@@ -287,11 +304,11 @@ w<-check_nchar(broodsNew)
 checks<-lappend(checks,broodsNew[w,],msg)
 
 
-########################################################################
+################################################################################
 ### C03 # Second check for unique values in columns with few non-numeric values
-########################################################################
+################################################################################
 
-msg<-"Show all unique values in columns for which the number of possible values is restricted"
+
 
 col_val<-c("ferme","nichoir","id","annee","nnich","jjulien","condition","sexe_morpho","age_morpho","couleur","age_exact","trougauche","troudroite","pararectrice","plaqueincu","Cause_recapt")
 
@@ -304,8 +321,18 @@ check_val<-function(x){
   res
 }
 
-checks<-lappend(checks,list(adultsNew=check_val(adultsNew),broodsNew=check_val(broodsNew),chicksNew=check_val(chicksNew)),msg)
 
+msg<-"Show all unique values in adultsNew columns for which the number of possible values is restricted"
+
+checks<-lappend(checks,check_val(adultsNew),msg)
+
+msg<-"Show all unique values in broodsNew columns for which the number of possible values is restricted"
+
+checks<-lappend(checks,check_val(broodsNew),msg)
+
+msg<-"Show all unique values in chicksNew columns for which the number of possible values is restricted"
+
+checks<-lappend(checks,check_val(chicksNew),msg)
 
 
 ################################################
@@ -569,25 +596,30 @@ checks<-lappend(checks,x[grep(" ",x$ferme),],msg)
 ### C26 # doublons globaux
 ###############################################################
 
-msg<-"Check for duplicates using all columns in each database"
+msg<-"Check for duplicates using all columns in adultsNew"
 
-checks<-lappend(checks,list(
-  adultsNew=check_dup(adultsNew),
-  broodsNew=check_dup(broodsNew),
-  chicksNew=check_dup(chicksNew)
-),msg)
+checks<-lappend(checks,check_dup(adultsNew),msg)
+
+msg<-"Check for duplicates using all columns in broodsNew"
+
+checks<-lappend(checks,check_dup(broodsNew),msg)
+
+msg<-"Check for duplicates using all columns in chicksNew"
+
+checks<-lappend(checks,check_dup(chicksNew),msg)
 
 
 ###############################################################
 ### C27
 ###############################################################
 
-msg<-"Check for adults or chicks with more than one entry for a single date"
+msg<-"Check for adults with more than one entry for a single date"
 
-checks<-lappend(checks,list(
-  adultsNew=check_dup(adultsNew,col=c("idadult","jjulien")),
-  chicksNew=check_dup(chicksNew,col=c("idois","jjulien"))
-),msg)
+checks<-lappend(checks,check_dup(adultsNew,col=c("idadult","jjulien")),msg)
+
+msg<-"Check for chicks with more than one entry for a single date"
+
+checks<-lappend(checks,check_dup(chicksNew,col=c("idois","jjulien")),msg)
 
 
 
@@ -595,25 +627,26 @@ checks<-lappend(checks,list(
 ### C28
 ###############################################################
 
-msg<-"Check for adults or chicks found at more than one farm"
+msg<-"Check for adults found at more than one farm"
 
-checks<-lappend(checks,list(
-  adultsNew=check_id_dup(adultsNew,col=c("idadult","ferme")),
-  chicksNew=check_id_dup(chicksNew,col=c("idois","ferme"))
-),msg)
+checks<-lappend(checks,check_id_dup(adultsNew,col=c("idadult","ferme")),msg)
+
+msg<-"Check for chicks found at more than one farm"
+
+checks<-lappend(checks,check_id_dup(chicksNew,col=c("idois","ferme")),msg)
 
 
 ###############################################################
 ### C29
 ###############################################################
 
-msg<-"Check for adults or chicks found at more than one nestbox"
+msg<-"Check for adults found at more than one nestbox"
 
-checks<-lappend(checks,list(
-  adultsNew=check_id_dup(adultsNew,col=c("idadult","ferme","nichoir")),
-  chicksNew=check_id_dup(chicksNew,col=c("idois","ferme","nichoir"))
-),msg)
+checks<-lappend(checks,check_id_dup(adultsNew,col=c("idadult","ferme","nichoir")),msg)
 
+msg<-"Check for chicks found at more than one nestbox"
+
+checks<-lappend(checks,check_id_dup(chicksNew,col=c("idois","ferme","nichoir")),msg)
 
 
 ###############################################################
@@ -817,116 +850,12 @@ if(print){
   }))
 }
 
+class(checks)<-"TREScheck"
 checks
 
 }
 
-x<-checkBD(dsn=path,print=FALSE)
-
-
-
-################################
-################################
-
-
-
-## Summarise nestling informations ==> idcouvee, number of nestlings, number of fledglings, number of dead nestlings, number of nestling dispareared
-
-SumOis <- data.frame(idcouvee = character(0), Nois = numeric(0), Nenvol = numeric(0),  NDead = numeric(0) , NDispa = numeric(0))
-
-z <- unique(chicksNew$idcouvee)
-
-for(i in z){
-  
-  # i = z[1]
-  
-  id <- subset(chicksNew, idcouvee == i)
-  
-  Nois <- length(unique(id$numero_oisillon))
-  
-  Ndead <- 0
-  Nenvol <- 0
-  Ndispa <- 0
-  z2 <- unique(id$numero_oisillon)
-  
-  for(j in z2){
-    # j = z2[2]
-    id2 <- subset(id, numero_oisillon == j)
-    ifelse(sum(id2$envol) == 0, Nenvol <- Nenvol, Nenvol <- Nenvol + 1)
-    
-    ifelse("mort" %in% id2$condition, Ndead <- Ndead + 1, Ndead <- Ndead)
-    
-    ifelse("disparu" %in% id2$condition,  Ndispa <- Ndispa + 1, NDispa <- Ndispa)
-  }
-  
-  NewLine <- data.frame(i, Nois, Nenvol, Ndead, Ndispa)
-  colnames(NewLine) <- names(SumOis)
-  
-  SumOis <- rbind(SumOis, NewLine)  
-  
-}
-rm(id, id2, NewLine, i, j, Nenvol, Nois, z, z2, Ndead, Ndispa)
-
-couveeOis <- merge(x = broodsNew, y = SumOis, by = "idcouvee", all.x = TRUE)
-couveeOis <-  couveeOis[!is.na(couveeOis$idcouvee), ]
-
-couveeOis$OisEqual <- as.numeric(couveeOis$noisnes == couveeOis$Nois) 
-couveeOis$EnvolEqual <- as.numeric(couveeOis$noisenvol == couveeOis$Nenvol)
-
-Errors4 <- couveeOis[0,] ### JE NE COMPREND PAS CETTE PARTIE ET L'UTILISATION DES ERRORS4 et 5
-Errors4$ErrorType <- character(0)
-
-# #####################
-Errors5 <- couveeOis[0,]
-Errors5$ErrorType <- character(0)
-
-
-#Check 5.1: hatching was detected in broodsNew but no nestlings in oisillons
-which(is.na(couveeOis$declomin) & !is.na(couveeOis$Nois)) #if this does not output intger(0), Needs to be cheked
-check5.1 <- couveeOis[which(is.na(couveeOis$declomin) & !is.na(couveeOis$Nois)), ]
-check5.1$ErrorType <- "5.1"
-Errors5 <- rbind(Errors5, check5.1)
-rm(check5.1)
-
-# check 5.1.2: hatching was detected in broodsNew but no nestlings in oisillons
-which(is.na(couveeOis$declomax) & !is.na(couveeOis$Nois)) #if this does not output intger(0), Needs to be cheked
-check5.1.2 <- couveeOis[which(is.na(couveeOis$declomin) & !is.na(couveeOis$Nois)), ]
-check5.1.2$ErrorType <- "5.1.2"
-Errors5 <- rbind(Errors5, check5.1.2)
-rm(check5.1.2)
-
-
-#check 5.2: number of noines in broodsNew != number of nestlings in oisillons
-check5.2 <- couveeOis[couveeOis$OisEqual == 0 & !is.na(couveeOis$OisEqual), ]
-check5.2$ErrorType <- "5.2"
-Errors5 <- rbind(Errors5, check5.2)
-rm(check5.2)
-
-#check 5.3: number of noienvol in broodsNew != number of fledlings in oisillons
-check5.3 <- couveeOis[couveeOis$EnvolEqual == 0 & !is.na(couveeOis$EnvolEqual), ]
-check5.3$ErrorType <- "5.3"
-Errors5 <- rbind(Errors5, check5.3)
-rm(check5.3)
-
-write.csv(Errors5, "Errors5.csv", row.names = FALSE, quote = TRUE)
-
-
-plot(eff.pres)
-trellis.focus("panel", 1, 1)
-panel.points(50, 50)
-panel.xyplot(50, 50)
-trellis.unfocus()
-
-xyplot(1:10,1:10)
-
-
-
-
-
-
-
-
-
+x<-checkBD(dsn=path)
 
 
 
