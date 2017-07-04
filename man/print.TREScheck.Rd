@@ -7,7 +7,9 @@ Print method for a \code{TREScheck} list of checks
 Prints a list with the check results
 }
 \usage{
-print.TREScheck(x)
+## S3 method for class 'TREScheck'
+print(x)
+x
 }
 \arguments{
   \item{x}{The list returned by \code{\link{checkBD}}.}
