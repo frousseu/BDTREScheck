@@ -307,6 +307,34 @@ w<-which(x$id != x$TEST)
 
 checks<-lappend(checks,x[w,c("ferme","nichoir","id","idcouvee")],msg)
 
+##########################################################################################
+### Check that idcouv == ferme + nichoir + annee + nnich
+##########################################################################################
+
+msg<-"idcouv do not correspond to ferme + nichoir + annee + nnich column in adultsNew db"
+
+x<-adultsNew
+x$TEST <- paste(x$ferme, x$nichoir, x$annee, x$nnich, sep="")
+w<-which(x$idcouvee != x$TEST)
+
+checks<-lappend(checks,x[w,c("ferme","nichoir", "annee", "nnich", "idcouvee","jjulien","idadult")],msg)
+
+msg<-"idcouv do not correspond to ferme + nichoir + annee + nnich column in chicksNew db"
+
+x<-chicksNew
+x$TEST <- paste(x$ferme, x$nichoir, x$annee, x$nnich, sep="")
+w<-which(x$idcouvee != x$TEST)
+
+checks<-lappend(checks,x[w,c("ferme","nichoir", "annee", "nnich", "idcouvee","jjulien","idois")],msg)
+
+msg<-"idcouv do not correspond to ferme + nichoir + annee + nnich column in broodsNew db"
+
+x<-broodsNew
+x$TEST <- paste(x$ferme, x$nichoir, x$annee, x$nnich, sep="")
+w<-which(x$idcouvee != x$TEST)
+
+checks<-lappend(checks,x[w,c("ferme","nichoir", "annee", "nnich", "idcouvee","codesp")],msg)
+
 
 ##########################################################################################
 ### Check the number of characters which shoudl always be fixed in the different ids
