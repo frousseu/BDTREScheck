@@ -573,36 +573,52 @@ checks<-lappend(checks,x[w,],msg)
 ###
 ###############################################################
 
-msg<-"Wing measurement outside the range of likely values"
+msg<-"Adult wing measurement outside the range of likely values (105-125 mm)"
 
 x<-adultsNew
-val<-c(104,127)
-w<-which(x$laile<val[1] | x$laile2<val[1] | x$laile>val[2] | x$laile2>val[2])
-checks<-lappend(checks,x[w,],msg)
+val<-c(105,125)
+w<-which(x$laile1<val[1] | x$laile2<val[1] | x$laile1>val[2] | x$laile2>val[2])
+checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","idadult","laile1","laile2","commentaire")],msg)
+
+msg<-"Adult wing measurement 1 and 2 too far apart (>1 mm)"
+
+x<-adultsNew
+val<-c(1)
+w<-which(abs(x$laile1 - x$laile2) > val)
+checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","idadult","laile1","laile2","commentaire")],msg)
+
 
 
 ###############################################################
 ### 
 ###############################################################
 
-msg<-"Weight measurement outside the range of likely values"
+msg<-"Adult weight measurements outside the range of likely values (15-30g)"
 
 x<-adultsNew
-val<-c(10,14)
+val<-c(15,30)
 w<-which(x$masse<val[1] | x$masse>val[2])
-checks<-lappend(checks,x[w,],msg)
+checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","idadult","masse","commentaire")],msg)
 
 
 ###############################################################
 ###
 ###############################################################
 
-msg<-"Tarsus measurement outside the range of likely values"
+msg<-"Adult tarsus measurements outside the range of likely values (10-14 mm)"
 
 x<-adultsNew
 val<-c(10,14)
 w<-which(x$tarse1<val[1] | x$tarse2<val[1] | x$tarse1>val[2] | x$tarse2>val[2])
-checks<-lappend(checks,x[w,],msg)
+checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","idadult","tarse1","tarse2","commentaire")],msg)
+
+
+msg<-"Adult tarsus measurement 1 and 2 too far apart (>0.1 mm)"
+
+x<-adultsNew
+val<-c(0.1)
+w<-which(abs(x$tarse1 - x$tarse2) > val)
+checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","idadult","tarse1","tarse2","commentaire")],msg)
 
 
 ###############################################################
