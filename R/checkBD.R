@@ -279,6 +279,34 @@ w<-which((!x$ferme%in%c("23","41") & !x$nichoir%in%nichoir_names_all) | (x$ferme
 
 checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee")],msg)
 
+##########################################################################################
+### Check that id == ferme + nichoir
+##########################################################################################
+
+msg<-"Id column do not correspond to ferme + nichoir id in adultsNew db"
+
+x<-adultsNew
+x$TEST <- paste(x$ferme, x$nichoir, sep="")
+w<-which(x$id != x$TEST)
+
+checks<-lappend(checks,x[w,c("ferme","nichoir", "id", "idcouvee","jjulien","idadult")],msg)
+
+msg<-"Id column do not correspond to ferme + nichoir id  in chicksNew db"
+
+x<-chicksNew
+x$TEST <- paste(x$ferme, x$nichoir, sep="")
+w<-which(x$id != x$TEST)
+
+checks<-lappend(checks,x[w,c("ferme","nichoir", "id", "idcouvee","jjulien","idois")],msg)
+
+msg<-"Id column do not correspond to ferme + nichoir id  in broodsNew db"
+
+x<-broodsNew
+x$TEST <- paste(x$ferme, x$nichoir, sep="")
+w<-which(x$id != x$TEST)
+
+checks<-lappend(checks,x[w,c("ferme","nichoir","id","idcouvee")],msg)
+
 
 ##########################################################################################
 ### Check the number of characters which shoudl always be fixed in the different ids
