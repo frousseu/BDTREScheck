@@ -690,26 +690,17 @@ checks<-lappend(checks,check_dup(chicksNew,col=c("idois","jjulien")),msg)
 ###
 ###############################################################
 
-msg<-"Check for adults found at more than one farm"
+msg<-"Check for adults found at more than one farm (maybe not an error)"
 
-checks<-lappend(checks,check_id_dup(adultsNew,col=c("idadult","ferme")),msg)
-
-msg<-"Check for chicks found at more than one farm"
-
-checks<-lappend(checks,check_id_dup(chicksNew,col=c("idois","ferme")),msg)
-
+checks<-lappend(checks,check_id_dup(adultsNew,col=c("idadult","ferme"))[,c("ferme","nichoir","idcouvee","jjulien","idadult","commentaire")],msg)
 
 ###############################################################
 ###
 ###############################################################
 
-msg<-"Check for adults found at more than one nestbox"
-
-checks<-lappend(checks,check_id_dup(adultsNew,col=c("idadult","ferme","nichoir")),msg)
-
 msg<-"Check for chicks found at more than one nestbox"
 
-checks<-lappend(checks,check_id_dup(chicksNew,col=c("idois","ferme","nichoir")),msg)
+checks<-lappend(checks,check_id_dup(chicksNew,col=c("idois","ferme","nichoir"))[,c("ferme","nichoir","idcouvee","jjulien","jour_suivi","idois", "numero_oisillon", "commentaires")],msg)
 
 
 ###############################################################
@@ -781,7 +772,7 @@ if(length(ids)){
 }else{
   res<-NULL
 }
-checks<-lappend(checks,res[,c("ferme","nichoir","idcouvee","jjulien","idois","condition","envol")],msg)
+checks<-lappend(checks,res[,c("ferme","nichoir","idcouvee","jour_suivi","idois","condition","envol")],msg)
 
 
 ###############################################################
