@@ -718,19 +718,19 @@ checks<-lappend(checks,check_id_dup(chicksNew,col=c("idois","ferme","nichoir")),
 
 msg<-"Make sure that chick conditions are from 3 possible values"
 
-adm_cond<-c("vivant","disparu","mort")
+adm_cond<-c("vivant", "disparu", "mort", "disparuJ16")
 w<-which(!chicksNew$condition%in%adm_cond)
-checks<-lappend(checks,chicksNew[w,],msg)
+checks<-lappend(checks,chicksNew[w,c("ferme","nichoir","idcouvee","jjulien","idois","condition","envol")],msg)
 
 
 ###############################################################
 ###
 ###############################################################
 
-msg<-"Make sure that dead or disappeared chicks have 0 for flight code"
+msg<-"Make sure that dead or disappeared chicks have 0 for flight code (few exceptions possibles, see comments)"
 
 w<-which(chicksNew$condition%in%c("disparu","mort") & chicksNew$envol==1)
-checks<-lappend(checks,chicksNew[w,],msg)
+checks<-lappend(checks,chicksNew[w,c("ferme","nichoir","idcouvee","jjulien","idois","condition","envol","commentaires")],msg)
 
 
 ###############################################################
@@ -781,7 +781,7 @@ if(length(ids)){
 }else{
   res<-NULL
 }
-checks<-lappend(checks,res,msg)
+checks<-lappend(checks,res[,c("ferme","nichoir","idcouvee","jjulien","idois","condition","envol")],msg)
 
 
 ###############################################################
