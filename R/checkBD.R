@@ -751,7 +751,7 @@ if(any(w)){
 }else{
   res<-NULL
 }
-checks<-lappend(checks,res,msg)
+checks<-lappend(checks,res[,c("ferme","nichoir","idcouvee","jour_suivi","idois","condition","envol")],msg)
 
 
 ###############################################################
