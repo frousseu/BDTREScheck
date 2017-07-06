@@ -12,7 +12,7 @@ print.TREScheck<-function(x){
       cat("Showing first",min(6,n),"lines of",n,"\n","\n","\n")
       print(head(res))
     }else{
-      print(head(res))
+      print(res)
     }
     
   }))
