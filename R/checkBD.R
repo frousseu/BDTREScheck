@@ -678,12 +678,15 @@ checks<-lappend(checks,check_dup(chicksNew),msg)
 
 msg<-"Check for adults with more than one entry for a single date"
 
-checks<-lappend(checks,check_dup(adultsNew,col=c("idadult","jjulien")),msg)
+checks<-lappend(checks,check_dup(adultsNew,col=c("idadult","jjulien"))[,c("ferme","nichoir","idcouvee","jjulien","idadult","condition","commentaire")],msg)
 
 msg<-"Check for chicks with more than one entry for a single date"
 
-checks<-lappend(checks,check_dup(chicksNew,col=c("idois","jjulien")),msg)
+checks<-lappend(checks,check_dup(chicksNew,col=c("idois","jjulien"))[,c("ferme","nichoir","idcouvee","jjulien","idois","jour_suivi","condition","commentaires")],msg)
 
+msg<-"Check for chicks with more than one entry for a single age"
+
+checks<-lappend(checks,check_dup(chicksNew,col=c("idois","jour_suivi"))[,c("ferme","nichoir","idcouvee","jjulien","idois","jour_suivi","condition","commentaires")],msg)
 
 
 ###############################################################
