@@ -330,7 +330,7 @@ checks<-lappend(checks,broodsNew[w,],msg)
 ################################################################################
 
 
-col_val<-c("ferme","nichoir","id","annee","nnich","jjulien","condition","sexe_morpho","age_morpho","couleur","age_exact","trougauche","troudroite","pararectrice","plaqueincu","Cause_recapt")
+col_val<-c("annee","nnich","jjulien","condition","sexe_morpho","age_morpho","couleur","age_exact","trougauche","troudroite","pararectrice","plaqueincu","Cause_recapt")
 
 # function for checking unique values
 check_val<-function(x){
