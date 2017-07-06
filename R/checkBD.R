@@ -534,31 +534,38 @@ msg<-"Capture date of young is before the laying date"
 w<-which(x$jjulien < x$dponte)
 checks<-lappend(checks,x[w,],msg)
 
+###############################################################
+### 
+###############################################################
 
+msg<-"Adult sex/age incoherencies within the current year"
+
+x<-adultsNew
+w<-which((x$sexe_morpho%in%c("F") & !x$age_morpho%in%c("SY","ASY",NA)) | (x$sexe_morpho%in%c("M") & !x$age_morpho%in%c("AHY",NA)) | (x$sexe_morpho%in%c(NA) & !x$age_morpho%in%c(NA)))
+checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","idadult","sexe_morpho","age_morpho","commentaire")],msg)
 
 ###############################################################
 ### 
 ###############################################################
 
-msg<-"Sex/age incoherencies"
-
-x<-adultsNew
-w<-which((x$sexe_morpho%in%c("F") & !x$age_morpho%in%c("SY","ASY",NA)) | (x$sexe_morpho%in%c("M") & !x$age_morpho%in%c("AHY",NA)) | (x$sexe_morpho%in%c(NA) & !x$age_morpho%in%c(NA)))
-checks<-lappend(checks,x[w,],msg)
-
+msg<-"Adult sex/age incoherencies between years"
+checks<-lappend(checks,"TO DO",msg)
 
 ###############################################################
-### Capture time 
+### Capture time - Nestlings
 ###############################################################
-
-
-mmh<-c("06:30","20:00")
 
 msg<-"Adult capture time outside 06:30 and 20:00"
+
+mmh<-c("06:30","20:00")
 
 x<-adultsNew
 w<-which(x$heure<mmh[1] | x$heure>mmh[2])
 checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","idadult","heure","commentaire")],msg)
+
+###############################################################
+### Capture time - Nestlings
+###############################################################
 
 msg<-"Nestling capture time outside 06:30 and 20:00"
 
