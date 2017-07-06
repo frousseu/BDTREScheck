@@ -226,6 +226,31 @@ if(any(!sapply(res,is.null))){
 
 checks<-lappend(checks,NULL,msg)
 
+##########################################################################################
+### Check than ferme id include only possible values
+##########################################################################################
+
+ferme_names <- c("01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31", "32", "33", "34", "35", "36",  "37", "38", "39", "40", "41") 
+
+msg<-"Impossible ferme id observed in adultsNew DB"
+
+x<-adultsNew
+w<-which(!x$ferme%in%ferme_names)
+checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","idadult")],msg)
+
+msg<-"Impossible ferme id observed in chicksNew DB"
+
+x<-chicksNew
+w<-which(!x$ferme%in%ferme_names)
+checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","idois")],msg)
+
+msg<-"Impossible ferme id observed in broodsNew DB"
+
+x<-broodsNew
+w<-which(!x$ferme%in%ferme_names)
+checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee")],msg)
+
+
 
 ##########################################################################################
 ### Check the number of characters which shoudl always be fixed in the different ids
