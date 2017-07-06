@@ -548,16 +548,24 @@ checks<-lappend(checks,x[w,],msg)
 
 
 ###############################################################
-### 
+### Capture time 
 ###############################################################
 
-mmh<-c("07:00","20:00")
 
-msg<-paste("Capture time outside",mmh[1],"and",mmh[2])
+mmh<-c("06:30","20:00")
+
+msg<-"Adult capture time outside 06:30 and 20:00"
 
 x<-adultsNew
 w<-which(x$heure<mmh[1] | x$heure>mmh[2])
-checks<-lappend(checks,x[w,],msg)
+checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","idadult","heure","commentaire")],msg)
+
+msg<-"Nestling capture time outside 06:30 and 20:00"
+
+x<-chicksNew
+w<-which(x$heure<mmh[1] | x$heure>mmh[2])
+checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","idois","heure","commentaires")],msg)
+
 
 ###############################################################
 ### 
@@ -567,7 +575,7 @@ msg<-"Some colors not in the list of possible values"
 
 x<-adultsNew
 w<-which(!x$couleur%in%c("B","V","BV","BR",NA))
-checks<-lappend(checks,x[w,],msg)
+checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","idadult","couleur","commentaire")],msg)
 
 ###############################################################
 ###
