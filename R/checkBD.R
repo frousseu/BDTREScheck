@@ -113,27 +113,24 @@ check_nchar<-function(x){
 ### READ DATA
 ###############################################
 
-couv_col<-c(rep("text",4),rep("numeric",19),rep("text",6),"text")
-adul_col<-c(rep("text",3),"numeric","numeric","text","date","numeric",rep("text",3),"numeric",rep("text",5),rep("numeric",10),rep("text",3))
+couv_col  <- c(rep("text",4),rep("numeric",19),rep("text",6),"text")
+adul_col  <- c(rep("text",3),"numeric","numeric","text","date","numeric",rep("text",3),"numeric",rep("text",5),rep("numeric",10),rep("text",3))
+chick_col <- c(rep("text",3),rep("numeric",2), "text", "date", "numeric", rep("text", 6), rep("numeric", 8), rep("text",2))  
 
 ### read_excel est sûrement utilisé temporairement et je supprime donc les warnings associés à la détection de caractères non-attendus
 broodsNew<-suppressWarnings(as.data.frame(read_excel(file.path(dsn,broodsNew),sheet=1,na="NA",col_types=couv_col,guess_max=100000)))
 adultsNew<-suppressWarnings(as.data.frame(read_excel(file.path(dsn,adultsNew),sheet="Adultes2016",na="NA",col_types=adul_col,guess_max=100000)))
-chicksNew<-suppressWarnings(as.data.frame(read_excel(file.path(dsn,chicksNew),sheet=1,na="NA",guess_max=1000000))) 
+chicksNew<-suppressWarnings(as.data.frame(read_excel(file.path(dsn,chicksNew),sheet=1,na="NA",col_types=chick_col,guess_max=1000000))) 
 
-broodsOld<-suppressWarnings(as.data.frame(read_excel(file.path(dsn,broodsOld),sheet=1,na="NA",guess_max=100000)))
+broodsOld<-suppressWarnings(as.data.frame(read_excel(file.path(dsn,broodsOld),sheet=1,na="NA",col_types=couv_col,guess_max=100000)))
 adultsOld<-suppressWarnings(as.data.frame(read_excel(file.path(dsn,adultsOld),sheet=1,na="NA",col_types=adul_col,guess_max=100000)))
-chicksOld<-suppressWarnings(as.data.frame(read_excel(file.path(dsn,chicksOld),sheet=1,na="NA",guess_max=100000))) 
-
+chicksOld<-suppressWarnings(as.data.frame(read_excel(file.path(dsn,chicksOld),sheet=1,na="NA",col_types=chick_col,guess_max=100000))) 
 
 ### make certain changes to columns and column names
 adultsNew$heure<-substr(adultsNew$heure,12,16)
-
-### temporarily change the names for the code to run !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-names(chicksNew)[which(names(chicksNew)=="idois2")]<-"idois"
-names(adultsOld)[which(names(adultsOld)=="laile")]<-"laile1"
-names(adultsOld)[which(names(adultsOld)=="sufixe")]<-"suffixe"
-
+adultsOld$heure<-substr(adultsOld$heure,12,16)
+chicksNew$heure<-substr(chicksNew$heure,12,16)
+chicksOld$heure<-substr(chicksOld$heure,12,16)
 
 ### build list of results to checks
 checks<-list()
