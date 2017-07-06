@@ -828,7 +828,7 @@ if(length(ids)){
 }else{
   res<-NULL
 }
-checks<-lappend(checks,res,msg)
+checks<-lappend(checks,res[,c("ferme","nichoir","idcouvee","jour_suivi","idois","commentaires")],msg)
 
 
 ###############################################################
@@ -850,17 +850,15 @@ checks<-lappend(checks,res,msg)
 ###
 ###############################################################
 
-msg<-"Broods that are in broods db but not in chicks db"
+msg<-"TRSW broods with at least one nestling that are in broods db but not in chicks db"
 
-temp<-setdiff(broodsNew$idcouvee,chicksNew$idcouvee)
+temp<-setdiff(broodsNew$idcouvee[which(broodsNew$codesp == 1 & broodsNew$noisnes >=1)],chicksNew$idcouvee)
 if(length(temp)>0){
   res<-temp
 }else{
   res<-NULL
 }
 checks<-lappend(checks,res,msg)
-
-
 
 
 ##########################################################
