@@ -227,7 +227,7 @@ if(any(!sapply(res,is.null))){
 checks<-lappend(checks,NULL,msg)
 
 ##########################################################################################
-### Check than ferme id include only possible values
+### Check that ferme id include only possible values
 ##########################################################################################
 
 ferme_names <- c("01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31", "32", "33", "34", "35", "36",  "37", "38", "39", "40", "41") 
@@ -250,6 +250,34 @@ x<-broodsNew
 w<-which(!x$ferme%in%ferme_names)
 checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee")],msg)
 
+
+##########################################################################################
+### Check that nichoir id include only possible values
+##########################################################################################
+
+nichoir_names_all <- c("01", "02", "03", "04", "05", "06", "07", "08", "09", "10")
+nichoir_names_41  <- c("11", "12", "13", "14", "15", "16", "17", "18", "19") 
+
+msg<-"Impossible nichoir id observed in adultsNew DB"
+
+x<-adultsNew
+w<-which((!x$ferme%in%c("23","41") & !x$nichoir%in%nichoir_names_all) | (x$ferme%in%c("23") & !x$nichoir%in%c(nichoir_names_all, "11")) | (x$ferme%in%c("41") & !x$nichoir%in%c(nichoir_names_all, nichoir_names_41)))
+
+checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","idadult")],msg)
+
+msg<-"Impossible nichoir id observed in chicksNew DB"
+
+x<-chicksNew
+w<-which((!x$ferme%in%c("23","41") & !x$nichoir%in%nichoir_names_all) | (x$ferme%in%c("23") & !x$nichoir%in%c(nichoir_names_all, "11")) | (x$ferme%in%c("41") & !x$nichoir%in%c(nichoir_names_all, nichoir_names_41)))
+
+checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","idois")],msg)
+
+msg<-"Impossible nichoir id observed in broodsNew DB"
+
+x<-broodsNew
+w<-which((!x$ferme%in%c("23","41") & !x$nichoir%in%nichoir_names_all) | (x$ferme%in%c("23") & !x$nichoir%in%c(nichoir_names_all, "11")) | (x$ferme%in%c("41") & !x$nichoir%in%c(nichoir_names_all, nichoir_names_41)))
+
+checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee")],msg)
 
 
 ##########################################################################################
