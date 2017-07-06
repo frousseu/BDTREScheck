@@ -75,7 +75,6 @@ checkShow(html=FALSE)
 - change default values of databases names
 - think of a way to remove warnings associated with the check on the number of characters based on column names that are not in all databases
 - think about the input db type given and arguments options (a data.frame already in the environment, a path to an excel, csv file, a remote database etc.)
-- remove internal correction to wrong names idois2 and sufixe
 - make a code for newly installed bands found in previous years
 - make part about summarizing brood information and hatching
 
@@ -119,179 +118,235 @@ checkShow(html=FALSE)
 </tr>
 <tr>
 <td style='text-align: center;'>8</td>
-<td style='text-align: center;'> "Are number of characters consistent for id-type columns in adultsNew db?"</td>
+<td style='text-align: center;'> "Impossible ferme id observed in adultsNew db"</td>
 </tr>
 <tr>
 <td style='text-align: center;'>9</td>
-<td style='text-align: center;'> "Are number of characters consistent for id-type columns in chicksNew db?"</td>
+<td style='text-align: center;'> "Impossible ferme id observed in chicksNew db"</td>
 </tr>
 <tr>
 <td style='text-align: center;'>10</td>
-<td style='text-align: center;'> "Are number of characters consistent for id-type columns in broodsNew db?"</td>
+<td style='text-align: center;'> "Impossible ferme id observed in broodsNew db"</td>
 </tr>
 <tr>
 <td style='text-align: center;'>11</td>
-<td style='text-align: center;'> "Show all unique values in adultsNew columns for which the number of possible values is restricted"</td>
+<td style='text-align: center;'> "Impossible nichoir id observed in adultsNew db"</td>
 </tr>
 <tr>
 <td style='text-align: center;'>12</td>
-<td style='text-align: center;'> "Show all unique values in broodsNew columns for which the number of possible values is restricted"</td>
+<td style='text-align: center;'> "Impossible nichoir id observed in chicksNew db"</td>
 </tr>
 <tr>
 <td style='text-align: center;'>13</td>
-<td style='text-align: center;'> "Show all unique values in chicksNew columns for which the number of possible values is restricted"</td>
+<td style='text-align: center;'> "Impossible nichoir id observed in broodsNew db"</td>
 </tr>
 <tr>
 <td style='text-align: center;'>14</td>
-<td style='text-align: center;'> "Females without matches in the broodsNew file"</td>
+<td style='text-align: center;'> "Id column do not correspond to ferme + nichoir id in adultsNew db"</td>
 </tr>
 <tr>
 <td style='text-align: center;'>15</td>
-<td style='text-align: center;'> "Adult females wrongly assigned to broodsNew"</td>
+<td style='text-align: center;'> "Id column do not correspond to ferme + nichoir idin chicksNew db"</td>
 </tr>
 <tr>
 <td style='text-align: center;'>16</td>
-<td style='text-align: center;'> "Males without matches in the broodsNew file"</td>
+<td style='text-align: center;'> "Id column do not correspond to ferme + nichoir idin broodsNew db"</td>
 </tr>
 <tr>
 <td style='text-align: center;'>17</td>
-<td style='text-align: center;'> c("Adult males wrongly assigned to broodsNew")</td>
+<td style='text-align: center;'> "idcouv does not correspond to ferme + nichoir + annee + nnich column in adultsNew db"</td>
 </tr>
 <tr>
 <td style='text-align: center;'>18</td>
-<td style='text-align: center;'> "Capture date is lower than the laying date and the individual has not been found dead"</td>
+<td style='text-align: center;'> "idcouv does not correspond to ferme + nichoir + annee + nnich column in chicksNew db"</td>
 </tr>
 <tr>
 <td style='text-align: center;'>19</td>
-<td style='text-align: center;'> "Adults in the adult DB that are not in the broodsNew DB"</td>
+<td style='text-align: center;'> "idcouv does not correspond to ferme + nichoir + annee + nnich column in broodsNew db"</td>
 </tr>
 <tr>
 <td style='text-align: center;'>20</td>
-<td style='text-align: center;'> "Capture date is later than the min or max departure date from the nest"</td>
+<td style='text-align: center;'> "Impossible prefixe name observed in adultsNew db (is it a new prefixe?)"</td>
 </tr>
 <tr>
 <td style='text-align: center;'>21</td>
-<td style='text-align: center;'> "Capture date is later than the min or max date of nest abandonment"</td>
+<td style='text-align: center;'> "Impossible prefixe name observed in chicksNew db (is it a new prefixe?)"</td>
 </tr>
 <tr>
 <td style='text-align: center;'>22</td>
-<td style='text-align: center;'> "Capture date of young is later than the minimal abandonment date if nest was abandoned"</td>
+<td style='text-align: center;'> "Show all unique values in adultsNew columns for which the number of possible values is restricted"</td>
 </tr>
 <tr>
 <td style='text-align: center;'>23</td>
-<td style='text-align: center;'> "Capture date of young is before the laying date"</td>
+<td style='text-align: center;'> "Show all unique values in broodsNew columns for which the number of possible values is restricted"</td>
 </tr>
 <tr>
 <td style='text-align: center;'>24</td>
-<td style='text-align: center;'> "Sex/age incoherencies"</td>
+<td style='text-align: center;'> "Show all unique values in chicksNew columns for which the number of possible values is restricted"</td>
 </tr>
 <tr>
 <td style='text-align: center;'>25</td>
-<td style='text-align: center;'> paste("Capture time outside", mmh[1], "and", mmh[2])</td>
+<td style='text-align: center;'> "Adult females assigned to an idcouv in adultsNEW but no female is assigned to this idcouv in broodsNEW"</td>
 </tr>
 <tr>
 <td style='text-align: center;'>26</td>
-<td style='text-align: center;'> "Some colors not in the list of possible values"</td>
+<td style='text-align: center;'> "Adult females assigned to an idcouv in adultNew but not referenced in broodsNew (idF2 or idF3)"</td>
 </tr>
 <tr>
 <td style='text-align: center;'>27</td>
-<td style='text-align: center;'> "Wing measurement outside the range of likely values"</td>
+<td style='text-align: center;'> "Males without matches in the broodsNew file"</td>
 </tr>
 <tr>
 <td style='text-align: center;'>28</td>
-<td style='text-align: center;'> "Weight measurement outside the range of likely values"</td>
+<td style='text-align: center;'> c("Adult males wrongly assigned to broodsNew")</td>
 </tr>
 <tr>
 <td style='text-align: center;'>29</td>
-<td style='text-align: center;'> "Tarsus measurement outside the range of likely values"</td>
+<td style='text-align: center;'> "Capture date is lower than the laying date and the individual has not been found dead"</td>
 </tr>
 <tr>
 <td style='text-align: center;'>30</td>
-<td style='text-align: center;'> "Male with brood patch"</td>
+<td style='text-align: center;'> "Adults in the adult DB that are not in the broodsNew DB"</td>
 </tr>
 <tr>
 <td style='text-align: center;'>31</td>
-<td style='text-align: center;'> "Newly installed band found in the previous years"</td>
+<td style='text-align: center;'> "Capture date is later than the min or max departure date from the nest"</td>
 </tr>
 <tr>
 <td style='text-align: center;'>32</td>
-<td style='text-align: center;'> "Visits are not all 2 days apart for the following farms in the adult DB"</td>
+<td style='text-align: center;'> "Capture date is later than the min or max date of nest abandonment"</td>
 </tr>
 <tr>
 <td style='text-align: center;'>33</td>
-<td style='text-align: center;'> "Visits are not all 2 days apart for the following farms in the chicksNew DB"</td>
+<td style='text-align: center;'> "Capture date of young is later than the minimal abandonment date if nest was abandoned"</td>
 </tr>
 <tr>
 <td style='text-align: center;'>34</td>
-<td style='text-align: center;'> "Check for spaces in ferme ids"</td>
+<td style='text-align: center;'> "Capture date of young is before the laying date"</td>
 </tr>
 <tr>
 <td style='text-align: center;'>35</td>
-<td style='text-align: center;'> "Check for duplicates using all columns in adultsNew"</td>
+<td style='text-align: center;'> "Adult sex/age incoherencies within the current year"</td>
 </tr>
 <tr>
 <td style='text-align: center;'>36</td>
-<td style='text-align: center;'> "Check for duplicates using all columns in broodsNew"</td>
+<td style='text-align: center;'> "Adult sex/age incoherencies between years"</td>
 </tr>
 <tr>
 <td style='text-align: center;'>37</td>
-<td style='text-align: center;'> "Check for duplicates using all columns in chicksNew"</td>
+<td style='text-align: center;'> "Adult capture time outside 06:30 and 20:00"</td>
 </tr>
 <tr>
 <td style='text-align: center;'>38</td>
-<td style='text-align: center;'> "Check for adults with more than one entry for a single date"</td>
+<td style='text-align: center;'> "Nestling capture time outside 06:30 and 20:00"</td>
 </tr>
 <tr>
 <td style='text-align: center;'>39</td>
-<td style='text-align: center;'> "Check for chicks with more than one entry for a single date"</td>
+<td style='text-align: center;'> "Some colors not in the list of possible values"</td>
 </tr>
 <tr>
 <td style='text-align: center;'>40</td>
-<td style='text-align: center;'> "Check for adults found at more than one farm"</td>
+<td style='text-align: center;'> "Adult wing measurement outside the range of likely values (105-125 mm)"</td>
 </tr>
 <tr>
 <td style='text-align: center;'>41</td>
-<td style='text-align: center;'> "Check for chicks found at more than one farm"</td>
+<td style='text-align: center;'> "Adult wing measurement 1 and 2 too far apart (>1 mm)"</td>
 </tr>
 <tr>
 <td style='text-align: center;'>42</td>
-<td style='text-align: center;'> "Check for adults found at more than one nestbox"</td>
+<td style='text-align: center;'> "Adult weight measurements outside the range of likely values (15-30g)"</td>
 </tr>
 <tr>
 <td style='text-align: center;'>43</td>
-<td style='text-align: center;'> "Check for chicks found at more than one nestbox"</td>
+<td style='text-align: center;'> "Adult tarsus measurements outside the range of likely values (10-14 mm)"</td>
 </tr>
 <tr>
 <td style='text-align: center;'>44</td>
-<td style='text-align: center;'> "Make sure that chick conditions are from 3 possible values"</td>
+<td style='text-align: center;'> "Adult tarsus measurement 1 and 2 too far apart (>0.1 mm)"</td>
 </tr>
 <tr>
 <td style='text-align: center;'>45</td>
-<td style='text-align: center;'> "Make sure that dead or disappeared chicks have 0 for flight code"</td>
+<td style='text-align: center;'> "Male with brood patch"</td>
 </tr>
 <tr>
 <td style='text-align: center;'>46</td>
-<td style='text-align: center;'> "Make sure that living chicks with a 0 flight code are eventually dead or disappeared"</td>
+<td style='text-align: center;'> "Newly installed band found in the previous years"</td>
 </tr>
 <tr>
 <td style='text-align: center;'>47</td>
-<td style='text-align: center;'> "Make sure that no chick comes back to life"</td>
+<td style='text-align: center;'> "Visits are not all 2 days apart for the following farms in the adult DB"</td>
 </tr>
 <tr>
 <td style='text-align: center;'>48</td>
-<td style='text-align: center;'> "Chicks which were followed for 12 days or more should have a band number as id and otherwise they should have a farm/brood id"</td>
+<td style='text-align: center;'> "Visits are not all 2 days apart for the following farms in the chicksNew DB"</td>
 </tr>
 <tr>
 <td style='text-align: center;'>49</td>
-<td style='text-align: center;'> "Chicks for which there is a band number but it does not correspond to the id of the chick"</td>
+<td style='text-align: center;'> "Check for spaces in ferme ids"</td>
 </tr>
 <tr>
 <td style='text-align: center;'>50</td>
+<td style='text-align: center;'> "Check for duplicates using all columns in adultsNew"</td>
+</tr>
+<tr>
+<td style='text-align: center;'>51</td>
+<td style='text-align: center;'> "Check for duplicates using all columns in broodsNew"</td>
+</tr>
+<tr>
+<td style='text-align: center;'>52</td>
+<td style='text-align: center;'> "Check for duplicates using all columns in chicksNew"</td>
+</tr>
+<tr>
+<td style='text-align: center;'>53</td>
+<td style='text-align: center;'> "Check for adults with more than one entry for a single date"</td>
+</tr>
+<tr>
+<td style='text-align: center;'>54</td>
+<td style='text-align: center;'> "Check for chicks with more than one entry for a single date"</td>
+</tr>
+<tr>
+<td style='text-align: center;'>55</td>
+<td style='text-align: center;'> "Check for chicks with more than one entry for a single age"</td>
+</tr>
+<tr>
+<td style='text-align: center;'>56</td>
+<td style='text-align: center;'> "Check for adults found at more than one farm (maybe not an error)"</td>
+</tr>
+<tr>
+<td style='text-align: center;'>57</td>
+<td style='text-align: center;'> "Check for chicks found at more than one nestbox"</td>
+</tr>
+<tr>
+<td style='text-align: center;'>58</td>
+<td style='text-align: center;'> "Make sure that chick conditions are from 3 possible values"</td>
+</tr>
+<tr>
+<td style='text-align: center;'>59</td>
+<td style='text-align: center;'> "Make sure that dead or disappeared chicks have 0 for flight code (few exceptions possibles, see comments)"</td>
+</tr>
+<tr>
+<td style='text-align: center;'>60</td>
+<td style='text-align: center;'> "Make sure that living chicks with a 0 flight code are eventually dead or disappeared"</td>
+</tr>
+<tr>
+<td style='text-align: center;'>61</td>
+<td style='text-align: center;'> "Make sure that no chick comes back to life"</td>
+</tr>
+<tr>
+<td style='text-align: center;'>62</td>
+<td style='text-align: center;'> "Chicks which were followed for 12 days or more should have a band number as id and otherwise they should have a farm/brood id (maybe an exception, see comments)"</td>
+</tr>
+<tr>
+<td style='text-align: center;'>63</td>
+<td style='text-align: center;'> "Chicks for which there is a band number but it does not correspond to the id of the chick"</td>
+</tr>
+<tr>
+<td style='text-align: center;'>64</td>
 <td style='text-align: center;'> "Broods that are in chicks db but not in broods db"</td>
 </tr>
 <tr>
-<td style='border-bottom: 2px solid grey; text-align: center;'>51</td>
-<td style='border-bottom: 2px solid grey; text-align: center;'> "Broods that are in broods db but not in chicks db"</td>
+<td style='border-bottom: 2px solid grey; text-align: center;'>65</td>
+<td style='border-bottom: 2px solid grey; text-align: center;'> "TRSW broods with at least one nestling that are in broods db but not in chicks db"</td>
 </tr>
 </tbody>
 </table>
