@@ -337,6 +337,27 @@ checks<-lappend(checks,x[w,c("ferme","nichoir", "annee", "nnich", "idcouvee","co
 
 
 ##########################################################################################
+### Check that prefixe columns include only possible values
+##########################################################################################
+
+prefixe_names <- c("1881", "1921", "2221", "2311", "2351", "2490", "2511", "2521", "2591", "2621")
+
+msg<-"Impossible prefixe name observed in adultsNew db (is it a new prefixe?)"
+
+x<-adultsNew
+w<-which(!x$prefixe%in%prefixe_names & !is.na(x$prefixe))
+
+checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","prefixe", "suffixe","idadult")],msg)
+
+msg<-"Impossible prefixe name observed in chicksNew db (is it a new prefixe?)"
+
+x<-chicksNew
+w<-which(!x$prefixe%in%prefixe_names & !is.na(x$prefixe))
+
+checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","prefixe", "suffixe","idois")],msg)
+
+
+##########################################################################################
 ### Check the number of characters which shoudl always be fixed in the different ids
 ##########################################################################################
 
