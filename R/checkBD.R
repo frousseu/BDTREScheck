@@ -119,7 +119,7 @@ chick_col <- c(rep("text",3),rep("numeric",2), "text", "date", "numeric", rep("t
 
 ### read_excel est sûrement utilisé temporairement et je supprime donc les warnings associés à la détection de caractères non-attendus
 broodsNew<-suppressWarnings(as.data.frame(read_excel(file.path(dsn,broodsNew),sheet=1,na="NA",col_types=couv_col,guess_max=100000)))
-adultsNew<-suppressWarnings(as.data.frame(read_excel(file.path(dsn,adultsNew),sheet="Adultes2016",na="NA",col_types=adul_col,guess_max=100000)))
+adultsNew<-suppressWarnings(as.data.frame(read_excel(file.path(dsn,adultsNew),sheet=1,na="NA",col_types=adul_col,guess_max=100000)))
 chicksNew<-suppressWarnings(as.data.frame(read_excel(file.path(dsn,chicksNew),sheet=1,na="NA",col_types=chick_col,guess_max=1000000))) 
 
 broodsOld<-suppressWarnings(as.data.frame(read_excel(file.path(dsn,broodsOld),sheet=1,na="NA",col_types=couv_col,guess_max=100000)))
