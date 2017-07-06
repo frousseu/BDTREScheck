@@ -361,17 +361,17 @@ checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","prefixe", "
 ### Check the number of characters which shoudl always be fixed in the different ids
 ##########################################################################################
 
-msg<-"Are number of characters consistent for id-type columns in adultsNew db?"
-w<-check_nchar(adultsNew)
-checks<-lappend(checks,adultsNew[w,],msg)
-
-msg<-"Are number of characters consistent for id-type columns in chicksNew db?"
-w<-check_nchar(chicksNew)
-checks<-lappend(checks,chicksNew[w,],msg)
-
-msg<-"Are number of characters consistent for id-type columns in broodsNew db?"
-w<-check_nchar(broodsNew)
-checks<-lappend(checks,broodsNew[w,],msg)
+#msg<-"Are number of characters consistent for id-type columns in adultsNew db?"
+#w<-check_nchar(adultsNew)
+#checks<-lappend(checks,adultsNew[w,],msg)
+#
+#msg<-"Are number of characters consistent for id-type columns in chicksNew db?"
+#w<-check_nchar(chicksNew)
+#checks<-lappend(checks,chicksNew[w,],msg)
+#
+#msg<-"Are number of characters consistent for id-type columns in broodsNew db?"
+#w<-check_nchar(broodsNew)
+#checks<-lappend(checks,broodsNew[w,],msg)
 
 
 ################################################################################
