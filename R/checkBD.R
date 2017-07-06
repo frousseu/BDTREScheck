@@ -788,13 +788,13 @@ checks<-lappend(checks,res[,c("ferme","nichoir","idcouvee","jjulien","idois","co
 ###
 ###############################################################
 
-msg<-"Chicks which were followed for 12 days or more should have a band number as id and otherwise they should have a farm/brood id"
+msg<-"Chicks which were followed for 12 days or more should have a band number as id and otherwise they should have a farm/brood id (maybe an exception, see comments)"
 
 ### find chicks for which id is not the band number despite having been followed after their 12e days
 x<-chicksNew
 x$idois<-paste0(x$ferme,x$nichoir,x$annee,x$nnich,x$numero_oisillon)
 x<-ddply(x,.(idois),function(i){
-     sup<-any(which(i$jour_suivi>=12))
+     sup<-any(which(i$jour_suivi>=12 & !i$condition%in%c("mort","disparu")))
      if(sup){
        res<-all(i$idois==paste0(i$prefixe,i$suffixe))
      }else{
@@ -809,7 +809,7 @@ if(length(ids)){
 }else{
   res<-NULL
 }
-checks<-lappend(checks,res,msg)
+checks<-lappend(checks,res[,c("ferme","nichoir","idcouvee","jour_suivi","idois","condition","envol","commentaires")],msg)
 
 
 ###############################################################
