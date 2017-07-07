@@ -494,6 +494,26 @@ w<-which(!is.na(x$nnich) & !is.na(x$idadul) & !is.na(x$declomin) & x$declomin <=
 checks<-lappend(checks,x[w,],msg)
 
 ################################################
+### No idF1
+################################################
+
+msg<-"BROODS: Female reference as second female when only one female captured (change to idF1 - some exceptions possible)"
+
+w<-which(is.na(broodsNew$idF1) & (!is.na(broodsNew$idF2) | !is.na(broodsNew$idF3)))
+
+checks<-lappend(checks,broodsNew[w,c("idcouvee","idF1","idF2","idF3", "Commentaires")],msg)
+
+################################################
+### No idM1
+################################################
+
+msg<-"BROODS: Male reference as second males when only one male captured (change to idM1)"
+
+w<-which(is.na(broodsNew$idM1) & (!is.na(broodsNew$idM2) | !is.na(broodsNew$idM3)))
+
+checks<-lappend(checks,broodsNew[w,c("idcouvee","idM1","idM2","idM3", "Commentaires")],msg)
+
+################################################
 ### Two males in a nestbox
 ################################################
 
