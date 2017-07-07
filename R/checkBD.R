@@ -766,7 +766,7 @@ checks<-lappend(checks,check_dup(chicksNew,col=c("idois","jour_suivi"))[,c("ferm
 ###
 ###############################################################
 
-msg<-"Check for adults found at more than one farm (maybe not an error)"
+msg<-"ADULTS: Check for adults found at more than one farm (maybe not an error)"
 
 checks<-lappend(checks,check_id_dup(adultsNew,col=c("idadult","ferme"))[,c("ferme","nichoir","idcouvee","jjulien","idadult","commentaire")],msg)
 
@@ -774,7 +774,7 @@ checks<-lappend(checks,check_id_dup(adultsNew,col=c("idadult","ferme"))[,c("ferm
 ###
 ###############################################################
 
-msg<-"Check for chicks found at more than one nestbox"
+msg<-"NESTLINGS: Check for nestlings found at more than one nestbox"
 
 checks<-lappend(checks,check_id_dup(chicksNew,col=c("idois","ferme","nichoir"))[,c("ferme","nichoir","idcouvee","jjulien","jour_suivi","idois", "numero_oisillon", "commentaires")],msg)
 
@@ -783,7 +783,7 @@ checks<-lappend(checks,check_id_dup(chicksNew,col=c("idois","ferme","nichoir"))[
 ### 
 ###############################################################
 
-msg<-"Capture date of young is later than the minimal abandonment date if nest was abandoned"
+msg<-"NESTLINGS/BROODS: Capture date of young is later than the minimal abandonment date if nest was abandoned"
 x<-merge(chicksNew,broodsNew[broodsNew$codesp==1,c("idcouvee","dponte","dincub","declomin","declomax","dabanmin","dabanmax")],by="idcouvee",all.x=TRUE)
 w<-which(x$jjulien > (x$dabanmin + 1))
 checks<-lappend(checks,x[w,],msg)
@@ -792,10 +792,19 @@ checks<-lappend(checks,x[w,],msg)
 ### 
 ###############################################################
 
-msg<-"Capture date of young is before the laying date"
+msg<-"NESTLINGS/BROODS: Capture date of young is before the laying date"
 
 w<-which(x$jjulien < x$dponte)
 checks<-lappend(checks,x[w,],msg)
+
+###############################################################
+### 
+###############################################################
+
+msg<-"NESTLINGS/BROODS: jjulien of young that doesn't correspond to declomax + jour_suivi"
+
+w<-which(x$jjulien != (x$declomax + x$jour_suivi))
+checks<-lappend(checks,x[w,c("idcouvee","ferme","nichoir","idois","declomax","jjulien","jour_suivi")],msg)
 
 
 ###############################################################
