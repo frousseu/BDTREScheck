@@ -731,8 +731,6 @@ x<-adultsNew
 w<-which(!x$plaqueincu%in%c("0","1") & !is.na(x$plaqueincu))
 checks<-lappend(checks,x[w,c("ferme","nichoir","jjulien","idcouvee","idadult","plaqueincu","commentaire")],msg)
 
-
-
 ###############################################################
 ###
 ###############################################################
@@ -785,11 +783,11 @@ checks<-lappend(checks,list(vis2days(chicksNew)),msg)
 ###
 ###############################################################
 
-msg<-"Check for spaces in ferme ids"
-
-x<-adultsNew
-checks<-lappend(checks,x[grep(" ",x$ferme),],msg)
-
+#msg<-"Check for spaces in ferme ids"
+#
+#x<-adultsNew
+#checks<-lappend(checks,x[grep(" ",x$ferme),],msg)
+#
 
 
 ###############################################################
