@@ -1,9 +1,10 @@
 
 
 checkBD<-function(dsn=".",
-           adultsNew="Adulte2016.xlsx",
-           broodsNew="Couvee2016.xlsx",
-           chicksNew="oisillons2016.xlsx",
+           year=NULL,
+           adultsNew=NULL,
+           broodsNew=NULL,
+           chicksNew=NULL,
            adultsOld="Adultes_2004-2015.xlsx",
            broodsOld="Couvee_2004-2015.xlsx",
            chicksOld="Oisillons_2004-2015.xls",
@@ -11,6 +12,10 @@ checkBD<-function(dsn=".",
            stop=FALSE)
 {
   
+if(is.null(year)==TRUE) 
+{ stop("The year argument MUST be specified")
+   }
+   
 #############################################
 ### INTERNAL FUNCTIONS
 #############################################
@@ -118,13 +123,38 @@ adul_col  <- c(rep("text",3),"numeric","numeric","text","date","numeric",rep("te
 chick_col <- c(rep("text",3),rep("numeric",2), "text", "date", "numeric", rep("text", 6), rep("numeric", 8), rep("text",2))  
 
 ### read_excel est sûrement utilisé temporairement et je supprime donc les warnings associés à la détection de caractères non-attendus
-broodsNew<-suppressWarnings(as.data.frame(read_excel(file.path(dsn,broodsNew),sheet=1,na="NA",col_types=couv_col,guess_max=100000)))
-adultsNew<-suppressWarnings(as.data.frame(read_excel(file.path(dsn,adultsNew),sheet=1,na="NA",col_types=adul_col,guess_max=100000)))
-chicksNew<-suppressWarnings(as.data.frame(read_excel(file.path(dsn,chicksNew),sheet=1,na="NA",col_types=chick_col,guess_max=1000000))) 
 
 broodsOld<-suppressWarnings(as.data.frame(read_excel(file.path(dsn,broodsOld),sheet=1,na="NA",col_types=couv_col,guess_max=100000)))
 adultsOld<-suppressWarnings(as.data.frame(read_excel(file.path(dsn,adultsOld),sheet=1,na="NA",col_types=adul_col,guess_max=100000)))
 chicksOld<-suppressWarnings(as.data.frame(read_excel(file.path(dsn,chicksOld),sheet=1,na="NA",col_types=chick_col,guess_max=100000))) 
+
+### If not specify New data not specified, Get New data from Old dataset (subsetting based year)
+if(is.null(broodsNew)==T){
+   broodsNew <-   broodsOld[which(broodsOld$annee==year),]
+   }else{
+      broodsNew<-suppressWarnings(as.data.frame(read_excel(file.path(dsn,broodsNew),sheet=1,na="NA",col_types=couv_col,guess_max=100000)))
+      #adultsNew <- adultsNew[which(adultsNew$annee < year),]
+   }
+
+if(is.null(adultsNew)==T){
+   adultsNew <-   adultsOld[which(adultsOld$annee==year),]
+   }else{
+   adultsNew<-suppressWarnings(as.data.frame(read_excel(file.path(dsn,adultsNew),sheet=1,na="NA",col_types=adul_col,guess_max=100000)))
+   #chicksNew <- chicksNew[which(chicksNew$annee < year),]
+   }
+
+if(is.null(chicksNew)==T){
+   chicksNew <-   chicksOld[which(chicksOld$annee==year),]
+   }else{
+      chicksNew<-suppressWarnings(as.data.frame(read_excel(file.path(dsn,chicksNew),sheet=1,na="NA",col_types=chick_col,guess_max=1000000))) 
+      #chicksNew <- chicksNew[which(chicksNew$annee < year),]
+   }
+
+# Use the year argument to subset Old dataset
+
+broodsOld <- broodsOld[which(broodsOld$annee < year),]
+adultsOld <- adultsOld[which(adultsOld$annee < year),]
+chicksOld <- chicksOld[which(chicksOld$annee < year),]
 
 ### make certain changes to columns and column names
 adultsNew$heure<-substr(adultsNew$heure,12,16)
