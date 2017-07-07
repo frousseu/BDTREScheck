@@ -559,92 +559,7 @@ checks<-lappend(checks,broodsNew[w,c("idcouvee","idM1","idM2","idM3", "Commentai
 msg<-"BROODS: Two males captured in the same nestbox but not properly reported (idM2 and idM3, not idM1)"
 
 w<-which(!is.na(broodsNew$idM1) & (!is.na(broodsNew$idM2) | !is.na(broodsNew$idM3)))
-
 checks<-lappend(checks,broodsNew[w,c("idcouvee","idM1","idM2","idM3", "Commentaires")],msg)
-
-##########################################################
-### Check if the nnich corresponds
-##########################################################
-
-x<-merge(adultsNew,broodsNew[broodsNew$codesp==1,c("idcouvee","codesp", "abandon", "dponte", "declomin", "declomax", "denvomin", "denvomax", "dabanmin","dabanmax")],by="idcouvee",all.x = TRUE)
-
-###########################################################
-### 
-###########################################################
-
-msg<-"Capture date is lower than the laying date and the individual has not been found dead"
-
-w<-which(x$jjulien < x$dponte & x$condition == 1)
-checks<-lappend(checks,x[w,],msg)
-
-
-###################################################################
-### 
-###################################################################
-
-#3.2) 
-#Check if some lines from the adult DB are not associated with a line that do not 
-#correspond to a TRSW in the broodsNew file
-#Not sure what that means in Nghia script!!!
-
-msg<-"Adults in the adult DB that are not in the broodsNew DB"
-
-w<-which(x$codesp != 1 & x$condition == 1)
-checks<-lappend(checks,x[w,],msg)
-
-
-
-###################################################################
-###
-###################################################################
-
-#3.3) in Nghia script
-
-msg<-"Capture date is later than the min or max departure date from the nest"
-
-w<-which((x$jjulien > x$denvomin) | (x$jjulien > x$denvomax))
-checks<-lappend(checks,x[w,],msg)
-
-
-######################################################################
-###
-######################################################################
-
-#3.3.2) Theses cases should be checked thoroughly as date of abandonment is tracked back to the first day when the eggs were cold.
-# e.g. Incubation is declared on day 145. 147 and 149 eggs are cold but female is caught anyway on day 149. On field, we consider that 
-# the nest was abandonned on day 151 (if incubation was declared previously and eggs are cold for 3 consecutive visits) and stop 
-# following this nest (i.e. adult manipulations) from this date. However, in the data base, dabanmin = 146 and dabanmax = 147. 
-# That is, the first day when the eggs were cold during that 3 visits sequence of cold eggs... probably not clear...
-
-msg<-"Capture date is later than the min or max date of nest abandonment"
-
-w<-which(((x$jjulien > x$dabanmin) | (x$jjulien > x$dabanmax)) & x$condition == 1)
-checks<-lappend(checks,x[w,],msg)
-
-############################################## 
-### Is nnich assigned correctly
-##############################################
-
-x<-merge(chicksNew,broodsNew[broodsNew$codesp==1,c("idcouvee","dponte","dincub","declomin","declomax","dabanmin","dabanmax")],by="idcouvee",all.x=TRUE)
-
-###############################################################
-### 
-###############################################################
-
-msg<-"Capture date of young is later than the minimal abandonment date if nest was abandoned"
-
-w<-which(x$jjulien > (x$dabanmin + 1))
-checks<-lappend(checks,x[w,],msg)
-
-
-###############################################################
-### 
-###############################################################
-
-msg<-"Capture date of young is before the laying date"
-
-w<-which(x$jjulien < x$dponte)
-checks<-lappend(checks,x[w,],msg)
 
 ###############################################################
 ### 
@@ -738,7 +653,7 @@ w<-which(x$tarse1<val[1] | x$tarse2<val[1] | x$tarse1>val[2] | x$tarse2>val[2])
 checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","idadult","tarse1","tarse2","commentaire")],msg)
 
 
-msg<-"Adult tarsus measurement 1 and 2 too far apart (>0.1 mm)"
+msg<-"ADULTS: tarsus measurement 1 and 2 too far apart (>0.1 mm)"
 
 x<-adultsNew
 val<-c(0.1)
@@ -865,31 +780,62 @@ checks<-lappend(checks,check_id_dup(chicksNew,col=c("idois","ferme","nichoir"))[
 
 
 ###############################################################
-###
+### 
 ###############################################################
 
-msg<-"Make sure that chick conditions are from 3 possible values"
-
-adm_cond<-c("vivant", "disparu", "mort", "disparuJ16")
-w<-which(!chicksNew$condition%in%adm_cond)
-checks<-lappend(checks,chicksNew[w,c("ferme","nichoir","idcouvee","jjulien","idois","condition","envol")],msg)
-
-
-###############################################################
-###
-###############################################################
-
-msg<-"Make sure that dead or disappeared chicks have 0 for flight code (few exceptions possibles, see comments)"
-
-w<-which(chicksNew$condition%in%c("disparu","mort") & chicksNew$envol==1)
-checks<-lappend(checks,chicksNew[w,c("ferme","nichoir","idcouvee","jjulien","idois","condition","envol","commentaires")],msg)
-
+msg<-"Capture date of young is later than the minimal abandonment date if nest was abandoned"
+x<-merge(chicksNew,broodsNew[broodsNew$codesp==1,c("idcouvee","dponte","dincub","declomin","declomax","dabanmin","dabanmax")],by="idcouvee",all.x=TRUE)
+w<-which(x$jjulien > (x$dabanmin + 1))
+checks<-lappend(checks,x[w,],msg)
 
 ###############################################################
 ### 
 ###############################################################
 
-msg<-"Make sure that living chicks with a 0 flight code are eventually dead or disappeared"
+msg<-"Capture date of young is before the laying date"
+
+w<-which(x$jjulien < x$dponte)
+checks<-lappend(checks,x[w,],msg)
+
+
+###############################################################
+###
+###############################################################
+
+msg<-"NESTLINGS: Wrong chick conditions (4 possible values; vivant, disparu, mort or disparuj16)"
+
+adm_cond<-c("vivant", "disparu", "mort", "disparuj16")
+x<-chicksNew
+w<-which(!x$condition%in%adm_cond)
+checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","idois","condition","envol")],msg)
+
+
+###############################################################
+###
+###############################################################
+
+msg<-"NESTLINGS: Dead or disappeared nestlings without a 0 for flight code (few exceptions possibles, see comments)"
+
+x<-chicksNew
+w<-which(x$condition%in%c("disparu","mort") & x$envol=="1")
+checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","idois","condition","envol","commentaires")],msg)
+
+
+###############################################################
+###
+###############################################################
+
+msg<-"NESTLINGS: Nestling with disparuj16 condition but without a 1 for flight code"
+
+x<-chicksNew
+w<-which(x$condition%in%c("disparuj16") & x$envol=="0")
+checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","idois","condition","envol","commentaires")],msg)
+
+###############################################################
+### 
+###############################################################
+
+msg<-"NESTLINGS: Make sure that living nestlings with a 0 flight code are eventually dead or disappeared"
 
 w<-which(chicksNew$condition%in%c("vivant") & chicksNew$envol==0)
 ids<-unique(chicksNew$idois[w])
@@ -910,7 +856,7 @@ checks<-lappend(checks,res[,c("ferme","nichoir","idcouvee","jour_suivi","idois",
 ### MOUAAHAHAHAHA!
 ###############################################################
 
-msg<-"Make sure that no chick comes back to life"
+msg<-"NESTLINGS: Make sure that no nestling comes back to life"
 
 x<-chicksNew[order(chicksNew$idois,chicksNew$jjulien,chicksNew$heure),]
 res<-ddply(x,.(idois),function(i){
@@ -940,7 +886,7 @@ checks<-lappend(checks,res[,c("ferme","nichoir","idcouvee","jour_suivi","idois",
 ###
 ###############################################################
 
-msg<-"Chicks which were followed for 12 days or more should have a band number as id and otherwise they should have a farm/brood id (maybe an exception, see comments)"
+msg<-"NESTLINGS: Nestlings which were followed for 12 days or more should have a band number as id and otherwise they should have a farm/brood id (maybe an exception, see comments)"
 
 ### find chicks for which id is not the band number despite having been followed after their 12e days
 x<-chicksNew
@@ -968,7 +914,7 @@ checks<-lappend(checks,res[,c("ferme","nichoir","idcouvee","jour_suivi","idois",
 ###
 ###############################################################
 
-msg<-"Chicks for which there is a band number but it does not correspond to the id of the chick"
+msg<-"NESTLINGS: Chicks for which there is a band number but it does not correspond to the id of the chick"
 
 x<-chicksNew
 x$idois<-paste0(x$ferme,x$nichoir,x$annee,x$nnich,x$numero_oisillon)
@@ -987,7 +933,7 @@ checks<-lappend(checks,res[,c("ferme","nichoir","idcouvee","jour_suivi","idois",
 ###
 ###############################################################
 
-msg<-"Broods that are in chicks db but not in broods db"
+msg<-"NESTLINGS/BROODS: Broods that are in chicks db but not in broods db"
 
 temp<-setdiff(chicksNew$idcouvee,broodsNew$idcouvee)
 if(length(temp)>0){
@@ -997,12 +943,11 @@ if(length(temp)>0){
 }
 checks<-lappend(checks,res,msg)
 
-
 ###############################################################
 ###
 ###############################################################
 
-msg<-"TRSW broods with at least one nestling that are in broods db but not in chicks db"
+msg<-"NESTLINGS/BROODS: TRES broods with at least one nestling that are in broods db but not in chicks db"
 
 temp<-setdiff(broodsNew$idcouvee[which(broodsNew$codesp == 1 & broodsNew$noisnes >=1)],chicksNew$idcouvee)
 if(length(temp)>0){
@@ -1011,7 +956,6 @@ if(length(temp)>0){
   res<-NULL
 }
 checks<-lappend(checks,res,msg)
-
 
 ##########################################################
 ### Summarize brood information
