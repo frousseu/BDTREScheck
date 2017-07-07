@@ -640,7 +640,6 @@ val<-c(15,30)
 w<-which(x$masse<val[1] | x$masse>val[2])
 checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","idadult","masse","commentaire")],msg)
 
-
 ###############################################################
 ###
 ###############################################################
@@ -669,7 +668,6 @@ msg<-"ADULTS: Wrong condition status"
 x<-adultsNew
 w<-which(!x$condition%in%c("0","1","2","3"))
 checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","idadult","condition","commentaire")],msg)
-
 
 ###############################################################
 ###
@@ -701,7 +699,6 @@ x<-adultsNew
 w<-which(!x$Cause_recapt%in%c("0","RPCS","ACC","RPCM"))# & !x$plaqueincu%in%c(0,NA))
 checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","idadult","Cause_recapt","commentaire")],msg)
 
-
 ##########################################################
 ###
 ##########################################################
@@ -714,17 +711,15 @@ checks<-lappend(checks,"NEED TO BUILD A CODE FOR THIS!",msg)
 ###
 ###############################################################
 
-msg<-"Visits are not all 2 days apart for the following farms in the adult DB"
+msg<-"ADULTS: Visits are not all 2 days apart for the following farms"
 
 checks<-lappend(checks,list(vis2days(adultsNew)),msg)
-
-
 
 ###############################################################
 ###
 ###############################################################
 
-msg<-"Visits are not all 2 days apart for the following farms in the chicksNew DB"
+msg<-"NESTLINGS: Visits are not all 2 days apart for the following farms"
 
 checks<-lappend(checks,list(vis2days(chicksNew)),msg)
 
@@ -732,35 +727,33 @@ checks<-lappend(checks,list(vis2days(chicksNew)),msg)
 ### DUPLICATES
 ###############################################################
 
-msg<-"Check for duplicates using all columns in adultsNew"
+msg<-"ADULTS: Check for duplicates using all columns"
 
 checks<-lappend(checks,check_dup(adultsNew),msg)
 
-msg<-"Check for duplicates using all columns in broodsNew"
+msg<-"BROODS: Check for duplicates using all columns"
 
 checks<-lappend(checks,check_dup(broodsNew),msg)
 
-msg<-"Check for duplicates using all columns in chicksNew"
+msg<-"CHICKS: Check for duplicates using all columns"
 
 checks<-lappend(checks,check_dup(chicksNew),msg)
-
 
 ###############################################################
 ###
 ###############################################################
 
-msg<-"Check for adults with more than one entry for a single date"
+msg<-"ADULTS: Check for adults with more than one entry for a single date"
 
 checks<-lappend(checks,check_dup(adultsNew,col=c("idadult","jjulien"))[,c("ferme","nichoir","idcouvee","jjulien","idadult","condition","commentaire")],msg)
 
-msg<-"Check for chicks with more than one entry for a single date"
+msg<-"NESTLINGS: Check for chicks with more than one entry for a single date"
 
 checks<-lappend(checks,check_dup(chicksNew,col=c("idois","jjulien"))[,c("ferme","nichoir","idcouvee","jjulien","idois","jour_suivi","condition","commentaires")],msg)
 
-msg<-"Check for chicks with more than one entry for a single age"
+msg<-"NESTLINGS: Check for chicks with more than one entry for a single age"
 
 checks<-lappend(checks,check_dup(chicksNew,col=c("idois","jour_suivi"))[,c("ferme","nichoir","idcouvee","jjulien","idois","jour_suivi","condition","commentaires")],msg)
-
 
 ###############################################################
 ###
@@ -777,7 +770,6 @@ checks<-lappend(checks,check_id_dup(adultsNew,col=c("idadult","ferme"))[,c("ferm
 msg<-"NESTLINGS: Check for nestlings found at more than one nestbox"
 
 checks<-lappend(checks,check_id_dup(chicksNew,col=c("idois","ferme","nichoir"))[,c("ferme","nichoir","idcouvee","jjulien","jour_suivi","idois", "numero_oisillon", "commentaires")],msg)
-
 
 ###############################################################
 ### 
