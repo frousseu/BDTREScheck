@@ -778,18 +778,6 @@ msg<-"Visits are not all 2 days apart for the following farms in the chicksNew D
 
 checks<-lappend(checks,list(vis2days(chicksNew)),msg)
 
-
-###############################################################
-###
-###############################################################
-
-#msg<-"Check for spaces in ferme ids"
-#
-#x<-adultsNew
-#checks<-lappend(checks,x[grep(" ",x$ferme),],msg)
-#
-
-
 ###############################################################
 ### DUPLICATES
 ###############################################################
