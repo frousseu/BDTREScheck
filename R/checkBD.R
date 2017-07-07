@@ -409,7 +409,7 @@ checks<-lappend(checks,check_val(chicksNew),msg)
 
 msg<-"ADULTS/BROODS: Females assigned to an idcouv in adults db but no female is assigned to this idcouv in broods db (check capture dates)"
 
-x<-merge(broodsNew[,c("idcouvee","idF1","idF2","idF3", "dponte", "denvomax", "dabanmax")],adultsNew[adultsNew$sexe_morpho=="F" | adultsNew$sexe_gen=="F" ,c("idcouvee", "idadult", "jjulien", "sexe_gen", "sexe_morpho")],by="idcouvee",all.x=TRUE)
+x<-merge(broodsNew[!is.na(broodsNew$nnich),c("idcouvee","idF1","idF2","idF3", "dponte", "denvomax", "dabanmax")],adultsNew[adultsNew$sexe_morpho=="F" | adultsNew$sexe_gen=="F" ,c("idcouvee", "idadult", "jjulien", "sexe_gen", "sexe_morpho")],by="idcouvee",all.x=TRUE)
 
 w<-which(is.na(x$idF1) & is.na(x$idF2) & is.na(x$idF3) & !is.na(x$idadult))
 
@@ -452,22 +452,56 @@ checks<-lappend(checks,x[w,],msg)
 ### 
 ################################################
 
-msg<-"Males without matches in the broodsNew file"
+msg<-"ADULTS/BROODS: Males assigned to an idcouv in adults db but no male is assigned to this idcouv in broods db (check capture dates)"
 
-x<-merge(broodsNew[,c("idcouvee","idM1")],adultsNew[adultsNew$sexe_morpho=="F",c("idcouvee", "idadult")],by="idcouvee",all.x=TRUE)
-w<-which(is.na(x$idM1) & !is.na(x$idadult))
+
+x<-merge(broodsNew[!is.na(broodsNew$nnich),c("idcouvee","idM1","idM2","idM3")],adultsNew[adultsNew$sexe_morpho=="M" | adultsNew$sexe_gen=="M" ,c("idcouvee", "idadult", "jjulien", "sexe_gen", "sexe_morpho")],by="idcouvee",all.x=TRUE)
+
+w<-which(is.na(x$idM1) & is.na(x$idM2) & is.na(x$idM3) & !is.na(x$idadult))
+
 checks<-lappend(checks,x[w,],msg)
 
-
-###################################################
+################################################
 ### 
-###################################################
+################################################
 
-msg<-c("Adult males wrongly assigned to broodsNew")
+msg<-"ADULTS/BROODS: Males assigned to an idcouv in adults db but not referenced in broods db (idM2 or idM3)"
 
-w<-which(x$idM1!=x$idadult)
+w<-which((x$idM1!=x$idadult | is.na(x$idM1) == T) & (x$idM2!=x$idadult | is.na(x$idM2) == T) & (x$idM3!=x$idadult | is.na(x$idM3) == T) & !(is.na(x$idM1)==T & is.na(x$idM2)==T & is.na(x$idM3)==T) )
+
 checks<-lappend(checks,x[w,],msg)
 
+################################################
+### Males not assign to an idcouv
+################################################
+
+msg<-"ADULTS/BROODS: Males captured at a nestbox but not assigned to an idcouv in adults db (check nnich)"
+
+x<-merge(broodsNew[,c("id","idcouvee","idM1","idM2","idM3", "declomin", "denvomax", "dabanmax")],adultsNew[adultsNew$sexe_morpho=="M" | adultsNew$sexe_gen=="M" ,c("id","idcouvee", "nnich", "idadult", "jjulien", "sexe_gen", "sexe_morpho")],by="id",all.x=TRUE)
+
+w<-which(is.na(x$nnich) & !is.na(x$idadul) & !is.na(x$declomin) & x$declomin <= x$jjulien & (x$denvomax >= x$jjulien|x$dabanmax >= x$jjulien))
+
+checks<-lappend(checks,x[w,],msg)
+
+################################################
+### Males assign to the wrong idcouv
+################################################
+
+msg<-"ADULTS/BROODS: Males captured at a nestbox but assigned to a wrong idcouv in adults db (check nnich)"
+
+w<-which(!is.na(x$nnich) & !is.na(x$idadul) & !is.na(x$declomin) & x$declomin <= x$jjulien & (x$denvomax >= x$jjulien|x$dabanmax >= x$jjulien) & x$idcouvee.x != x$idcouvee.y)
+
+checks<-lappend(checks,x[w,],msg)
+
+################################################
+### Two males in a nestbox
+################################################
+
+msg<-"BROODS: Two males captured in the same nestbox but not properly reported (idM2 and idM3, not idM1)"
+
+w<-which(!is.na(broodsNew$idM1) & (!is.na(broodsNew$idM2) | !is.na(broodsNew$idM3)))
+
+checks<-lappend(checks,broodsNew[w,c("idcouvee","idM1","idM2","idM3", "Commentaires")],msg)
 
 ##########################################################
 ### Check if the nnich corresponds
