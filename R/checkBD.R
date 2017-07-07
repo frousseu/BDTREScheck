@@ -1,7 +1,7 @@
 
 
 checkBD<-function(dsn=".",
-           year=NULL,
+           year,
            adultsNew=NULL,
            broodsNew=NULL,
            chicksNew=NULL,
@@ -11,11 +11,8 @@ checkBD<-function(dsn=".",
            sheet=1,
            stop=FALSE)
 {
-  
-if(is.null(year)==TRUE) 
-{ stop("The year argument MUST be specified")
-   }
-   
+ 
+
 #############################################
 ### INTERNAL FUNCTIONS
 #############################################

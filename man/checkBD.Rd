@@ -7,10 +7,11 @@ A function for doing checks on the TRES latest DB
 This function will do a series of checks on the latest TRES DB (adults, chicks and broods) and returns a list with the results.
 }
 \usage{
-checkBD(dsn = ".", adultsNew = "Adulte2016.xlsx", broodsNew = "Couvee2016.xlsx", chicksNew = "oisillons2016.xlsx", adultsOld = "Adultes_2004-2015.xlsx", broodsOld = "Couvee_2004-2015.xlsx", chicksOld = "Oisillons_2004-2015.xls", sheet = 1, stop = FALSE)
+checkBD(dsn = ".", year, adultsNew = NULL, broodsNew = NULL, chicksNew = NULL, adultsOld = "Adultes_2004-2015.xlsx", broodsOld = "Couvee_2004-2015.xlsx", chicksOld = "Oisillons_2004-2015.xls", sheet = 1, stop = FALSE)
 }
 \arguments{
   \item{dsn}{Path to the location of the different databases}
+  \item{year}{Year in which verfications are made}
   \item{adultsNew}{Excel file with the latest data}
   \item{broodsNew}{Excel file with the latest data}
   \item{chicksNew}{Excel file with the latest data}
