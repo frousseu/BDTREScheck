@@ -379,7 +379,7 @@ checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","prefixe", "
 ################################################################################
 
 
-col_val<-c("annee","nnich","jjulien","condition","sexe_morpho","age_morpho","couleur","age_exact","plaqueincu","Cause_recapt")
+col_val<-c("annee","nnich","jjulien","condition","sexe_morpho","age_exact")
 
 # function for checking unique values
 check_val<-function(x){
@@ -613,7 +613,7 @@ checks<-lappend(checks,x[w,],msg)
 ### 
 ###############################################################
 
-msg<-"Adult sex/age incoherencies within the current year"
+msg<-"ADULTS: Sex/age incoherencies within the current year"
 
 x<-adultsNew
 w<-which((x$sexe_morpho%in%c("F") & !x$age_morpho%in%c("SY","ASY",NA)) | (x$sexe_morpho%in%c("M") & !x$age_morpho%in%c("AHY",NA)) | (x$sexe_morpho%in%c(NA) & !x$age_morpho%in%c(NA)))
@@ -623,14 +623,14 @@ checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","idadult","s
 ### 
 ###############################################################
 
-msg<-"Adult sex/age incoherencies between years"
+msg<-"ADULTS: sex/age incoherencies between years"
 checks<-lappend(checks,"TO DO",msg)
 
 ###############################################################
 ### Capture time - Nestlings
 ###############################################################
 
-msg<-"Adult capture time outside 06:30 and 20:00"
+msg<-"ADULTS: Capture time outside 06:30 and 20:00"
 
 mmh<-c("06:30","20:00")
 
@@ -642,7 +642,7 @@ checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","idadult","h
 ### Capture time - Nestlings
 ###############################################################
 
-msg<-"Nestling capture time outside 06:30 and 20:00"
+msg<-"NESTLINGS: Capture time outside 06:30 and 20:00"
 
 x<-chicksNew
 w<-which(x$heure<mmh[1] | x$heure>mmh[2])
@@ -653,7 +653,7 @@ checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","idois","heu
 ### 
 ###############################################################
 
-msg<-"Some colors not in the list of possible values"
+msg<-"ADULTS: Some colors not in the list of possible values"
 
 x<-adultsNew
 w<-which(!x$couleur%in%c("B","V","BV","BR",NA))
@@ -663,14 +663,14 @@ checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","idadult","c
 ###
 ###############################################################
 
-msg<-"Adult wing measurement outside the range of likely values (105-125 mm)"
+msg<-"ADULTS: Wing measurement outside the range of likely values (105-125 mm)"
 
 x<-adultsNew
 val<-c(105,125)
 w<-which(x$laile1<val[1] | x$laile2<val[1] | x$laile1>val[2] | x$laile2>val[2])
 checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","idadult","laile1","laile2","commentaire")],msg)
 
-msg<-"Adult wing measurement 1 and 2 too far apart (>1 mm)"
+msg<-"ADULTS: Wing measurement 1 and 2 too far apart (>1 mm)"
 
 x<-adultsNew
 val<-c(1)
@@ -683,7 +683,7 @@ checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","idadult","l
 ### 
 ###############################################################
 
-msg<-"Adult weight measurements outside the range of likely values (15-30g)"
+msg<-"ADULTS: Weight measurements outside the range of likely values (15-30g)"
 
 x<-adultsNew
 val<-c(15,30)
@@ -695,7 +695,7 @@ checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","idadult","m
 ###
 ###############################################################
 
-msg<-"Adult tarsus measurements outside the range of likely values (10-14 mm)"
+msg<-"ADULTS: Tarsus measurements outside the range of likely values (10-14 mm)"
 
 x<-adultsNew
 val<-c(10,14)
@@ -710,17 +710,48 @@ val<-c(0.1)
 w<-which(abs(x$tarse1 - x$tarse2) > val)
 checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","idadult","tarse1","tarse2","commentaire")],msg)
 
+###############################################################
+###
+###############################################################
+
+msg<-"ADULTS: Wrong condition status"
+
+x<-adultsNew
+w<-which(!x$condition%in%c("0","1","2","3"))
+checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","idadult","condition","commentaire")],msg)
+
 
 ###############################################################
 ###
 ###############################################################
 
-msg<-"Male with brood patch"
+msg<-"ADULTS: Wrong plaqueincu status"
 
 x<-adultsNew
-val<-c(10,14)
-w<-which(x$sexe_morpho%in%c("M") & !x$plaqueincu%in%c(0,NA))
-checks<-lappend(checks,x[w,],msg)
+w<-which(!x$plaqueincu%in%c("0","1") & !is.na(x$plaqueincu))
+checks<-lappend(checks,x[w,c("ferme","nichoir","jjulien","idcouvee","idadult","plaqueincu","commentaire")],msg)
+
+
+
+###############################################################
+###
+###############################################################
+
+msg<-"ADULTS: Male with brood patch (plaqueincu)"
+
+x<-adultsNew
+w<-which(x$sexe_morpho%in%c("M") & !x$plaqueincu%in%c("0",NA))
+checks<-lappend(checks,x[w,c("ferme","nichoir","jjulien","idcouvee","idadult","sexe_morpho","sexe_gen","plaqueincu","commentaire")],msg)
+
+###############################################################
+###
+###############################################################
+
+msg<-"ADULTS: Wrong Cause_capture status"
+
+x<-adultsNew
+w<-which(!x$Cause_recapt%in%c("0","RPCS","ACC","RPCM"))# & !x$plaqueincu%in%c(0,NA))
+checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","idadult","Cause_recapt","commentaire")],msg)
 
 
 ##########################################################
