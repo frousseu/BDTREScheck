@@ -238,11 +238,19 @@ x<-adultsNew
 w<-which(!x$ferme%in%ferme_names)
 checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","idadult")],msg)
 
+##########################################################################################
+### 
+##########################################################################################
+
 msg<-"NESTLINGS: Wrong ferme id observed"
 
 x<-chicksNew
 w<-which(!x$ferme%in%ferme_names)
 checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","idois")],msg)
+
+##########################################################################################
+### 
+##########################################################################################
 
 msg<-"BROODS: Wrong ferme id observed"
 
@@ -262,21 +270,26 @@ msg<-"ADULTS: Wrong nichoir id observed"
 
 x<-adultsNew
 w<-which((!x$ferme%in%c("23","41") & !x$nichoir%in%nichoir_names_all) | (x$ferme%in%c("23") & !x$nichoir%in%c(nichoir_names_all, "11")) | (x$ferme%in%c("41") & !x$nichoir%in%c(nichoir_names_all, nichoir_names_41)))
-
 checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","idadult")],msg)
+
+##########################################################################################
+### 
+##########################################################################################
 
 msg<-"NESTLINGS: Wrong nichoir id observed"
 
 x<-chicksNew
 w<-which((!x$ferme%in%c("23","41") & !x$nichoir%in%nichoir_names_all) | (x$ferme%in%c("23") & !x$nichoir%in%c(nichoir_names_all, "11")) | (x$ferme%in%c("41") & !x$nichoir%in%c(nichoir_names_all, nichoir_names_41)))
-
 checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","idois")],msg)
+
+##########################################################################################
+### 
+##########################################################################################
 
 msg<-"BROODS: Wrong nichoir id observed"
 
 x<-broodsNew
 w<-which((!x$ferme%in%c("23","41") & !x$nichoir%in%nichoir_names_all) | (x$ferme%in%c("23") & !x$nichoir%in%c(nichoir_names_all, "11")) | (x$ferme%in%c("41") & !x$nichoir%in%c(nichoir_names_all, nichoir_names_41)))
-
 checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee")],msg)
 
 ##########################################################################################
@@ -288,23 +301,28 @@ msg<-"ADULTS: id column doesn't correspond to ferme + nichoir id"
 x<-adultsNew
 x$TEST <- paste(x$ferme, x$nichoir, sep="")
 w<-which(x$id != x$TEST)
-
 checks<-lappend(checks,x[w,c("ferme","nichoir", "id", "idcouvee","jjulien","idadult")],msg)
+
+##########################################################################################
+### 
+##########################################################################################
 
 msg<-"NESTLINGS: id column doesn't correspond to ferme + nichoir id"
 
 x<-chicksNew
 x$TEST <- paste(x$ferme, x$nichoir, sep="")
 w<-which(x$id != x$TEST)
-
 checks<-lappend(checks,x[w,c("ferme","nichoir", "id", "idcouvee","jjulien","idois")],msg)
+
+##########################################################################################
+### 
+##########################################################################################
 
 msg<-"BROODS: id column doesn't correspond to ferme + nichoir id"
 
 x<-broodsNew
 x$TEST <- paste(x$ferme, x$nichoir, sep="")
 w<-which(x$id != x$TEST)
-
 checks<-lappend(checks,x[w,c("ferme","nichoir","id","idcouvee")],msg)
 
 ##########################################################################################
@@ -319,20 +337,26 @@ w<-which(x$idcouvee != x$TEST)
 
 checks<-lappend(checks,x[w,c("ferme","nichoir", "annee", "nnich", "idcouvee","jjulien","idadult")],msg)
 
+##########################################################################################
+### 
+##########################################################################################
+
 msg<-"NESTLINGS: idcouv doesn't correspond to ferme + nichoir + annee + nnich column"
 
 x<-chicksNew
 x$TEST <- paste(x$ferme, x$nichoir, x$annee, x$nnich, sep="")
 w<-which(x$idcouvee != x$TEST)
-
 checks<-lappend(checks,x[w,c("ferme","nichoir", "annee", "nnich", "idcouvee","jjulien","idois")],msg)
+
+##########################################################################################
+### 
+##########################################################################################
 
 msg<-"BROODS: idcouv doesn't correspond to ferme + nichoir + annee + nnich column"
 
 x<-broodsNew
 x$TEST <- paste(x$ferme, x$nichoir, x$annee, x$nnich, sep="")
 w<-which(x$idcouvee != x$TEST)
-
 checks<-lappend(checks,x[w,c("ferme","nichoir", "annee", "nnich", "idcouvee","codesp")],msg)
 
 
@@ -346,14 +370,16 @@ msg<-"ADULTS: Wrong prefixe name observed (is it a new prefixe?)"
 
 x<-adultsNew
 w<-which(!x$prefixe%in%prefixe_names & !is.na(x$prefixe))
-
 checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","prefixe", "suffixe","idadult")],msg)
+
+##########################################################################################
+### 
+##########################################################################################
 
 msg<-"NESTLINGS: Wrong prefixe name observed (is it a new prefixe?)"
 
 x<-chicksNew
 w<-which(!x$prefixe%in%prefixe_names & !is.na(x$prefixe))
-
 checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","prefixe", "suffixe","idois")],msg)
 
 
@@ -378,8 +404,7 @@ checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","prefixe", "
 ### Second check for unique values in columns with few non-numeric values
 ################################################################################
 
-
-col_val<-c("annee","nnich","jjulien","condition","sexe_morpho","age_exact")
+col_val<-c("annee","nnich","jjulien","sexe_morpho","age_exact")
 
 # function for checking unique values
 check_val<-function(x){
@@ -410,9 +435,7 @@ checks<-lappend(checks,check_val(chicksNew),msg)
 msg<-"ADULTS/BROODS: Females assigned to an idcouv in adults db but no female is assigned to this idcouv in broods db (check capture dates)"
 
 x<-merge(broodsNew[!is.na(broodsNew$nnich),c("idcouvee","idF1","idF2","idF3", "dponte", "denvomax", "dabanmax")],adultsNew[adultsNew$sexe_morpho=="F" | adultsNew$sexe_gen=="F" ,c("idcouvee", "idadult", "jjulien", "sexe_gen", "sexe_morpho")],by="idcouvee",all.x=TRUE)
-
 w<-which(is.na(x$idF1) & is.na(x$idF2) & is.na(x$idF3) & !is.na(x$idadult))
-
 checks<-lappend(checks,x[w, ],msg)
 
 
@@ -423,7 +446,6 @@ checks<-lappend(checks,x[w, ],msg)
 msg<-"ADULTS/BROODS: Females assigned to an idcouv in adults db but not referenced in broods db (idF2 or idF3)"
 
 w<-which((x$idF1!=x$idadult | is.na(x$idF1) == T) & (x$idF2!=x$idadult | is.na(x$idF2) == T) & (x$idF3!=x$idadult | is.na(x$idF3) == T) & !(is.na(x$idF1)==T & is.na(x$idF2)==T & is.na(x$idF3)==T) )
-
 checks<-lappend(checks,x[w,],msg)
 
 ################################################
@@ -433,9 +455,7 @@ checks<-lappend(checks,x[w,],msg)
 msg<-"ADULTS/BROODS: Females captured at a nestbox but not assigned to an idcouv in adults db (check nnich)"
 
 x<-merge(broodsNew[,c("id","idcouvee","idF1","idF2","idF3", "dponte", "denvomax", "dabanmax")],adultsNew[adultsNew$sexe_morpho=="F" | adultsNew$sexe_gen=="F" ,c("id","idcouvee", "nnich", "idadult", "jjulien", "sexe_gen", "sexe_morpho")],by="id",all.x=TRUE)
-
 w<-which(is.na(x$nnich) & !is.na(x$idadul) & !is.na(x$dponte) & x$dponte <= x$jjulien & (x$denvomax >= x$jjulien|x$dabanmax >= x$jjulien))
-
 checks<-lappend(checks,x[w,],msg)
 
 ################################################
@@ -445,7 +465,6 @@ checks<-lappend(checks,x[w,],msg)
 msg<-"ADULTS/BROODS: Females captured at a nestbox but assigned to a wrong idcouv in adults db (check nnich)"
 
 w<-which(!is.na(x$nnich) & !is.na(x$idadul) & !is.na(x$dponte) & x$dponte <= x$jjulien & (x$denvomax >= x$jjulien|x$dabanmax >= x$jjulien) & x$idcouvee.x != x$idcouvee.y)
-
 checks<-lappend(checks,x[w,],msg)
 
 ################################################
@@ -454,11 +473,8 @@ checks<-lappend(checks,x[w,],msg)
 
 msg<-"ADULTS/BROODS: Males assigned to an idcouv in adults db but no male is assigned to this idcouv in broods db (check capture dates)"
 
-
 x<-merge(broodsNew[!is.na(broodsNew$nnich),c("idcouvee","idM1","idM2","idM3")],adultsNew[adultsNew$sexe_morpho=="M" | adultsNew$sexe_gen=="M" ,c("idcouvee", "idadult", "jjulien", "sexe_gen", "sexe_morpho")],by="idcouvee",all.x=TRUE)
-
 w<-which(is.na(x$idM1) & is.na(x$idM2) & is.na(x$idM3) & !is.na(x$idadult))
-
 checks<-lappend(checks,x[w,],msg)
 
 ################################################
@@ -468,7 +484,6 @@ checks<-lappend(checks,x[w,],msg)
 msg<-"ADULTS/BROODS: Males assigned to an idcouv in adults db but not referenced in broods db (idM2 or idM3)"
 
 w<-which((x$idM1!=x$idadult | is.na(x$idM1) == T) & (x$idM2!=x$idadult | is.na(x$idM2) == T) & (x$idM3!=x$idadult | is.na(x$idM3) == T) & !(is.na(x$idM1)==T & is.na(x$idM2)==T & is.na(x$idM3)==T) )
-
 checks<-lappend(checks,x[w,],msg)
 
 ################################################
@@ -478,9 +493,7 @@ checks<-lappend(checks,x[w,],msg)
 msg<-"ADULTS/BROODS: Males captured at a nestbox but not assigned to an idcouv in adults db (check nnich)"
 
 x<-merge(broodsNew[,c("id","idcouvee","idM1","idM2","idM3", "declomin", "denvomax", "dabanmax")],adultsNew[adultsNew$sexe_morpho=="M" | adultsNew$sexe_gen=="M" ,c("id","idcouvee", "nnich", "idadult", "jjulien", "sexe_gen", "sexe_morpho")],by="id",all.x=TRUE)
-
 w<-which(is.na(x$nnich) & !is.na(x$idadul) & !is.na(x$declomin) & x$declomin <= x$jjulien & (x$denvomax >= x$jjulien|x$dabanmax >= x$jjulien))
-
 checks<-lappend(checks,x[w,],msg)
 
 ################################################
@@ -490,7 +503,6 @@ checks<-lappend(checks,x[w,],msg)
 msg<-"ADULTS/BROODS: Males captured at a nestbox but assigned to a wrong idcouv in adults db (check nnich)"
 
 w<-which(!is.na(x$nnich) & !is.na(x$idadul) & !is.na(x$declomin) & x$declomin <= x$jjulien & (x$denvomax >= x$jjulien|x$dabanmax >= x$jjulien) & x$idcouvee.x != x$idcouvee.y)
-
 checks<-lappend(checks,x[w,],msg)
 
 ################################################
@@ -582,8 +594,6 @@ msg<-"Capture date is later than the min or max date of nest abandonment"
 w<-which(((x$jjulien > x$dabanmin) | (x$jjulien > x$dabanmax)) & x$condition == 1)
 checks<-lappend(checks,x[w,],msg)
 
-
-
 ############################################## 
 ### Is nnich assigned correctly
 ##############################################
@@ -624,7 +634,7 @@ checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","idadult","s
 ###############################################################
 
 msg<-"ADULTS: sex/age incoherencies between years"
-checks<-lappend(checks,"TO DO",msg)
+checks<-lappend(checks,"TO DO !!!",msg)
 
 ###############################################################
 ### Capture time - Nestlings
@@ -676,8 +686,6 @@ x<-adultsNew
 val<-c(1)
 w<-which(abs(x$laile1 - x$laile2) > val)
 checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","idadult","laile1","laile2","commentaire")],msg)
-
-
 
 ###############################################################
 ### 
