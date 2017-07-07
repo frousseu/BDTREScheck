@@ -426,6 +426,27 @@ w<-which((x$idF1!=x$idadult | is.na(x$idF1) == T) & (x$idF2!=x$idadult | is.na(x
 
 checks<-lappend(checks,x[w,],msg)
 
+################################################
+### Females not assign to an idcouv
+################################################
+
+msg<-"ADULTS/BROODS: Females captured at a nestbox but not assigned to an idcouv in adults db (check nnich)"
+
+x<-merge(broodsNew[,c("id","idcouvee","idF1","idF2","idF3", "dponte", "denvomax", "dabanmax")],adultsNew[adultsNew$sexe_morpho=="F" | adultsNew$sexe_gen=="F" ,c("id","idcouvee", "nnich", "idadult", "jjulien", "sexe_gen", "sexe_morpho")],by="id",all.x=TRUE)
+
+w<-which(is.na(x$nnich) & !is.na(x$idadul) & !is.na(x$dponte) & x$dponte <= x$jjulien & (x$denvomax >= x$jjulien|x$dabanmax >= x$jjulien))
+
+checks<-lappend(checks,x[w,],msg)
+
+################################################
+### Females assign to the wrong idcouv
+################################################
+
+msg<-"ADULTS/BROODS: Females captured at a nestbox but assigned to a wrong idcouv in adults db (check nnich)"
+
+w<-which(!is.na(x$nnich) & !is.na(x$idadul) & !is.na(x$dponte) & x$dponte <= x$jjulien & (x$denvomax >= x$jjulien|x$dabanmax >= x$jjulien) & x$idcouvee.x != x$idcouvee.y)
+
+checks<-lappend(checks,x[w,],msg)
 
 ################################################
 ### 
