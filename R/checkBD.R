@@ -952,11 +952,11 @@ msg<-"NESTLINGS/BROODS: TRES broods with at least one nestling that are in brood
 
 temp<-setdiff(broodsNew$idcouvee[which(broodsNew$codesp == 1 & broodsNew$noisnes >=1)],chicksNew$idcouvee)
 if(length(temp)>0){
-  res<-temp
+  x<-temp
 }else{
-  res<-NULL
+  x<-NULL
 }
-checks<-lappend(checks,res,msg)
+checks<-lappend(checks,x,msg)
 
 ##########################################################
 ### Summarize brood information
