@@ -142,19 +142,19 @@ checks<-list()
 
 ### Empty lines are sometime generated when using read_excel
 
-msg<-"Remove rows with NA id's in broodsNew"
+msg<-"GENERAL: Remove rows with NA id's in broodsNew"
 ini<-nrow(broodsNew)
 broodsNew<-checkNArows(broodsNew)
 res<-paste("Removed",ini-nrow(broodsNew),"rows with NA ferme id's")
 checks<-lappend(checks,res,msg)
 
-msg<-"Remove rows with NA id's in adultsNew"
+msg<-"GENERAL: Remove rows with NA id's in adultsNew"
 ini<-nrow(adultsNew)
 adultsNew<-checkNArows(adultsNew)
 res<-paste("Removed",ini-nrow(adultsNew),"rows with NA ferme id's")
 checks<-lappend(checks,res,msg)
 
-msg<-"Remove rows with NA id's in chicksNew"
+msg<-"GENERAL: Remove rows with NA id's in chicksNew"
 ini<-nrow(chicksNew)
 chicksNew<-checkNArows(chicksNew)
 res<-paste("Removed",ini-nrow(chicksNew),"rows with NA ferme id's")
@@ -190,15 +190,15 @@ oisillon_names<-c("ferme","nichoir","id","annee","nnich","idcouvee","heure","jju
 couvee_names<-c("idcouvee","id","ferme","nichoir","annee","codesp","nnich","noeufs","noisnes","noisenvol","noismort","dispa_ois","dispa_oeufs","abandon","pred_pot","dponte","dincub","declomin","declomax","denvomin","denvomax","dabanmin","dabanmax","idF1","idM1","idF2","idF3","idM2","idM3","Commentaires")
 
 
-msg<-"Are column names in adult consistent?"
+msg<-"GENERAL: Are column names in adult consistent?"
 check_names(adultsNew)
 checks<-lappend(checks,NULL,msg)
 
-msg<-"Are column names in chicksNew consistent?"
+msg<-"GENERAL: Are column names in chicksNew consistent?"
 check_names(chicksNew)
 checks<-lappend(checks,NULL,msg)
 
-msg<-"Are column names in broodsNew consistent?"
+msg<-"GENERAL: Are column names in broodsNew consistent?"
 check_names(broodsNew)
 checks<-lappend(checks,NULL,msg)
 
@@ -210,7 +210,7 @@ checks<-lappend(checks,NULL,msg)
 
 ### This will also stop the function to prevent further checks if some names do not match, if everything is ok, a NULL will be appended to the check list
 
-msg<-"Are column names consistant across old and new databases"
+msg<-"GENERAL: Are column names consistant across old and new databases"
 
 res<-list()
 res[[1]]<-c(setdiff(names(broodsNew),names(broodsOld)),setdiff(names(broodsOld),names(broodsNew)))
@@ -232,19 +232,19 @@ checks<-lappend(checks,NULL,msg)
 
 ferme_names <- c("01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31", "32", "33", "34", "35", "36",  "37", "38", "39", "40", "41") 
 
-msg<-"Impossible ferme id observed in adultsNew db"
+msg<-"ADULTS: Wrong ferme id observed"
 
 x<-adultsNew
 w<-which(!x$ferme%in%ferme_names)
 checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","idadult")],msg)
 
-msg<-"Impossible ferme id observed in chicksNew db"
+msg<-"NESTLINGS: Wrong ferme id observed"
 
 x<-chicksNew
 w<-which(!x$ferme%in%ferme_names)
 checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","idois")],msg)
 
-msg<-"Impossible ferme id observed in broodsNew db"
+msg<-"BROODS: Wrong ferme id observed"
 
 x<-broodsNew
 w<-which(!x$ferme%in%ferme_names)
@@ -258,21 +258,21 @@ checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee")],msg)
 nichoir_names_all <- c("01", "02", "03", "04", "05", "06", "07", "08", "09", "10")
 nichoir_names_41  <- c("11", "12", "13", "14", "15", "16", "17", "18", "19") 
 
-msg<-"Impossible nichoir id observed in adultsNew db"
+msg<-"ADULTS: Wrong nichoir id observed"
 
 x<-adultsNew
 w<-which((!x$ferme%in%c("23","41") & !x$nichoir%in%nichoir_names_all) | (x$ferme%in%c("23") & !x$nichoir%in%c(nichoir_names_all, "11")) | (x$ferme%in%c("41") & !x$nichoir%in%c(nichoir_names_all, nichoir_names_41)))
 
 checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","idadult")],msg)
 
-msg<-"Impossible nichoir id observed in chicksNew db"
+msg<-"NESTLINGS: Wrong nichoir id observed"
 
 x<-chicksNew
 w<-which((!x$ferme%in%c("23","41") & !x$nichoir%in%nichoir_names_all) | (x$ferme%in%c("23") & !x$nichoir%in%c(nichoir_names_all, "11")) | (x$ferme%in%c("41") & !x$nichoir%in%c(nichoir_names_all, nichoir_names_41)))
 
 checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","idois")],msg)
 
-msg<-"Impossible nichoir id observed in broodsNew db"
+msg<-"BROODS: Wrong nichoir id observed"
 
 x<-broodsNew
 w<-which((!x$ferme%in%c("23","41") & !x$nichoir%in%nichoir_names_all) | (x$ferme%in%c("23") & !x$nichoir%in%c(nichoir_names_all, "11")) | (x$ferme%in%c("41") & !x$nichoir%in%c(nichoir_names_all, nichoir_names_41)))
@@ -283,7 +283,7 @@ checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee")],msg)
 ### Check that id == ferme + nichoir
 ##########################################################################################
 
-msg<-"Id column do not correspond to ferme + nichoir id in adultsNew db"
+msg<-"ADULTS: id column doesn't correspond to ferme + nichoir id"
 
 x<-adultsNew
 x$TEST <- paste(x$ferme, x$nichoir, sep="")
@@ -291,7 +291,7 @@ w<-which(x$id != x$TEST)
 
 checks<-lappend(checks,x[w,c("ferme","nichoir", "id", "idcouvee","jjulien","idadult")],msg)
 
-msg<-"Id column do not correspond to ferme + nichoir id  in chicksNew db"
+msg<-"NESTLINGS: id column doesn't correspond to ferme + nichoir id"
 
 x<-chicksNew
 x$TEST <- paste(x$ferme, x$nichoir, sep="")
@@ -299,7 +299,7 @@ w<-which(x$id != x$TEST)
 
 checks<-lappend(checks,x[w,c("ferme","nichoir", "id", "idcouvee","jjulien","idois")],msg)
 
-msg<-"Id column do not correspond to ferme + nichoir id  in broodsNew db"
+msg<-"BROODS: id column doesn't correspond to ferme + nichoir id"
 
 x<-broodsNew
 x$TEST <- paste(x$ferme, x$nichoir, sep="")
@@ -311,7 +311,7 @@ checks<-lappend(checks,x[w,c("ferme","nichoir","id","idcouvee")],msg)
 ### Check that idcouv == ferme + nichoir + annee + nnich
 ##########################################################################################
 
-msg<-"idcouv does not correspond to ferme + nichoir + annee + nnich column in adultsNew db"
+msg<-"ADULTS: idcouv doesn't correspond to ferme + nichoir + annee + nnich column"
 
 x<-adultsNew
 x$TEST <- paste(x$ferme, x$nichoir, x$annee, x$nnich, sep="")
@@ -319,7 +319,7 @@ w<-which(x$idcouvee != x$TEST)
 
 checks<-lappend(checks,x[w,c("ferme","nichoir", "annee", "nnich", "idcouvee","jjulien","idadult")],msg)
 
-msg<-"idcouv does not correspond to ferme + nichoir + annee + nnich column in chicksNew db"
+msg<-"NESTLINGS: idcouv doesn't correspond to ferme + nichoir + annee + nnich column"
 
 x<-chicksNew
 x$TEST <- paste(x$ferme, x$nichoir, x$annee, x$nnich, sep="")
@@ -327,7 +327,7 @@ w<-which(x$idcouvee != x$TEST)
 
 checks<-lappend(checks,x[w,c("ferme","nichoir", "annee", "nnich", "idcouvee","jjulien","idois")],msg)
 
-msg<-"idcouv does not correspond to ferme + nichoir + annee + nnich column in broodsNew db"
+msg<-"BROODS: idcouv doesn't correspond to ferme + nichoir + annee + nnich column"
 
 x<-broodsNew
 x$TEST <- paste(x$ferme, x$nichoir, x$annee, x$nnich, sep="")
@@ -342,14 +342,14 @@ checks<-lappend(checks,x[w,c("ferme","nichoir", "annee", "nnich", "idcouvee","co
 
 prefixe_names <- c("1881", "1921", "2221", "2311", "2351", "2490", "2511", "2521", "2591", "2621")
 
-msg<-"Impossible prefixe name observed in adultsNew db (is it a new prefixe?)"
+msg<-"ADULTS: Wrong prefixe name observed (is it a new prefixe?)"
 
 x<-adultsNew
 w<-which(!x$prefixe%in%prefixe_names & !is.na(x$prefixe))
 
 checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","prefixe", "suffixe","idadult")],msg)
 
-msg<-"Impossible prefixe name observed in chicksNew db (is it a new prefixe?)"
+msg<-"NESTLINGS: Wrong prefixe name observed (is it a new prefixe?)"
 
 x<-chicksNew
 w<-which(!x$prefixe%in%prefixe_names & !is.na(x$prefixe))
@@ -379,7 +379,7 @@ checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","prefixe", "
 ################################################################################
 
 
-col_val<-c("annee","nnich","jjulien","condition","sexe_morpho","age_morpho","couleur","age_exact","trougauche","troudroite","pararectrice","plaqueincu","Cause_recapt")
+col_val<-c("annee","nnich","jjulien","condition","sexe_morpho","age_morpho","couleur","age_exact","plaqueincu","Cause_recapt")
 
 # function for checking unique values
 check_val<-function(x){
@@ -390,15 +390,15 @@ check_val<-function(x){
   res
 }
 
-msg<-"Show all unique values in adultsNew columns for which the number of possible values is restricted"
+msg<-"ADULTS: Show all unique values in columns for which the number of possible values is restricted"
 
 checks<-lappend(checks,check_val(adultsNew),msg)
 
-msg<-"Show all unique values in broodsNew columns for which the number of possible values is restricted"
+msg<-"BROODS: Show all unique values in columns for which the number of possible values is restricted"
 
 checks<-lappend(checks,check_val(broodsNew),msg)
 
-msg<-"Show all unique values in chicksNew columns for which the number of possible values is restricted"
+msg<-"NESTLINGS: Show all unique values in columns for which the number of possible values is restricted"
 
 checks<-lappend(checks,check_val(chicksNew),msg)
 
@@ -407,9 +407,9 @@ checks<-lappend(checks,check_val(chicksNew),msg)
 ### Check for females and brood assignment
 ################################################
 
-msg<-"Adult females assigned to an idcouv in adultsNEW but no female is assigned to this idcouv in broodsNEW"
+msg<-"ADULTS/BROODS: Females assigned to an idcouv in adults db but no female is assigned to this idcouv in broods db (check capture dates)"
 
-x<-merge(broodsNew[,c("idcouvee","idF1","idF2","idF3")],adultsNew[adultsNew$sexe_morpho=="F" | adultsNew$sexe_gen=="F" ,c("idcouvee", "idadult")],by="idcouvee",all.x=TRUE)
+x<-merge(broodsNew[,c("idcouvee","idF1","idF2","idF3", "dponte", "denvomax", "dabanmax")],adultsNew[adultsNew$sexe_morpho=="F" | adultsNew$sexe_gen=="F" ,c("idcouvee", "idadult", "jjulien", "sexe_gen", "sexe_morpho")],by="idcouvee",all.x=TRUE)
 
 w<-which(is.na(x$idF1) & is.na(x$idF2) & is.na(x$idF3) & !is.na(x$idadult))
 
@@ -420,7 +420,7 @@ checks<-lappend(checks,x[w, ],msg)
 ### 
 ################################################
 
-msg<-"Adult females assigned to an idcouv in adultNew but not referenced in broodsNew (idF2 or idF3)"
+msg<-"ADULTS/BROODS: Females assigned to an idcouv in adults db but not referenced in broods db (idF2 or idF3)"
 
 w<-which((x$idF1!=x$idadult | is.na(x$idF1) == T) & (x$idF2!=x$idadult | is.na(x$idF2) == T) & (x$idF3!=x$idadult | is.na(x$idF3) == T) & !(is.na(x$idF1)==T & is.na(x$idF2)==T & is.na(x$idF3)==T) )
 
