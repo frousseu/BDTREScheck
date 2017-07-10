@@ -582,9 +582,9 @@ checks<-lappend(checks,"TO DO !!!",msg)
 ### Capture time - Nestlings
 ###############################################################
 
-msg<-"ADULTS: Capture time outside 06:30 and 20:00"
+msg<-"ADULTS: Capture time outside 06:00 and 20:40 (max)"
 
-mmh<-c("06:30","20:00")
+mmh<-c("06:00","20:40")
 
 x<-adultsNew
 w<-which(x$heure<mmh[1] | x$heure>mmh[2])
@@ -594,7 +594,7 @@ checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","idadult","h
 ### Capture time - Nestlings
 ###############################################################
 
-msg<-"NESTLINGS: Capture time outside 06:30 and 20:00"
+msg<-"NESTLINGS: Capture time outside 06:00 and 20:40 (max)"
 
 x<-chicksNew
 w<-which(x$heure<mmh[1] | x$heure>mmh[2])
