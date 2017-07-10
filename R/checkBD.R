@@ -121,9 +121,9 @@ chick_col <- c(rep("text",3),rep("numeric",2), "text", "date", "numeric", rep("t
 
 ### read_excel est sûrement utilisé temporairement et je supprime donc les warnings associés à la détection de caractères non-attendus
 
-broodsOld<-suppressWarnings(as.data.frame(read_excel(file.path(dsn,broodsOld),sheet=1,na="NA",col_types=couv_col,guess_max=100000)))
-adultsOld<-suppressWarnings(as.data.frame(read_excel(file.path(dsn,adultsOld),sheet=1,na="NA",col_types=adul_col,guess_max=100000)))
-chicksOld<-suppressWarnings(as.data.frame(read_excel(file.path(dsn,chicksOld),sheet=1,na="NA",col_types=chick_col,guess_max=100000))) 
+broodsOld<-suppressWarnings(as.data.frame(read_excel(file.path(dsn,broodsOld),sheet=sheet,na="NA",col_types=couv_col,guess_max=100000)))
+adultsOld<-suppressWarnings(as.data.frame(read_excel(file.path(dsn,adultsOld),sheet=sheet,na="NA",col_types=adul_col,guess_max=100000)))
+chicksOld<-suppressWarnings(as.data.frame(read_excel(file.path(dsn,chicksOld),sheet=sheet,na="NA",col_types=chick_col,guess_max=100000))) 
 
 ### If not specify New data not specified, Get New data from Old dataset (subsetting based year)
 if(is.null(broodsNew)==T){
