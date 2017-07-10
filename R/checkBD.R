@@ -600,6 +600,64 @@ x<-chicksNew
 w<-which(x$heure<mmh[1] | x$heure>mmh[2])
 checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","idois","heure","commentaires")],msg)
 
+###############################################################
+### Genetic sex combination with loci in adults
+###############################################################
+
+msg<-"ADULTS: Wrong sexe_gen/locus_sexe_gen association (both NA or with values)"
+
+x<-adultsNew
+w<-which(!(is.na(x$sexe_gen) & is.na(x$locus_sexe_gen) | (x$sexe_gen%in%c("M","F","I") & x$locus_sexe_gen%in%c("P2P8","L2550"))))
+checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","idadult","sexe_gen","locus_sexe_gen")],msg)
+
+###############################################################
+### Adults which change sex during a breeding season
+###############################################################
+
+msg<-"ADULTS: Check for adults with changing sexe_morph (within the current breeding season ONLY)"
+
+checks<-lappend(checks,check_id_dup(adultsNew,col=c("idadult","sexe_morpho"))[,c("ferme","nichoir","idcouvee","jjulien","idadult","sexe_morpho","sexe_gen","locus_sexe_gen","commentaire")],msg)
+
+###############################################################
+### Adults which change sex during across breeding season
+###############################################################
+
+msg<-"ADULTS: Check for adults with changing sexe_morph (across seasons)"
+
+checks<-lappend(checks,check_id_dup(rbind(adultsOld[adultsOld$idadult%in%unique(adultsNew$idadult),],adultsNew),col=c("idadult","sexe_morpho"))[,c("annee","ferme","nichoir","idcouvee","jjulien","idadult","sexe_morpho","sexe_gen","locus_sexe_gen","commentaire")],msg)
+
+###############################################################
+### Adults which change sex during a breeding season
+###############################################################
+
+msg<-"ADULTS: Check for adults with changing sexe_gen (within the current breeding season ONLY)"
+
+checks<-lappend(checks,check_id_dup(adultsNew,col=c("idadult","sexe_gen"))[,c("ferme","nichoir","idcouvee","jjulien","idadult","sexe_morpho","sexe_gen","locus_sexe_gen","commentaire")],msg)
+
+###############################################################
+### Adults which change sex during across breeding season
+###############################################################
+
+msg<-"ADULTS: Check for adults with changing sexe_gen (across seasons)"
+
+checks<-lappend(checks,check_id_dup(rbind(adultsOld[adultsOld$idadult%in%unique(adultsNew$idadult),],adultsNew),col=c("idadult","sexe_gen"))[,c("annee","ferme","nichoir","idcouvee","jjulien","idadult","sexe_morpho","sexe_gen","locus_sexe_gen","commentaire")],msg)
+
+###############################################################
+### Adults which change sex during a breeding season
+###############################################################
+
+msg<-"ADULTS: Check for adults with changing locus_sexe_gen (within the current breeding season ONLY)"
+
+checks<-lappend(checks,check_id_dup(adultsNew,col=c("idadult","locus_sexe_gen"))[,c("ferme","nichoir","idcouvee","jjulien","idadult","sexe_morpho","sexe_gen","locus_sexe_gen","commentaire")],msg)
+
+###############################################################
+### Adults which change sex during across breeding season
+###############################################################
+
+msg<-"ADULTS: Check for adults with changing locus_sexe_gen (across seasons)"
+
+checks<-lappend(checks,check_id_dup(rbind(adultsOld[adultsOld$idadult%in%unique(adultsNew$idadult),],adultsNew),col=c("idadult","locus_sexe_gen"))[,c("annee","ferme","nichoir","idcouvee","jjulien","idadult","sexe_morpho","sexe_gen","locus_sexe_gen","commentaire")],msg)
+
 
 ###############################################################
 ### 
