@@ -238,143 +238,251 @@ checkShow(html=FALSE)
 </tr>
 <tr>
 <td style='text-align: center;'>38</td>
-<td style='text-align: center;'> "ADULTS: Capture time outside 06:30 and 20:00"</td>
+<td style='text-align: center;'> "ADULTS: Capture time outside 06:00 and 20:40 (max)"</td>
 </tr>
 <tr>
 <td style='text-align: center;'>39</td>
-<td style='text-align: center;'> "NESTLINGS: Capture time outside 06:30 and 20:00"</td>
+<td style='text-align: center;'> "NESTLINGS: Capture time outside 06:00 and 20:40 (max)"</td>
 </tr>
 <tr>
 <td style='text-align: center;'>40</td>
-<td style='text-align: center;'> "ADULTS: Some colors not in the list of possible values"</td>
+<td style='text-align: center;'> "ADULTS: Wrong sexe_gen/locus_sexe_gen association (both NA or with values)"</td>
 </tr>
 <tr>
 <td style='text-align: center;'>41</td>
-<td style='text-align: center;'> "ADULTS: Wing measurement outside the range of likely values (105-125 mm)"</td>
+<td style='text-align: center;'> "ADULTS: Check for adults with changing sexe_morph (within the current breeding season ONLY)"</td>
 </tr>
 <tr>
 <td style='text-align: center;'>42</td>
-<td style='text-align: center;'> "ADULTS: Wing measurement 1 and 2 too far apart (>1 mm)"</td>
+<td style='text-align: center;'> "ADULTS: Check for adults with changing sexe_morph (across seasons)"</td>
 </tr>
 <tr>
 <td style='text-align: center;'>43</td>
-<td style='text-align: center;'> "ADULTS: Weight measurements outside the range of likely values (15-30g)"</td>
+<td style='text-align: center;'> "ADULTS: Check for adults with changing sexe_gen (within the current breeding season ONLY)"</td>
 </tr>
 <tr>
 <td style='text-align: center;'>44</td>
-<td style='text-align: center;'> "ADULTS: Tarsus measurements outside the range of likely values (10-14 mm)"</td>
+<td style='text-align: center;'> "ADULTS: Check for adults with changing sexe_gen (across seasons)"</td>
 </tr>
 <tr>
 <td style='text-align: center;'>45</td>
-<td style='text-align: center;'> "ADULTS: tarsus measurement 1 and 2 too far apart (>0.1 mm)"</td>
+<td style='text-align: center;'> "ADULTS: Check for adults with changing locus_sexe_gen (within the current breeding season ONLY)"</td>
 </tr>
 <tr>
 <td style='text-align: center;'>46</td>
-<td style='text-align: center;'> "ADULTS: Wrong condition status"</td>
+<td style='text-align: center;'> "ADULTS: Check for adults with changing locus_sexe_gen (across seasons)"</td>
 </tr>
 <tr>
 <td style='text-align: center;'>47</td>
-<td style='text-align: center;'> "ADULTS: Wrong plaqueincu status"</td>
+<td style='text-align: center;'> "ADULTS: Some colors not in the list of possible values"</td>
 </tr>
 <tr>
 <td style='text-align: center;'>48</td>
-<td style='text-align: center;'> "ADULTS: Male with brood patch (plaqueincu)"</td>
+<td style='text-align: center;'> "ADULTS: Wing measurement outside the range of likely values (105-125 mm)"</td>
 </tr>
 <tr>
 <td style='text-align: center;'>49</td>
-<td style='text-align: center;'> "ADULTS: Wrong Cause_capture status"</td>
+<td style='text-align: center;'> "ADULTS: Wing measurement 1 and 2 too far apart (>1 mm)"</td>
 </tr>
 <tr>
 <td style='text-align: center;'>50</td>
-<td style='text-align: center;'> "Newly installed band found in the previous years"</td>
+<td style='text-align: center;'> "ADULTS: Weight measurements outside the range of likely values (15-30g)"</td>
 </tr>
 <tr>
 <td style='text-align: center;'>51</td>
-<td style='text-align: center;'> "ADULTS: Visits are not all 2 days apart for the following farms"</td>
+<td style='text-align: center;'> "ADULTS: Tarsus measurements outside the range of likely values (10-14 mm)"</td>
 </tr>
 <tr>
 <td style='text-align: center;'>52</td>
-<td style='text-align: center;'> "NESTLINGS: Visits are not all 2 days apart for the following farms"</td>
+<td style='text-align: center;'> "ADULTS: tarsus measurement 1 and 2 too far apart (>0.1 mm)"</td>
 </tr>
 <tr>
 <td style='text-align: center;'>53</td>
-<td style='text-align: center;'> "ADULTS: Check for duplicates using all columns"</td>
+<td style='text-align: center;'> "ADULTS: Wrong condition status"</td>
 </tr>
 <tr>
 <td style='text-align: center;'>54</td>
-<td style='text-align: center;'> "BROODS: Check for duplicates using all columns"</td>
+<td style='text-align: center;'> "ADULTS: Wrong plaqueincu status"</td>
 </tr>
 <tr>
 <td style='text-align: center;'>55</td>
-<td style='text-align: center;'> "CHICKS: Check for duplicates using all columns"</td>
+<td style='text-align: center;'> "ADULTS: Male with brood patch (plaqueincu)"</td>
 </tr>
 <tr>
 <td style='text-align: center;'>56</td>
-<td style='text-align: center;'> "ADULTS: Check for adults with more than one entry for a single date"</td>
+<td style='text-align: center;'> "ADULTS: Wrong Cause_capture status"</td>
 </tr>
 <tr>
 <td style='text-align: center;'>57</td>
-<td style='text-align: center;'> "NESTLINGS: Check for chicks with more than one entry for a single date"</td>
+<td style='text-align: center;'> "Newly installed band found in the previous years"</td>
 </tr>
 <tr>
 <td style='text-align: center;'>58</td>
-<td style='text-align: center;'> "NESTLINGS: Check for chicks with more than one entry for a single age"</td>
+<td style='text-align: center;'> "ADULTS: Visits are not all 2 days apart for the following farms"</td>
 </tr>
 <tr>
 <td style='text-align: center;'>59</td>
-<td style='text-align: center;'> "ADULTS: Check for adults found at more than one farm (maybe not an error)"</td>
+<td style='text-align: center;'> "NESTLINGS: Visits are not all 2 days apart for the following farms"</td>
 </tr>
 <tr>
 <td style='text-align: center;'>60</td>
-<td style='text-align: center;'> "NESTLINGS: Check for nestlings found at more than one nestbox"</td>
+<td style='text-align: center;'> "ADULTS: Check for duplicates using all columns"</td>
 </tr>
 <tr>
 <td style='text-align: center;'>61</td>
-<td style='text-align: center;'> "NESTLINGS/BROODS: Capture date of young is later than the minimal abandonment date if nest was abandoned"</td>
+<td style='text-align: center;'> "BROODS: Check for duplicates using all columns"</td>
 </tr>
 <tr>
 <td style='text-align: center;'>62</td>
-<td style='text-align: center;'> "NESTLINGS/BROODS: Capture date of young is before the laying date"</td>
+<td style='text-align: center;'> "CHICKS: Check for duplicates using all columns"</td>
 </tr>
 <tr>
 <td style='text-align: center;'>63</td>
-<td style='text-align: center;'> "NESTLINGS/BROODS: jjulien of young that doesn't correspond to declomax + jour_suivi"</td>
+<td style='text-align: center;'> "ADULTS: Check for adults with more than one entry for a single date"</td>
 </tr>
 <tr>
 <td style='text-align: center;'>64</td>
-<td style='text-align: center;'> "NESTLINGS: Wrong chick conditions (4 possible values; vivant, disparu, mort or disparuj16)"</td>
+<td style='text-align: center;'> "NESTLINGS: Check for chicks with more than one entry for a single date"</td>
 </tr>
 <tr>
 <td style='text-align: center;'>65</td>
-<td style='text-align: center;'> "NESTLINGS: Dead or disappeared nestlings without a 0 for flight code (few exceptions possibles, see comments)"</td>
+<td style='text-align: center;'> "NESTLINGS: Check for chicks with more than one entry for a single age"</td>
 </tr>
 <tr>
 <td style='text-align: center;'>66</td>
-<td style='text-align: center;'> "NESTLINGS: Nestling with disparuj16 condition but without a 1 for flight code"</td>
+<td style='text-align: center;'> "ADULTS: Check for adults found at more than one farm (maybe not an error)"</td>
 </tr>
 <tr>
 <td style='text-align: center;'>67</td>
-<td style='text-align: center;'> "NESTLINGS: Make sure that living nestlings with a 0 flight code are eventually dead or disappeared"</td>
+<td style='text-align: center;'> "NESTLINGS: Check for nestlings found at more than one nestbox"</td>
 </tr>
 <tr>
 <td style='text-align: center;'>68</td>
-<td style='text-align: center;'> "NESTLINGS: Make sure that no nestling comes back to life"</td>
+<td style='text-align: center;'> "NESTLINGS/BROODS: Capture date of young is later than the minimal abandonment date if nest was abandoned"</td>
 </tr>
 <tr>
 <td style='text-align: center;'>69</td>
-<td style='text-align: center;'> "NESTLINGS: Nestlings which were followed for 12 days or more should have a band number as id and otherwise they should have a farm/brood id (maybe an exception, see comments)"</td>
+<td style='text-align: center;'> "NESTLINGS/BROODS: Capture date of young is before the laying date"</td>
 </tr>
 <tr>
 <td style='text-align: center;'>70</td>
-<td style='text-align: center;'> "NESTLINGS: Chicks for which there is a band number but it does not correspond to the id of the chick"</td>
+<td style='text-align: center;'> "NESTLINGS/BROODS: jjulien of young that doesn't correspond to declomax + jour_suivi"</td>
 </tr>
 <tr>
 <td style='text-align: center;'>71</td>
+<td style='text-align: center;'> "NESTLINGS: Wrong sexe_gen/locus_sexe_gen association (both NA or with values)"</td>
+</tr>
+<tr>
+<td style='text-align: center;'>72</td>
+<td style='text-align: center;'> "NESTLINGS: Check for individuals with changing sexe_gen"</td>
+</tr>
+<tr>
+<td style='text-align: center;'>73</td>
+<td style='text-align: center;'> "NESTLINGS: Check for individuals with changing locus_sexe_gen"</td>
+</tr>
+<tr>
+<td style='text-align: center;'>74</td>
+<td style='text-align: center;'> "NESTLINGS: Wrong chick conditions (4 possible values; vivant, disparu, mort or disparuj16)"</td>
+</tr>
+<tr>
+<td style='text-align: center;'>75</td>
+<td style='text-align: center;'> "NESTLINGS: Dead or disappeared nestlings without a 0 for flight code (few exceptions possibles, see comments)"</td>
+</tr>
+<tr>
+<td style='text-align: center;'>76</td>
+<td style='text-align: center;'> "NESTLINGS: Nestling with disparuj16 condition but without a 1 for flight code"</td>
+</tr>
+<tr>
+<td style='text-align: center;'>77</td>
+<td style='text-align: center;'> "NESTLINGS: Make sure that living nestlings with a 0 flight code are eventually dead or disappeared"</td>
+</tr>
+<tr>
+<td style='text-align: center;'>78</td>
+<td style='text-align: center;'> "NESTLINGS: Make sure that no nestling comes back to life"</td>
+</tr>
+<tr>
+<td style='text-align: center;'>79</td>
+<td style='text-align: center;'> "NESTLINGS: Nestlings which were followed for 12 days or more should have a band number as id and otherwise they should have a farm/brood id (maybe an exception, see comments)"</td>
+</tr>
+<tr>
+<td style='text-align: center;'>80</td>
+<td style='text-align: center;'> "NESTLINGS: Chicks for which there is a band number but it does not correspond to the id of the chick"</td>
+</tr>
+<tr>
+<td style='text-align: center;'>81</td>
+<td style='text-align: center;'> "NESTLINGS: 9primaires larger than expected (65 mm, no age consideration)"</td>
+</tr>
+<tr>
+<td style='text-align: center;'>82</td>
+<td style='text-align: center;'> "NESTLINGS: 9primaires outside the range of likely values at 6-day-old (0 - 10 mm)"</td>
+</tr>
+<tr>
+<td style='text-align: center;'>83</td>
+<td style='text-align: center;'> "NESTLINGS: 9primaires outside the range of likely values at 12-day-old (5 - 45 mm)"</td>
+</tr>
+<tr>
+<td style='text-align: center;'>84</td>
+<td style='text-align: center;'> "NESTLINGS: 9primaires outside the range of likely values at 16-day-old (15 - 65 mm)"</td>
+</tr>
+<tr>
+<td style='text-align: center;'>85</td>
+<td style='text-align: center;'> "NESTLINGS: 9primaires 1 and 2 too far apart (>0.1 mm)"</td>
+</tr>
+<tr>
+<td style='text-align: center;'>86</td>
+<td style='text-align: center;'> "NESTLINGS: Weight measurements larger than expected (27 g, no age consideration)"</td>
+</tr>
+<tr>
+<td style='text-align: center;'>87</td>
+<td style='text-align: center;'> "NESTLINGS: Weight measurements outside the range of likely value at 2-days-old (1-8 g)"</td>
+</tr>
+<tr>
+<td style='text-align: center;'>88</td>
+<td style='text-align: center;'> "NESTLINGS: Weight measurements outside the range of likely value at 6-days-old (2-20 g)"</td>
+</tr>
+<tr>
+<td style='text-align: center;'>89</td>
+<td style='text-align: center;'> "NESTLINGS: Weight measurements outside the range of likely value at 12-days-old (10-27 g)"</td>
+</tr>
+<tr>
+<td style='text-align: center;'>90</td>
+<td style='text-align: center;'> "NESTLINGS: Weight measurements outside the range of likely value at 16-days-old (12-27 g)"</td>
+</tr>
+<tr>
+<td style='text-align: center;'>91</td>
+<td style='text-align: center;'> "NESTLINGS: Tarsus measurements outside the range of likely values (10-14 mm)"</td>
+</tr>
+<tr>
+<td style='text-align: center;'>92</td>
+<td style='text-align: center;'> "NESTLINGS: Tarsus measurement 1 and 2 too far apart (>0.1 mm)"</td>
+</tr>
+<tr>
+<td style='text-align: center;'>93</td>
 <td style='text-align: center;'> "NESTLINGS/BROODS: Broods that are in chicks db but not in broods db"</td>
 </tr>
 <tr>
-<td style='border-bottom: 2px solid grey; text-align: center;'>72</td>
-<td style='border-bottom: 2px solid grey; text-align: center;'> "NESTLINGS/BROODS: TRES broods with at least one nestling that are in broods db but not in chicks db"</td>
+<td style='text-align: center;'>94</td>
+<td style='text-align: center;'> "NESTLINGS/BROODS: TRES broods with at least one nestling that are in broods db but not in chicks db"</td>
+</tr>
+<tr>
+<td style='text-align: center;'>95</td>
+<td style='text-align: center;'> "ADULTS/NESTLINGS: Check for individuals with changing sexe_gen and locus_sexe_gen across db"</td>
+</tr>
+<tr>
+<td style='text-align: center;'>96</td>
+<td style='text-align: center;'> "ADULTS: Check for age_exact column for individuals hatched in our study system"</td>
+</tr>
+<tr>
+<td style='text-align: center;'>97</td>
+<td style='text-align: center;'> "BROODS: Check for duplicates in idcouvee"</td>
+</tr>
+<tr>
+<td style='text-align: center;'>98</td>
+<td style='text-align: center;'> "BROODS: Check for duplicates in id/nnich (change nnich)"</td>
+</tr>
+<tr>
+<td style='border-bottom: 2px solid grey; text-align: center;'>99</td>
+<td style='border-bottom: 2px solid grey; text-align: center;'> "BROODS: Check for missing id (add lines for them)"</td>
 </tr>
 </tbody>
 </table>
