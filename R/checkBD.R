@@ -1011,6 +1011,103 @@ if(length(ids)){
 }
 checks<-lappend(checks,res[,c("ferme","nichoir","idcouvee","jour_suivi","idois","commentaires")],msg)
 
+###############################################################
+### 9primaires checks in nestlings
+###############################################################
+
+msg<-"NESTLINGS: 9primaires larger than expected (65 mm, no age consideration)"
+
+x<-chicksNew
+val<-c(65)
+w<-which(x$"9primaires1">val | x$"9primaires2">val)
+checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","idois","9primaires1","9primaires2","commentaires")],msg)
+
+msg<-"NESTLINGS: 9primaires outside the range of likely values at 6-day-old (0 - 10 mm)"
+
+x<-chicksNew
+val<-c(0,10)
+w<-which(x$jour_suivi == 6 & (x$"9primaires1"<val[1] | x$"9primaires2"<val[1] | x$"9primaires1">val[2] | x$"9primaires2">val[2]))
+checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jour_suivi","idois","9primaires1","9primaires2","commentaires")],msg)
+
+msg<-"NESTLINGS: 9primaires outside the range of likely values at 12-day-old (5 - 45 mm)"
+
+x<-chicksNew
+val<-c(5,45)
+w<-which(x$jour_suivi == 12 & (x$"9primaires1"<val[1] | x$"9primaires2"<val[1] | x$"9primaires1">val[2] | x$"9primaires2">val[2]))
+checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jour_suivi","idois","9primaires1","9primaires2","commentaires")],msg)
+
+msg<-"NESTLINGS: 9primaires outside the range of likely values at 16-day-old (15 - 65 mm)"
+
+x<-chicksNew
+val<-c(15,65)
+w<-which(x$jour_suivi == 16 & (x$"9primaires1"<val[1] | x$"9primaires2"<val[1] | x$"9primaires1">val[2] | x$"9primaires2">val[2]))
+checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jour_suivi","idois","9primaires1","9primaires2","commentaires")],msg)
+
+msg<-"NESTLINGS: 9primaires 1 and 2 too far apart (>0.1 mm)"
+
+x<-chicksNew
+val<-c(0.1)
+w<-which(abs(x$"9primaires1" - x$"9primaires2") > val)
+checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","idois","9primaires1","9primaires2","commentaires")],msg)
+
+###############################################################
+### 
+###############################################################
+
+msg<-"NESTLINGS: Weight measurements larger than expected (27 g, no age consideration)"
+
+x<-chicksNew
+val<-c(27)
+w<-which(x$masse>val[1])
+checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","idois","masse","commentaires")],msg)
+
+msg<-"NESTLINGS: Weight measurements outside the range of likely value at 2-days-old (1-8 g)"
+
+x<-chicksNew
+val<-c(1,8)
+w<-which(x$jour_suivi == 6 & (x$masse<val[1] | x$masse>val[2]))
+checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jour_suivi","idois","masse","commentaires")],msg)
+
+msg<-"NESTLINGS: Weight measurements outside the range of likely value at 6-days-old (2-20 g)"
+
+x<-chicksNew
+val<-c(2,20)
+w<-which(x$jour_suivi == 6 & (x$masse<val[1] | x$masse>val[2]))
+checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jour_suivi","idois","masse","commentaires")],msg)
+
+msg<-"NESTLINGS: Weight measurements outside the range of likely value at 12-days-old (10-27 g)"
+
+x<-chicksNew
+val<-c(10,27)
+w<-which(x$jour_suivi == 12 & (x$masse<val[1] | x$masse>val[2]))
+checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jour_suivi","idois","masse","commentaires")],msg)
+
+msg<-"NESTLINGS: Weight measurements outside the range of likely value at 16-days-old (12-27 g)"
+
+x<-chicksNew
+val<-c(12,27)
+w<-which(x$jour_suivi == 16 & (x$masse<val[1] | x$masse>val[2]))
+checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jour_suivi","idois","masse","commentaires")],msg)
+
+
+###############################################################
+###
+###############################################################
+
+msg<-"NESTLINGS: Tarsus measurements outside the range of likely values (10-14 mm)"
+
+x<-chicksNew
+val<-c(10,14)
+w<-which(x$tarse1<val[1] | x$tarse2<val[1] | x$tarse1>val[2] | x$tarse2>val[2])
+checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","idois","tarse1","tarse2","commentaires")],msg)
+
+
+msg<-"NESTLINGS: Tarsus measurement 1 and 2 too far apart (>0.1 mm)"
+
+x<-chicksNew
+val<-c(0.1)
+w<-which(abs(x$tarse1 - x$tarse2) > val)
+checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","idois","tarse1","tarse2","commentaires")],msg)
 
 ###############################################################
 ###
