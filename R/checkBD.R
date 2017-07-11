@@ -856,6 +856,31 @@ msg<-"NESTLINGS/BROODS: jjulien of young that doesn't correspond to declomax + j
 w<-which(x$jjulien != (x$declomax + x$jour_suivi))
 checks<-lappend(checks,x[w,c("idcouvee","ferme","nichoir","idois","declomax","jjulien","jour_suivi")],msg)
 
+###############################################################
+### Genetic sex combination with loci in nestlings
+###############################################################
+
+msg<-"NESTLINGS: Wrong sexe_gen/locus_sexe_gen association (both NA or with values)"
+
+x<-chicksNew
+w<-which(!(is.na(x$sexe_gen) & is.na(x$locus_sexe_gen) | (x$sexe_gen%in%c("M","F","I") & x$locus_sexe_gen%in%c("P2P8","L2550"))))
+checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","idois","sexe_gen","locus_sexe_gen")],msg)
+
+###############################################################
+### Nestlings which change sex during a breeding season
+###############################################################
+
+msg<-"NESTLINGS: Check for individuals with changing sexe_gen"
+
+checks<-lappend(checks,check_id_dup(chicksNew,col=c("idois","sexe_gen"))[,c("ferme","nichoir","idcouvee","jjulien","idois","sexe_morpho","sexe_gen","locus_sexe_gen","commentaires")],msg)
+
+###############################################################
+### Nestlings which change locus sex during a breeding season
+###############################################################
+
+msg<-"NESTLINGS: Check for individuals with changing locus_sexe_gen"
+
+checks<-lappend(checks,check_id_dup(chicksNew,col=c("idois","locus_sexe_gen"))[,c("ferme","nichoir","idcouvee","jjulien","idois","sexe_morpho","sexe_gen","locus_sexe_gen","commentaires")],msg)
 
 ###############################################################
 ###
