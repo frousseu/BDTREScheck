@@ -990,7 +990,7 @@ if(length(ids)){
 }else{
   res<-NULL
 }
-checks<-lappend(checks,res[,c("ferme","nichoir","idcouvee","jour_suivi","idois","condition","envol","commentaires")],msg)
+checks<-lappend(checks,res[,c("ferme","nichoir","idcouvee","jour_suivi","idois","numero_oisillon","condition","envol","commentaires")],msg)
 
 
 ###############################################################
@@ -1009,7 +1009,7 @@ if(length(ids)){
 }else{
   res<-NULL
 }
-checks<-lappend(checks,res[,c("ferme","nichoir","idcouvee","jour_suivi","idois","commentaires")],msg)
+checks<-lappend(checks,res[,c("ferme","nichoir","idcouvee","jour_suivi","idois","numero_oisillon","commentaires")],msg)
 
 ###############################################################
 ### 9primaires checks in nestlings
