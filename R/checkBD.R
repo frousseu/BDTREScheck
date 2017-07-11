@@ -1150,6 +1150,36 @@ msg<-"ADULTS: Check for age_exact column for individuals hatched in our study sy
 
 checks<-lappend(checks,"TO DO!!!",msg)
 
+###############################################################
+### Broods initial checks
+###############################################################
+
+msg<-"BROODS: Check for duplicates in idcouvee"
+
+checks<-lappend(checks,check_dup(broodsNew, col=c("idcouvee")),msg)
+
+###############################################################
+### Broods initial checks
+###############################################################
+
+msg<-"BROODS: Check for duplicates in id/nnich (change nnich)"
+
+checks<-lappend(checks,check_dup(broodsNew, col=c("id","nnich")),msg)
+
+###############################################################
+### Missing id
+###############################################################
+
+msg<-"BROODS: Check for missing id (add lines for them)"
+
+id_names <- expand.grid(ferme_names[1:40], nichoir_names_all)
+id_names <- as.data.frame(paste(id_names[,1],id_names[,2],sep=""))
+names(id_names)<- "id"
+
+x<-merge(id_names,broodsNew[,c("id","idcouvee")],by="id",all.x=TRUE)
+w<-which(is.na(x$idcouvee))
+checks<-lappend(checks,x[w,],msg)
+
 ##########################################################
 ### Summarize brood information
 ##########################################################
