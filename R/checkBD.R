@@ -658,7 +658,6 @@ msg<-"ADULTS: Check for adults with changing locus_sexe_gen (across seasons)"
 
 checks<-lappend(checks,check_id_dup(rbind(adultsOld[adultsOld$idadult%in%unique(adultsNew$idadult),],adultsNew),col=c("idadult","locus_sexe_gen"))[,c("annee","ferme","nichoir","idcouvee","jjulien","idadult","sexe_morpho","sexe_gen","locus_sexe_gen","commentaire")],msg)
 
-
 ###############################################################
 ### 
 ###############################################################
@@ -1040,6 +1039,19 @@ if(length(temp)>0){
   x<-NULL
 }
 checks<-lappend(checks,x,msg)
+
+###############################################################
+### Adults which were nestlings in our system
+###############################################################
+
+msg<-"ADULTS/NESTLINGS: Check for individuals with changing sexe_gen and locus_sexe_gen across db"
+
+checks<-lappend(checks,"TO DO!!!",msg)
+
+
+msg<-"ADULTS: Check for age_exact column for individuals hatched in our study system"
+
+checks<-lappend(checks,"TO DO!!!",msg)
 
 ##########################################################
 ### Summarize brood information
