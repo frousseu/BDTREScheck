@@ -1180,6 +1180,26 @@ x<-merge(id_names,broodsNew[,c("id","idcouvee")],by="id",all.x=TRUE)
 w<-which(is.na(x$idcouvee))
 checks<-lappend(checks,x[w,],msg)
 
+###############################################################
+### Checks for errors in clutch size vs nestling
+###############################################################
+
+msg<-"BROODS: Broods with more nestlings than eggs"
+
+x<-broodsNew
+w<-which(x$noisnes > x$noeufs)
+checks<-lappend(checks,x[w,c("idcouvee","ferme","nichoir","codesp","noeufs","noisnes","Commentaires")],msg)
+
+###############################################################
+### Checks for errors in clutch size vs nestling
+###############################################################
+
+msg<-"BROODS: More/less nestlings than nestling status"
+
+x<-broodsNew
+w<-which(!(x$noisnes == (x$noisenvol + x$noismort + x$dispa_ois)))
+checks<-lappend(checks,x[w,c("idcouvee","ferme","nichoir","codesp","noeufs","noisnes","noisenvol","noismort","dispa_ois","Commentaires")],msg)
+
 ##########################################################
 ### Summarize brood information
 ##########################################################
