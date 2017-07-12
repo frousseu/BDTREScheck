@@ -1239,6 +1239,34 @@ w<-which(!(x$noisnes == (x$noisenvol + x$noismort + x$dispa_ois)))
 checks<-lappend(checks,x[w,c("idcouvee","ferme","nichoir","codesp","noeufs","noisnes","noisenvol","noismort","dispa_ois","Commentaires")],msg)
 
 ###############################################################
+### Only one value in declo, denvo or daban
+###############################################################
+
+msg<-"BROODS: Missing 1 value in declo (min or max)"
+
+x<-broodsNew
+w<-which((is.na(x$declomin) & !is.na(x$declomax)) | (!is.na(x$declomin) & is.na(x$declomax)))
+checks<-lappend(checks,x[w,c("idcouvee","ferme","nichoir","declomin","declomax","Commentaires")],msg)
+
+msg<-"BROODS: Missing 1 value in denvo for TRES (min or max)"
+
+x<-broodsNew
+w<-which((x$codesp == 1) & ((is.na(x$denvomin) & !is.na(x$denvomax)) | (!is.na(x$denvomin) & is.na(x$denvomax))))
+checks<-lappend(checks,x[w,c("idcouvee","ferme","nichoir","codesp","denvomin","denvomax","Commentaires")],msg)
+
+msg<-"BROODS: Wrong denvomin for other species (should be NA)"
+
+x<-broodsNew
+w<-which((x$codesp != 1) & (!is.na(x$denvomin)))
+checks<-lappend(checks,x[w,c("idcouvee","ferme","nichoir","codesp","denvomin","denvomax","Commentaires")],msg)
+
+msg<-"BROODS: Missing 1 value in daban (min or max)"
+
+x<-broodsNew
+w<-which((is.na(x$dabanmin) & !is.na(x$dabanmax)) | (!is.na(x$dabanmin) & is.na(x$dabanmax)))
+checks<-lappend(checks,x[w,c("idcouvee","ferme","nichoir","dabanmin","dabanmax","Commentaires")],msg)
+
+###############################################################
 ### Too big difference between LD and II
 ###############################################################
 
