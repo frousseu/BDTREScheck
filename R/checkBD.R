@@ -1215,7 +1215,7 @@ checks<-lappend(checks,x[w,c("idcouvee","ferme","nichoir","abandon","pred_pot","
 msg<-"BROODS: Wrong chronology in events within a brood"
 
 x<-broodsNew
-w<-which(x$dponte > x$dincub | x$dincub > x$declomin | x$declomin > x$declomax | x$declomax > x$denvomin | x$denvomin > x$denvomax | x$dponte > x$declomin)
+w<-which(x$dponte > x$dincub | x$dincub > x$declomin | x$declomin > x$declomax | x$declomax > x$denvomin | x$declomax > x$denvomax | x$denvomin > x$denvomax | x$dponte > x$declomin)
 checks<-lappend(checks,x[w,c("idcouvee","ferme","nichoir","dponte","dincub","declomin","declomax","denvomin","denvomax","Commentaires")],msg)
 
 ###############################################################
