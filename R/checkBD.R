@@ -572,11 +572,11 @@ w<-which((x$sexe_morpho%in%c("F") & !x$age_morpho%in%c("SY","ASY",NA)) | (x$sexe
 checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","idadult","sexe_morpho","age_morpho","commentaire")],msg)
 
 ###############################################################
-### 
+###  Check for inconherencies across years
 ###############################################################
 
 msg<-"ADULTS: sex/age incoherencies between years"
-checks<-lappend(checks,"TO DO !!!",msg)
+checks<-lappend(checks,"NEED TO BUILD A CODE FOR THIS!",msg)
 
 ###############################################################
 ### Capture time - Nestlings
@@ -1051,7 +1051,7 @@ w<-which(abs(x$"9primaires1" - x$"9primaires2") > val)
 checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","idois","9primaires1","9primaires2","commentaires")],msg)
 
 ###############################################################
-### 
+### Nestlings mass checks
 ###############################################################
 
 msg<-"NESTLINGS: Weight measurements larger than expected (27 g, no age consideration)"
@@ -1091,7 +1091,7 @@ checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jour_suivi","idois","
 
 
 ###############################################################
-###
+### Nestlings tarsus checks
 ###############################################################
 
 msg<-"NESTLINGS: Tarsus measurements outside the range of likely values (10-14 mm)"
@@ -1143,12 +1143,11 @@ checks<-lappend(checks,x,msg)
 
 msg<-"ADULTS/NESTLINGS: Check for individuals with changing sexe_gen and locus_sexe_gen across db"
 
-checks<-lappend(checks,"TO DO!!!",msg)
-
+checks<-lappend(checks,"TNEED TO BUILD A CODE FOR THIS!",msg)
 
 msg<-"ADULTS: Check for age_exact column for individuals hatched in our study system"
 
-checks<-lappend(checks,"TO DO!!!",msg)
+checks<-lappend(checks,"NEED TO BUILD A CODE FOR THIS!",msg)
 
 ###############################################################
 ### Broods initial checks
@@ -1196,7 +1195,7 @@ checks<-lappend(checks,x[w,c("idcouvee","ferme","nichoir","codesp","Commentaires
 
 msg<-"BROODS: Wrong nnich"
 
-checks<-lappend(checks,"TO DO!!!",msg)
+checks<-lappend(checks,"NEED TO BUILD A CODE FOR THIS!",msg)
 
 ###############################################################
 ### Wrong abandon / pred_pot
@@ -1357,8 +1356,6 @@ y<-ddply(chicksNew,.(idcouvee),function(i){
   ans
     
 })
-
-
 
 ### hatching detected in brood but no nestlings in chicks
 # check possible erreur dans le script original avec le min et la max de declo
