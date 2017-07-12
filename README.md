@@ -46,7 +46,8 @@ x<-checkBD(
   chicksNew=NULL,
   adultsOld="Adultes_2004-2015.xlsx",
   broodsOld="Couvee_2004-2015.xlsx",
-  chicksOld="Oisillons_2004-2015.xls"
+  chicksOld="Oisillons_2004-2015.xls",
+  sheet=1
 )
 
 ```
@@ -69,7 +70,6 @@ checkShow(html=FALSE)
 
 ## TODO
 
-- check sheet number argument and sheets of current databases
 - add part at the end of Nghia script
 - find what to do with read_excel warnings on expectation about column format
 - change default values of databases names
@@ -77,6 +77,7 @@ checkShow(html=FALSE)
 - think about the input db type given and arguments options (a data.frame already in the environment, a path to an excel, csv file, a remote database etc.)
 - make a code for newly installed bands found in previous years
 - make part about summarizing brood information and hatching
+- make a few other checks already described, but not code
 
 ## Current List Of Checks
 
@@ -481,8 +482,32 @@ checkShow(html=FALSE)
 <td style='text-align: center;'> "BROODS: Check for duplicates in id/nnich (change nnich)"</td>
 </tr>
 <tr>
-<td style='border-bottom: 2px solid grey; text-align: center;'>99</td>
-<td style='border-bottom: 2px solid grey; text-align: center;'> "BROODS: Check for missing id (add lines for them)"</td>
+<td style='text-align: center;'>99</td>
+<td style='text-align: center;'> "BROODS: Check for missing id (add lines for them)"</td>
+</tr>
+<tr>
+<td style='text-align: center;'>100</td>
+<td style='text-align: center;'> "BROODS: Wrong codesp"</td>
+</tr>
+<tr>
+<td style='text-align: center;'>101</td>
+<td style='text-align: center;'> "BROODS: Wrong nnich"</td>
+</tr>
+<tr>
+<td style='text-align: center;'>102</td>
+<td style='text-align: center;'> "BROODS: Wrong abandon / pred_pot"</td>
+</tr>
+<tr>
+<td style='text-align: center;'>103</td>
+<td style='text-align: center;'> "BROODS: Wrong chronology in events within a brood"</td>
+</tr>
+<tr>
+<td style='text-align: center;'>104</td>
+<td style='text-align: center;'> "BROODS: Broods with more nestlings than eggs"</td>
+</tr>
+<tr>
+<td style='border-bottom: 2px solid grey; text-align: center;'>105</td>
+<td style='border-bottom: 2px solid grey; text-align: center;'> "BROODS: More/less nestlings than nestling status (noines != noisenvol + noismort + dispa_ois)"</td>
 </tr>
 </tbody>
 </table>
