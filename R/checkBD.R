@@ -1239,10 +1239,44 @@ w<-which(!(x$noisnes == (x$noisenvol + x$noismort + x$dispa_ois)))
 checks<-lappend(checks,x[w,c("idcouvee","ferme","nichoir","codesp","noeufs","noisnes","noisenvol","noismort","dispa_ois","Commentaires")],msg)
 
 ###############################################################
-### No fledging if abandoned
+### Too big difference between LD and II
 ###############################################################
 
+msg<-"BROODS: Very long time elapse between laying date and incubation initiation (> 2 weeks; 2 different broods?)"
 
+x<-broodsNew
+w<-which(x$dincub - x$dponte + x$noeufs > 14)
+checks<-lappend(checks,x[w,c("idcouvee","ferme","nichoir","noeufs","dponte","dincub","Commentaires")],msg)
+
+###############################################################
+### Too big difference between LD and HD
+###############################################################
+
+msg<-"BROODS: Very long time elapse between laying date and hatching date (> 4 weeks; 2 different broods?)"
+
+x<-broodsNew
+w<-which(x$declomin - x$dponte + x$noeufs > 28)
+checks<-lappend(checks,x[w,c("idcouvee","ferme","nichoir","noeufs","dponte","declomin","Commentaires")],msg)
+
+###############################################################
+### Too big difference between II and HD
+###############################################################
+
+msg<-"BROODS: Very long time elapse between incubation initiation and hatching date (> 2 weeks; 2 different broods?)"
+
+x<-broodsNew
+w<-which(x$declomin - x$dincub > 14)
+checks<-lappend(checks,x[w,c("idcouvee","ferme","nichoir","noeufs","dponte","dincub","declomin","Commentaires")],msg)
+
+###############################################################
+### Too big difference between eclo min and max
+###############################################################
+
+msg<-"BROODS: Too long time elapse between minimum and maximum hatching date (> 1 day)"
+
+x<-broodsNew
+w<-which(x$declomax - x$declomin > 1)
+checks<-lappend(checks,x[w,c("idcouvee","ferme","nichoir","declomin","declomax","Commentaires")],msg)
 
 
 ##########################################################
