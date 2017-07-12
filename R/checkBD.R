@@ -1181,6 +1181,44 @@ w<-which(is.na(x$idcouvee))
 checks<-lappend(checks,x[w,],msg)
 
 ###############################################################
+### Wrong codesp
+###############################################################
+
+msg<-"BROODS: Wrong codesp"
+
+x<-broodsNew
+w<-which(!x$codesp%in%c(1:5,NA) | (x$codesp != 1 & (!is.na(x$idF1) | !is.na(x$idF2) | !is.na(x$idF3) | !is.na(x$idM1) | !is.na(x$idM2) | !is.na(x$idM3))))
+checks<-lappend(checks,x[w,c("idcouvee","ferme","nichoir","codesp","Commentaires")],msg)
+
+###############################################################
+### Check nnich 1 vs 2 (2 = later)
+###############################################################
+
+msg<-"BROODS: Wrong nnich"
+
+checks<-lappend(checks,"TO DO!!!",msg)
+
+###############################################################
+### Wrong abandon / pred_pot
+###############################################################
+
+msg<-"BROODS: Wrong abandon / pred_pot"
+
+x<-broodsNew
+w<-which(!x$abandon%in%c(0:2,NA) | !x$pred_pot%in%c(0:1,NA) | (x$abandon!=1 & x$pred_pot==1))
+checks<-lappend(checks,x[w,c("idcouvee","ferme","nichoir","abandon","pred_pot","Commentaires")],msg)
+
+###############################################################
+### Check for chronolgy in events
+###############################################################
+
+msg<-"BROODS: Wrong chronology in events within a brood"
+
+x<-broodsNew
+w<-which(x$dponte > x$dincub | x$dincub > x$declomin | x$declomin > x$declomax | x$declomax > x$denvomin | x$denvomin > x$denvomax | x$dponte > x$declomin)
+checks<-lappend(checks,x[w,c("idcouvee","ferme","nichoir","dponte","dincub","declomin","declomax","denvomin","denvomax","Commentaires")],msg)
+
+###############################################################
 ### Checks for errors in clutch size vs nestling
 ###############################################################
 
@@ -1194,11 +1232,18 @@ checks<-lappend(checks,x[w,c("idcouvee","ferme","nichoir","codesp","noeufs","noi
 ### Checks for errors in clutch size vs nestling
 ###############################################################
 
-msg<-"BROODS: More/less nestlings than nestling status"
+msg<-"BROODS: More/less nestlings than nestling status (noines != noisenvol + noismort + dispa_ois)"
 
 x<-broodsNew
 w<-which(!(x$noisnes == (x$noisenvol + x$noismort + x$dispa_ois)))
 checks<-lappend(checks,x[w,c("idcouvee","ferme","nichoir","codesp","noeufs","noisnes","noisenvol","noismort","dispa_ois","Commentaires")],msg)
+
+###############################################################
+### No fledging if abandoned
+###############################################################
+
+
+
 
 ##########################################################
 ### Summarize brood information
