@@ -1238,6 +1238,39 @@ w<-which(!(x$noisnes == (x$noisenvol + x$noismort + x$dispa_ois)))
 checks<-lappend(checks,x[w,c("idcouvee","ferme","nichoir","codesp","noeufs","noisnes","noisenvol","noismort","dispa_ois","Commentaires")],msg)
 
 ###############################################################
+### Checks for errors in clutch size vs nestling
+###############################################################
+
+msg<-"BROODS: Too much eggs/nestlings within the same brood (8 and more; few exception possible, see comments)"
+
+x<-broodsNew
+val<-8
+w<-which(x$noisnes >= val[1] | x$noeufs >= val[1]) 
+checks<-lappend(checks,x[w,c("idcouvee","ferme","nichoir","codesp","noeufs","noisnes","Commentaires")],msg)
+
+###############################################################
+### Checks for errors jj values
+###############################################################
+
+msg<-"BROODS: Event dates outside the range of possible values (JJ 95-220)"
+
+x<-broodsNew
+val<-c(95,220)
+w<-which(x$dponte < val[1] | x$dincub < val[1] | x$declomin < val[1] | x$declomax < val[1] | x$denvomin < val[1] | x$denvomax < val[1] | x$dabanmin < val[1] | x$dabanmax < val[1] | x$dponte > val[2] | x$dincub > val[2] | x$declomin > val[2] | x$declomax > val[2] | x$denvomin > val[2] | x$denvomax > val[2] | x$dabanmin > val[2] | x$dabanmax > val[2]) 
+
+checks<-lappend(checks,x[w,c("idcouvee","ferme","nichoir","codesp","dponte","dincub","declomin","declomax","denvomin","denvomax","dabanmin","dabanmax","Commentaires")],msg)
+
+###############################################################
+### Checks for missing envol/aban for TRES
+###############################################################
+
+msg<-"BROODS: No fledging or abandon date for TRES broods (exception possibles, see comments"
+
+x<-broodsNew
+w<-which(x$codesp == 1 & !is.na(x$dponte) & is.na(x$denvomin) & is.na(x$dabanmin))
+checks<-lappend(checks,x[w,c("idcouvee","ferme","nichoir","codesp","dponte","denvomin","dabanmin","Commentaires")],msg)
+
+###############################################################
 ### Only one value in declo, denvo or daban
 ###############################################################
 
