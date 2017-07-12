@@ -1248,6 +1248,12 @@ x<-broodsNew
 w<-which(x$dincub - x$dponte + x$noeufs > 14)
 checks<-lappend(checks,x[w,c("idcouvee","ferme","nichoir","noeufs","dponte","dincub","Commentaires")],msg)
 
+msg<-"BROODS: Very short time elapse between laying date and incubation initiation (< 5 days)"
+
+x<-broodsNew
+w<-which(x$dincub - x$dponte + x$noeufs < 5)
+checks<-lappend(checks,x[w,c("idcouvee","ferme","nichoir","noeufs","dponte","dincub","Commentaires")],msg)
+
 ###############################################################
 ### Too big difference between LD and HD
 ###############################################################
@@ -1256,6 +1262,12 @@ msg<-"BROODS: Very long time elapse between laying date and hatching date (> 4 w
 
 x<-broodsNew
 w<-which(x$declomin - x$dponte + x$noeufs > 28)
+checks<-lappend(checks,x[w,c("idcouvee","ferme","nichoir","noeufs","dponte","declomin","Commentaires")],msg)
+
+msg<-"BROODS: Very short time elapse between laying date and hatching date (< 2 weeks)"
+
+x<-broodsNew
+w<-which(x$declomin - x$dponte + x$noeufs < 14)
 checks<-lappend(checks,x[w,c("idcouvee","ferme","nichoir","noeufs","dponte","declomin","Commentaires")],msg)
 
 ###############################################################
@@ -1268,6 +1280,12 @@ x<-broodsNew
 w<-which(x$declomin - x$dincub > 14)
 checks<-lappend(checks,x[w,c("idcouvee","ferme","nichoir","noeufs","dponte","dincub","declomin","Commentaires")],msg)
 
+msg<-"BROODS: Very short time elapse between incubation initiation and hatching date (< 1 week)"
+
+x<-broodsNew
+w<-which(x$declomin - x$dincub < 7)
+checks<-lappend(checks,x[w,c("idcouvee","ferme","nichoir","noeufs","dponte","dincub","declomin","Commentaires")],msg)
+
 ###############################################################
 ### Too big difference between eclo min and max
 ###############################################################
@@ -1278,6 +1296,25 @@ x<-broodsNew
 w<-which(x$declomax - x$declomin > 1)
 checks<-lappend(checks,x[w,c("idcouvee","ferme","nichoir","declomin","declomax","Commentaires")],msg)
 
+###############################################################
+### Too big difference between daban min and max
+###############################################################
+
+msg<-"BROODS: Too long time elapse between minimum and maximum abandon date (> 1 day)"
+
+x<-broodsNew
+w<-which(x$dabanmax - x$dabanmin > 1)
+checks<-lappend(checks,x[w,c("idcouvee","ferme","nichoir","dabanmin","dabanmax","Commentaires")],msg)
+
+###############################################################
+### Too big difference between denvo min and max
+###############################################################
+
+msg<-"BROODS: Too long time elapse between minimum and maximum fledging date (> 1 week)"
+
+x<-broodsNew
+w<-which(x$denvomax - x$denvomin > 7)
+checks<-lappend(checks,x[w,c("idcouvee","ferme","nichoir","denvomin","denvomax","Commentaires")],msg)
 
 ##########################################################
 ### Summarize brood information
