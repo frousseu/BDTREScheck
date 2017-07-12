@@ -40,7 +40,7 @@ path<-"C:/Users/rouf1703/Documents/UdeS/Consultation/ELefol/Doc/BD 2004-2015"
 
 x<-checkBD(
   dsn=path,
-  year,
+  year=2015,
   adultsNew=NULL,
   broodsNew=NULL,
   chicksNew=NULL,
