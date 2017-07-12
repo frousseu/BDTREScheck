@@ -506,8 +506,72 @@ checkShow(html=FALSE)
 <td style='text-align: center;'> "BROODS: Broods with more nestlings than eggs"</td>
 </tr>
 <tr>
-<td style='border-bottom: 2px solid grey; text-align: center;'>105</td>
-<td style='border-bottom: 2px solid grey; text-align: center;'> "BROODS: More/less nestlings than nestling status (noines != noisenvol + noismort + dispa_ois)"</td>
+<td style='text-align: center;'>105</td>
+<td style='text-align: center;'> "BROODS: More/less nestlings than nestling status (noines != noisenvol + noismort + dispa_ois)"</td>
+</tr>
+<tr>
+<td style='text-align: center;'>106</td>
+<td style='text-align: center;'> "BROODS: Too much eggs/nestlings within the same brood (8 and more; few exception possible, see comments)"</td>
+</tr>
+<tr>
+<td style='text-align: center;'>107</td>
+<td style='text-align: center;'> "BROODS: Event dates outside the range of possible values (JJ 95-220)"</td>
+</tr>
+<tr>
+<td style='text-align: center;'>108</td>
+<td style='text-align: center;'> "BROODS: No fledging or abandon date for TRES broods (exception possibles, see comments"</td>
+</tr>
+<tr>
+<td style='text-align: center;'>109</td>
+<td style='text-align: center;'> "BROODS: Missing 1 value in declo (min or max)"</td>
+</tr>
+<tr>
+<td style='text-align: center;'>110</td>
+<td style='text-align: center;'> "BROODS: Missing 1 value in denvo for TRES (min or max)"</td>
+</tr>
+<tr>
+<td style='text-align: center;'>111</td>
+<td style='text-align: center;'> "BROODS: Wrong denvomin for other species (should be NA)"</td>
+</tr>
+<tr>
+<td style='text-align: center;'>112</td>
+<td style='text-align: center;'> "BROODS: Missing 1 value in daban (min or max)"</td>
+</tr>
+<tr>
+<td style='text-align: center;'>113</td>
+<td style='text-align: center;'> "BROODS: Very long time elapse between laying date and incubation initiation (> 2 weeks; 2 different broods?)"</td>
+</tr>
+<tr>
+<td style='text-align: center;'>114</td>
+<td style='text-align: center;'> "BROODS: Very short time elapse between laying date and incubation initiation (< 5 days)"</td>
+</tr>
+<tr>
+<td style='text-align: center;'>115</td>
+<td style='text-align: center;'> "BROODS: Very long time elapse between laying date and hatching date (> 4 weeks; 2 different broods?)"</td>
+</tr>
+<tr>
+<td style='text-align: center;'>116</td>
+<td style='text-align: center;'> "BROODS: Very short time elapse between laying date and hatching date (< 2 weeks)"</td>
+</tr>
+<tr>
+<td style='text-align: center;'>117</td>
+<td style='text-align: center;'> "BROODS: Very long time elapse between incubation initiation and hatching date (> 2 weeks; 2 different broods?)"</td>
+</tr>
+<tr>
+<td style='text-align: center;'>118</td>
+<td style='text-align: center;'> "BROODS: Very short time elapse between incubation initiation and hatching date (< 1 week)"</td>
+</tr>
+<tr>
+<td style='text-align: center;'>119</td>
+<td style='text-align: center;'> "BROODS: Too long time elapse between minimum and maximum hatching date (> 1 day)"</td>
+</tr>
+<tr>
+<td style='text-align: center;'>120</td>
+<td style='text-align: center;'> "BROODS: Too long time elapse between minimum and maximum abandon date (> 1 day)"</td>
+</tr>
+<tr>
+<td style='border-bottom: 2px solid grey; text-align: center;'>121</td>
+<td style='border-bottom: 2px solid grey; text-align: center;'> "BROODS: Too long time elapse between minimum and maximum fledging date (> 1 week)"</td>
 </tr>
 </tbody>
 </table>
