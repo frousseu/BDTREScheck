@@ -431,7 +431,7 @@ checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","prefixe", "
 ### Second check for unique values in columns with few non-numeric values
 ################################################################################
 
-col_val<-c("annee","nnich","jjulien","sexe_morpho","age_exact")
+col_val<-c("annee","nnich")
 
 # function for checking unique values
 check_val<-function(x){
