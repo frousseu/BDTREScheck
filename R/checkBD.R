@@ -1065,7 +1065,7 @@ msg<-"NESTLINGS: Weight measurements outside the range of likely value at 2-days
 
 x<-chicksNew
 val<-c(1,8)
-w<-which(x$jour_suivi == 6 & (x$masse<val[1] | x$masse>val[2]))
+w<-which(x$jour_suivi == 2 & (x$masse<val[1] | x$masse>val[2]))
 checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jour_suivi","idois","masse","commentaires")],msg)
 
 msg<-"NESTLINGS: Weight measurements outside the range of likely value at 6-days-old (2-20 g)"
