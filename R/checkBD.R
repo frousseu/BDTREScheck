@@ -659,14 +659,18 @@ msg<-"ADULTS: Check for adults with changing locus_sexe_gen (across seasons)"
 checks<-lappend(checks,check_id_dup(rbind(adultsOld[adultsOld$idadult%in%unique(adultsNew$idadult),],adultsNew),col=c("idadult","locus_sexe_gen"))[,c("annee","ferme","nichoir","idcouvee","jjulien","idadult","sexe_morpho","sexe_gen","locus_sexe_gen","commentaire")],msg)
 
 ###############################################################
-### 
+### Check colour, depending on sampling year
 ###############################################################
 
-msg<-"ADULTS: Some colors not in the list of possible values"
+msg<-"ADULTS: Some colors not in the list of possible values?"
 
 x<-adultsNew
-w<-which(!x$couleur%in%c("B","V","BV","BR",NA))
-checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","idadult","couleur","commentaire")],msg)
+if(year>=2010){
+   w<-which(!x$couleur%in%c("B","V","BV","BR",NA))
+   checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","idadult","couleur","commentaire")],msg)
+   } else {
+      checks<-lappend(checks,unique(x$couleur),msg)
+}   
 
 ###############################################################
 ###
