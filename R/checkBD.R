@@ -673,6 +673,26 @@ if(year>=2010){
 }   
 
 ###############################################################
+### ADULTS: Two morphological measurements (wing and tarsus length)
+###############################################################
+
+msg<-"ADULTS: Missing one wing measurement"
+
+x<-adultsNew
+if(year>=2007){
+   w<-which((!is.na(x$laile1) & is.na(x$laile2)) | (is.na(x$laile1) & !is.na(x$laile2)))
+   checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","idadult","laile1","laile2","commentaire")],msg)
+   } else {
+      checks<-lappend(checks,"Only one measurement was taken prior to 2007",msg)
+}  
+
+msg<-"ADULTS: Missing one tarsus measurement"
+
+x<-adultsNew
+w<-which((!is.na(x$tarse1) & is.na(x$tarse2)) | (is.na(x$tarse1) & !is.na(x$tarse2)))
+checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","idadult","tarse1","tarse2","commentaire")],msg)
+
+###############################################################
 ###
 ###############################################################
 
@@ -1014,6 +1034,26 @@ if(length(ids)){
   res<-NULL
 }
 checks<-lappend(checks,res[,c("ferme","nichoir","idcouvee","jour_suivi","idois","numero_oisillon","commentaires")],msg)
+
+###############################################################
+### NESTLINGS: Two morphological measurements (wing and tarsus length)
+###############################################################
+
+msg<-"NESTLINGS: Missing one wing measurement"
+
+x<-chicksNew
+if(year>=2007){
+   w<-which((!is.na(x$"9primaires1") & is.na(x$"9primaires2")) | (is.na(x$"9primaires1") & !is.na(x$"9primaires2")))
+   checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","idois","9primaires1","9primaires2","commentaires")],msg)
+   } else {
+      checks<-lappend(checks,"Only one measurement was taken prior to 2007",msg)
+}  
+
+msg<-"NESTLINGS: Missing one tarsus measurement"
+
+x<-chicksNew
+w<-which((!is.na(x$tarse1) & is.na(x$tarse2)) | (is.na(x$tarse1) & !is.na(x$tarse2)))
+checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","idois","tarse1","tarse2","commentaires")],msg)
 
 ###############################################################
 ### 9primaires checks in nestlings
