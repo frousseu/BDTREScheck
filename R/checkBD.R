@@ -990,6 +990,14 @@ checks<-lappend(checks,res[,c("ferme","nichoir","idcouvee","jour_suivi","idois",
 
 
 ###############################################################
+### Check numero oisillon
+###############################################################
+
+msg<-"NESTLINGS: Check that numero_ois are from 1 to nb of nestlings"
+
+checks<-lappend(checks,"NEED TO BUILD A CODE FOR THIS!",msg)
+
+###############################################################
 ###
 ###############################################################
 
@@ -1187,7 +1195,7 @@ checks<-lappend(checks,x,msg)
 
 msg<-"ADULTS/NESTLINGS: Check for individuals with changing sexe_gen and locus_sexe_gen across db"
 
-checks<-lappend(checks,"TNEED TO BUILD A CODE FOR THIS!",msg)
+checks<-lappend(checks,"NEED TO BUILD A CODE FOR THIS!",msg)
 
 msg<-"ADULTS: Check for age_exact column for individuals hatched in our study system"
 
