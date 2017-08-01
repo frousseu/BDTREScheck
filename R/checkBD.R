@@ -400,6 +400,16 @@ w<-which(!x$prefixe%in%prefixe_names & !is.na(x$prefixe))
 checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","prefixe", "suffixe","idadult")],msg)
 
 ##########################################################################################
+### Check that suffixe columns include the right number of characters
+##########################################################################################
+
+msg<-"ADULTS: Wrong suffixe name observed (too short/long)"
+
+x<-adultsNew
+w<-which(nchar(x$suffixe)!=5 & !is.na(x$prefixe))
+checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","prefixe", "suffixe","idadult")],msg)
+
+##########################################################################################
 ### Check that idadult == prefixe + suffixe
 ##########################################################################################
 
@@ -429,6 +439,16 @@ msg<-"NESTLINGS: Wrong prefixe name observed (is it a new prefixe?)"
 
 x<-chicksNew
 w<-which(!x$prefixe%in%prefixe_names & !is.na(x$prefixe))
+checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","prefixe", "suffixe","idois")],msg)
+
+##########################################################################################
+### Check that suffixe columns include the right number of characters
+##########################################################################################
+
+msg<-"NESTLINGS: Wrong suffixe name observed (too short/long)"
+
+x<-chicksNew
+w<-which(nchar(x$suffixe)!=5 & !is.na(x$prefixe))
 checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","prefixe", "suffixe","idois")],msg)
 
 ##########################################################################################
