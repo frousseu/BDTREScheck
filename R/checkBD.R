@@ -400,6 +400,28 @@ w<-which(!x$prefixe%in%prefixe_names & !is.na(x$prefixe))
 checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","prefixe", "suffixe","idadult")],msg)
 
 ##########################################################################################
+### Check that idadult == prefixe + suffixe
+##########################################################################################
+
+msg<-"ADULTS: idadult doesn't correspond to prefixe + suffixe"
+
+x<-adultsNew
+x$TEST <- paste0(x$prefixe, x$suffixe)
+w<-which(x$idadult!=x$TEST & !is.na(x$prefixe))
+checks<-lappend(checks,x[w,c("ferme","nichoir", "annee", "nnich", "idcouvee","jjulien","prefixe","suffixe","idadult")],msg)
+
+##########################################################################################
+### Check that not banded adults have a letter!
+##########################################################################################
+
+msg<-"ADULTS: idadult doesn't correspond to id + year + LETTER"
+
+x<-adultsNew
+x$TEST <- paste0(x$id, x$year)
+w<-which(is.na(x$prefixe) & (str_sub(x$idadult,1,8)!=x$TEST | length(x$idadult)!=8 | !str_sub(x$idadult,-1)%in%c("A","B","C","D","E","F","G","H")))
+checks<-lappend(checks,x[w,c("ferme","nichoir", "annee", "nnich", "idcouvee","jjulien","prefixe","suffixe","idadult")],msg)
+
+##########################################################################################
 ### 
 ##########################################################################################
 
@@ -409,6 +431,27 @@ x<-chicksNew
 w<-which(!x$prefixe%in%prefixe_names & !is.na(x$prefixe))
 checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","prefixe", "suffixe","idois")],msg)
 
+##########################################################################################
+### Check that idois == prefixe + suffixe
+##########################################################################################
+
+msg<-"NESTLINGS: idois doesn't correspond to prefixe + suffixe"
+
+x<-chicksNew
+x$TEST <- paste0(x$prefixe, x$suffixe)
+w<-which(x$idois!=x$TEST & !is.na(x$prefixe))
+checks<-lappend(checks,x[w,c("ferme","nichoir", "annee", "nnich", "idcouvee","jjulien","prefixe","suffixe","idois")],msg)
+
+##########################################################################################
+### Check that not banded adults have a letter!
+##########################################################################################
+
+msg<-"NESTLINGS: idois doesn't correspond to idcouvee + numero_oisillon"
+
+x<-chicksNew
+x$TEST <- paste0(x$idcouvee, x$numero_oisillon)
+w<-which(x$idois!=x$TEST & is.na(x$prefixe))
+checks<-lappend(checks,x[w,c("ferme","nichoir", "annee", "nnich", "idcouvee","jjulien","prefixe","suffixe","idois","numero_oisillon")],msg)
 
 ##########################################################################################
 ### Check the number of characters which shoudl always be fixed in the different ids
@@ -562,7 +605,7 @@ w<-which(!is.na(broodsNew$idM1) & (!is.na(broodsNew$idM2) | !is.na(broodsNew$idM
 checks<-lappend(checks,broodsNew[w,c("idcouvee","idM1","idM2","idM3", "Commentaires")],msg)
 
 ###############################################################
-### 
+###
 ###############################################################
 
 msg<-"ADULTS: Sex/age incoherencies within the current year"
