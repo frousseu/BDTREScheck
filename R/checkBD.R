@@ -984,7 +984,7 @@ checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","idois","sex
 
 msg<-"NESTLINGS: Check for individuals with changing sexe_gen"
 
-checks<-lappend(checks,check_id_dup(chicksNew,col=c("idois","sexe_gen"))[,c("ferme","nichoir","idcouvee","jjulien","idois","sexe_morpho","sexe_gen","locus_sexe_gen","commentaires")],msg)
+checks<-lappend(checks,check_id_dup(chicksNew,col=c("idois","sexe_gen"))[,c("ferme","nichoir","idcouvee","jjulien","idois","sexe_gen","locus_sexe_gen","commentaires")],msg)
 
 ###############################################################
 ### Nestlings which change locus sex during a breeding season
@@ -992,7 +992,7 @@ checks<-lappend(checks,check_id_dup(chicksNew,col=c("idois","sexe_gen"))[,c("fer
 
 msg<-"NESTLINGS: Check for individuals with changing locus_sexe_gen"
 
-checks<-lappend(checks,check_id_dup(chicksNew,col=c("idois","locus_sexe_gen"))[,c("ferme","nichoir","idcouvee","jjulien","idois","sexe_morpho","sexe_gen","locus_sexe_gen","commentaires")],msg)
+checks<-lappend(checks,check_id_dup(chicksNew,col=c("idois","locus_sexe_gen"))[,c("ferme","nichoir","idcouvee","jjulien","idois","sexe_gen","locus_sexe_gen","commentaires")],msg)
 
 ###############################################################
 ###
