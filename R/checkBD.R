@@ -948,7 +948,7 @@ checks<-lappend(checks,check_id_dup(chicksNew,col=c("idois","ferme","nichoir"))[
 msg<-"NESTLINGS/BROODS: Capture date of young is later than the minimal abandonment date if nest was abandoned"
 x<-merge(chicksNew,broodsNew[broodsNew$codesp==1,c("idcouvee","dponte","dincub","declomin","declomax","dabanmin","dabanmax")],by="idcouvee",all.x=TRUE)
 w<-which(x$jjulien > (x$dabanmin + 1))
-checks<-lappend(checks,x[w,],msg)
+checks<-lappend(checks,x[w,c("idcouvee","ferme","nichoir","jjulien","idois","condition","dabanmin","dabanmax","commentaires")],msg)
 
 ###############################################################
 ### 
