@@ -6,7 +6,7 @@ Date: 2017-07-04
 Author: Francois Rousseu, Nghia Tran and Audrey Bourret
 Maintainer: Francois Rousseu <francois.rousseu@usherbrooke.ca>
 Description: A package for doing checks on the Tree Swallow DB.
-Depends: readxl, plyr, htmlTable
+Depends: readxl, plyr, htmlTable, stringr
 License: GPL-2
 LazyLoad: yes
 

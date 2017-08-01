@@ -579,6 +579,44 @@ msg<-"ADULTS: sex/age incoherencies between years"
 checks<-lappend(checks,"NEED TO BUILD A CODE FOR THIS!",msg)
 
 ###############################################################
+### Check colour, depending on sampling year
+###############################################################
+
+msg<-"ADULTS: Some colors not in the list of possible values?"
+
+x<-adultsNew
+if(year>=2010){
+   w<-which(!x$couleur%in%c("B","V","BV","BR",NA))
+   checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","idadult","couleur","commentaire")],msg)
+   } else {
+      checks<-lappend(checks,unique(x$couleur),msg)
+}  
+
+###############################################################
+### Incoherencies with colour (BR) and  age
+###############################################################
+
+msg<-"ADULTS: Brown females (>50%) not assigned to SY?"
+
+x<-adultsNew
+if(year>=2010){
+   w<-which(x$couleur%in%c("BR") & !x$age_morpho%in%c("SY"))
+} else {
+   w<-which(str_sub(x$couleur,1,3) == "BR5" & !x$age_morpho%in%c("SY"))
+}  
+   checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","idadult","sexe_morpho","age_morpho","couleur","commentaire")],msg)
+
+
+###############################################################
+### Incoherencies with colour and  age
+###############################################################
+
+msg<-"ADULTS: Individual with a couleur assigned, but without morpho_age"
+
+w<-which(!is.na(x$couleur) & is.na(x$age_morpho))
+checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","idadult","sexe_morpho","age_morpho","couleur","commentaire")],msg)
+
+###############################################################
 ### Capture time - Nestlings
 ###############################################################
 
@@ -658,19 +696,7 @@ msg<-"ADULTS: Check for adults with changing locus_sexe_gen (across seasons)"
 
 checks<-lappend(checks,check_id_dup(rbind(adultsOld[adultsOld$idadult%in%unique(adultsNew$idadult),],adultsNew),col=c("idadult","locus_sexe_gen"))[,c("annee","ferme","nichoir","idcouvee","jjulien","idadult","sexe_morpho","sexe_gen","locus_sexe_gen","commentaire")],msg)
 
-###############################################################
-### Check colour, depending on sampling year
-###############################################################
-
-msg<-"ADULTS: Some colors not in the list of possible values?"
-
-x<-adultsNew
-if(year>=2010){
-   w<-which(!x$couleur%in%c("B","V","BV","BR",NA))
-   checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","idadult","couleur","commentaire")],msg)
-   } else {
-      checks<-lappend(checks,unique(x$couleur),msg)
-}   
+ 
 
 ###############################################################
 ### ADULTS: Two morphological measurements (wing and tarsus length)
