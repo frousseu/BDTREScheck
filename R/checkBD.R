@@ -1531,6 +1531,17 @@ y<-ddply(chicksNew,.(idcouvee),function(i){
     
 })
 
+################################################
+### 
+################################################
+
+msg<-"NESTLINGS/BROODS: Inconsistency in the number of nestlings between databases (NESTLINGS: Nois, Nenvol, Ndead, Ndispa)"
+
+x<-merge(broodsNew[which(!is.na(broodsNew$nnich) & broodsNew$codesp == 1 & broodsNew$noisnes>=1),c("idcouvee","noisnes","noisenvol","noismort", "dispa_ois")],y,by="idcouvee",all.x=TRUE)
+w<-which(x$noisnes!=x$Nois | x$noisenvol!=x$Nenvol | x$noismort!=x$Ndead | x$dispa_ois!=x$Ndispa)
+checks<-lappend(checks,x[w,c("idcouvee","noisnes","Nois","noisenvol","Nenvol","noismort","Ndead","dispa_ois","Ndispa")],msg)
+
+
 ### hatching detected in brood but no nestlings in chicks
 # check possible erreur dans le script original avec le min et la max de declo
 
