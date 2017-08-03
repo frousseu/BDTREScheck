@@ -75,7 +75,11 @@ check_dup<-function(x,col=NULL){
   }
   res<-x[dup(x[,col]),]
   if(nrow(res)>0){
-    res<-res[order(apply(res[,col],1,paste0,collapse="")),]
+     if(length(col)==1){
+       res[order(res[,col]),]
+      }else{
+       res<-res[order(apply(res[,col],1,paste0,collapse="")),]
+     }
   }else{
     res<-NULL
   }
