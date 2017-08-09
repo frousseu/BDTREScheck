@@ -431,9 +431,9 @@ checks<-lappend(checks,x[w,c("ferme","nichoir", "annee", "nnich", "idcouvee","jj
 msg<-"ADULTS: idadult doesn't correspond to id + year + LETTER"
 
 x<-adultsNew
-x$TEST <- paste0(x$id, x$year)
-w<-which(is.na(x$prefixe) & (str_sub(x$idadult,1,8)!=x$TEST | length(x$idadult)!=8 | !str_sub(x$idadult,-1)%in%c("A","B","C","D","E","F","G","H")))
-checks<-lappend(checks,x[w,c("ferme","nichoir", "annee", "nnich", "idcouvee","jjulien","prefixe","suffixe","idadult")],msg)
+x$TEST <- paste0(x$id, x$annee)
+w<-which(is.na(x$prefixe) & (str_sub(x$idadult,1,8)!=x$TEST |  nchar(x$idadult)!=9 | !str_sub(x$idadult,-1)%in%c("A","B","C","D","E","F","G","H")))
+checks<-lappend(checks,x[w,c("id", "ferme","nichoir", "annee", "nnich", "idcouvee","jjulien","prefixe","suffixe","idadult")],msg)
 
 ##########################################################################################
 ### 
@@ -1300,7 +1300,7 @@ checks<-lappend(checks,"NEED TO BUILD A CODE FOR THIS!",msg)
 
 msg<-"BROODS: Check for duplicates in idcouvee"
 
-checks<-lappend(checks,check_dup(broodsNew, col=c("idcouvee")),msg)
+checks<-lappend(checks,check_dup(broodsNew, col=c("idcouvee"))[,c("idcouvee","ferme","nichoir","codesp","nnich","dponte","Commentaires")],msg)
 
 ###############################################################
 ### Broods initial checks
@@ -1308,7 +1308,7 @@ checks<-lappend(checks,check_dup(broodsNew, col=c("idcouvee")),msg)
 
 msg<-"BROODS: Check for duplicates in id/nnich (change nnich)"
 
-checks<-lappend(checks,check_dup(broodsNew, col=c("id","nnich")),msg)
+checks<-lappend(checks,check_dup(broodsNew, col=c("id","nnich"))[,c("idcouvee","ferme","nichoir","codesp","nnich","dponte","Commentaires")],msg)
 
 ###############################################################
 ### Missing id
