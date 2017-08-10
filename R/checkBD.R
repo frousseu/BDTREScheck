@@ -1299,7 +1299,21 @@ checks<-lappend(checks,x,msg)
 
 msg<-"ADULTS/NESTLINGS: Check for individuals with changing sexe_gen and locus_sexe_gen across db"
 
-checks<-lappend(checks,"NEED TO BUILD A CODE FOR THIS!",msg)
+# the code only checks for individuals with both M and F label and nothing else
+
+a<-rbind(adultsNew,adultsOld)
+x<-a[order(a$idadult,a$annee,a$jjulien,a$heure),]
+x<-unlist(dlply(x,.(idadult),function(i){
+  all(c("M","F")%in%i$sexe_gen) | all(c("M","F")%in%i$locus_sexe_gen)
+}))
+if(any(x)){
+  res<-a[a$idadult%in%names(x)[x],]        
+}else{
+  res<-NULL
+}
+
+checks<-lappend(checks,res,msg)
+
 
 msg<-"ADULTS: Check for age_exact column for individuals hatched in our study system"
 
