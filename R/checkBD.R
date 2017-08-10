@@ -1297,7 +1297,7 @@ by<-c("band","annee","jjulien","heure","sexe_gen","locus_sexe_gen")
 x<-merge(a,o,by.x=by,by.y=by,all=TRUE)
 x<-x[order(x$band,x$annee,x$jjulien,x$heure),c("idois","idadult",by)]
 l<-unlist(dlply(x,.(band),function(i){
-  all(c("M","F")%in%i$sexe_gen) | all(c("M","F")%in%i$locus_sexe_gen)
+  all(c("M","F")%in%i$sexe_gen)
 }))
 if(any(l)){
   res<-x[x$band%in%names(l)[l],]        
