@@ -1294,7 +1294,7 @@ if(length(temp)>0){
 checks<-lappend(checks,x,msg)
 
 ###############################################################
-### Adults which were nestlings in our system
+### Adults which change sex
 ###############################################################
 
 msg<-"ADULTS/NESTLINGS: Check for individuals with changing sexe_gen and locus_sexe_gen across db"
@@ -1314,8 +1314,22 @@ if(any(x)){
 
 checks<-lappend(checks,res,msg)
 
+###############################################################
+### Adults which were nestlings in our system
+###############################################################
 
-msg<-"ADULTS: Check for age_exact column for individuals hatched in our study system"
+msg<-"ADULTS: Check for either missing or wrong age_exact column for individuals hatched in our study system"
+
+a<-rbind(adultsNew,adultsOld)
+o<-rbind(chicksNew,chicksOld)
+
+m<-match(a$idadult,o$idois)
+w<-which(a$idadult%in%o$idois & (is.na(a$age_exact) | a$age_exact!=(a$annee-o$annee[m])))
+if(any(w)){
+  res<-cbind(o[m[w],c("idois","annee")],a[w,])
+}else{
+  res<-NULL  
+}
 
 checks<-lappend(checks,"NEED TO BUILD A CODE FOR THIS!",msg)
 
