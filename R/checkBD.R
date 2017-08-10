@@ -1331,7 +1331,7 @@ if(any(w)){
   res<-NULL  
 }
 
-checks<-lappend(checks,"NEED TO BUILD A CODE FOR THIS!",msg)
+checks<-lappend(checks,res,msg)
 
 ###############################################################
 ### Broods initial checks
