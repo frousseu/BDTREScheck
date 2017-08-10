@@ -1370,9 +1370,30 @@ checks<-lappend(checks,x[w,c("idcouvee","ferme","nichoir","codesp","Commentaires
 ### Check nnich 1 vs 2 (2 = later)
 ###############################################################
 
-msg<-"BROODS: Wrong nnich"
+msg<-"BROODS: checks if the nnich number is good assuming only one line per brood"
 
-checks<-lappend(checks,"NEED TO BUILD A CODE FOR THIS!",msg)
+x<-rbind(broodsNew,broodsOld)
+x<-x[order(x$ferme,x$nichoir,x$annee),]
+l<-ddply(x,.(ferme,nichoir,annee),function(i){
+  print(paste(nrow(i),paste(i$nnich,collapse=" "),sep=" _ "))
+  if(nrow(i)<=1){
+    if(!i$nnich%in%c(1,NA)){
+      TRUE
+    }else{
+      FALSE
+    }
+  }else{
+    !identical(1:nrow(i),as.integer(i$nnich))
+  }
+})
+l<-l[l$V1,]
+w<-which(paste(x$ferme,x$nichoir,x$annee)%in%paste(l$ferme,l$nichoir,l$annee))
+if(any(w)){
+  res<-x[w,]
+}else{
+  res<-NULL  
+}
+checks<-lappend(checks,res,msg)
 
 ###############################################################
 ### Wrong abandon / pred_pot
