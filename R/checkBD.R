@@ -1086,9 +1086,20 @@ checks<-lappend(checks,res[,c("ferme","nichoir","idcouvee","jour_suivi","idois",
 ### Check numero oisillon
 ###############################################################
 
-msg<-"NESTLINGS: Check that numero_ois are from 1 to nb of nestlings"
+msg<-"NESTLINGS: Check that numero_oisillon are from 1 to nb of nestlings"
 
-checks<-lappend(checks,"NEED TO BUILD A CODE FOR THIS!",msg)
+x<-ddply(chicksNew,.(idcouvee),function(i){
+  n<-length(unique(i$idois))
+  any(!i$numero_oisillon%in%(1:n))
+})
+w<-which(x[,2])
+if(any(w)){
+  res<-chicksNew[chicksNew$idcouvee%in%x[w,1],]
+}else{
+  res<-NULL  
+}
+
+checks<-lappend(checks,res,msg)
 
 ###############################################################
 ###
