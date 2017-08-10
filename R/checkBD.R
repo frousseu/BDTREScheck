@@ -642,8 +642,13 @@ checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","idadult","s
 ###  Check for inconherencies across years
 ###############################################################
 
+# this is already done with checks on age_exact and on sex
+
 msg<-"ADULTS: sex/age incoherencies between years"
 checks<-lappend(checks,"NEED TO BUILD A CODE FOR THIS!",msg)
+
+
+
 
 ###############################################################
 ### Check colour, depending on sampling year
@@ -1299,15 +1304,22 @@ checks<-lappend(checks,x,msg)
 
 msg<-"ADULTS/NESTLINGS: Check for individuals with changing sexe_gen and locus_sexe_gen across db"
 
-# the code only checks for individuals with both M and F label and nothing else
+# the code only checks for individuals with both M and F labels in sexe_gen and nothing else
+# i don't understand what to do with locus_sexe_gen
+# what is band number idois -2147483648 corresponding to many individuals?
 
 a<-rbind(adultsNew,adultsOld)
-x<-a[order(a$idadult,a$annee,a$jjulien,a$heure),]
-x<-unlist(dlply(x,.(idadult),function(i){
+o<-rbind(chicksNew,chicksOld)
+a$band<-a$idadult
+o$band<-o$idois
+by<-c("band","annee","jjulien","heure","sexe_gen","locus_sexe_gen")
+x<-merge(a,o,by.x=by,by.y=by,all=TRUE)
+x<-x[order(x$band,x$annee,x$jjulien,x$heure),c("idois","idadult",by)]
+l<-unlist(dlply(x,.(band),function(i){
   all(c("M","F")%in%i$sexe_gen) | all(c("M","F")%in%i$locus_sexe_gen)
 }))
-if(any(x)){
-  res<-a[a$idadult%in%names(x)[x],]        
+if(any(l)){
+  res<-x[x$band%in%names(l)[l],]        
 }else{
   res<-NULL
 }
