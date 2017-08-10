@@ -629,25 +629,14 @@ w<-which(!is.na(broodsNew$idM1) & (!is.na(broodsNew$idM2) | !is.na(broodsNew$idM
 checks<-lappend(checks,broodsNew[w,c("idcouvee","idM1","idM2","idM3", "Commentaires")],msg)
 
 ###############################################################
-###
+###  Check for inconherencies in sex/age
 ###############################################################
 
-msg<-"ADULTS: Sex/age incoherencies within the current year"
+msg<-"ADULTS: Sex/age incoherencies"
 
-x<-adultsNew
+x<-rbind(adultsNew,adultsOld)
 w<-which((x$sexe_morpho%in%c("F") & !x$age_morpho%in%c("SY","ASY",NA)) | (x$sexe_morpho%in%c("M") & !x$age_morpho%in%c("AHY",NA)) | (x$sexe_morpho%in%c(NA) & !x$age_morpho%in%c(NA)))
-checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","idadult","sexe_morpho","age_morpho","commentaire")],msg)
-
-###############################################################
-###  Check for inconherencies across years
-###############################################################
-
-# this is already done with checks on age_exact and on sex
-
-msg<-"ADULTS: sex/age incoherencies between years"
-checks<-lappend(checks,"NEED TO BUILD A CODE FOR THIS!",msg)
-
-
+checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","annee","jjulien","idadult","sexe_morpho","age_morpho","commentaire")],msg)
 
 
 ###############################################################
