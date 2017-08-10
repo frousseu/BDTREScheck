@@ -867,14 +867,6 @@ x<-adultsNew
 w<-which(!x$Cause_recapt%in%c("0","RPCS","ACC","RPCM"))# & !x$plaqueincu%in%c(0,NA))
 checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","idadult","Cause_recapt","commentaire")],msg)
 
-##########################################################
-###
-##########################################################
-
-msg<-"Newly installed band found in the previous years"
-
-checks<-lappend(checks,"NEED TO BUILD A CODE FOR THIS!",msg)
-
 ###############################################################
 ###
 ###############################################################
