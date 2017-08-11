@@ -1285,9 +1285,7 @@ checks<-lappend(checks,x,msg)
 
 msg<-"ADULTS/NESTLINGS: Check for individuals with changing sexe_gen and locus_sexe_gen across db"
 
-# the code only checks for individuals with both M and F labels in sexe_gen and nothing else
-# i don't understand what to do with locus_sexe_gen
-# what is band number idois -2147483648 corresponding to many individuals?
+# the code checks for more than one label for sex (NA, I, M, F)
 
 a<-rbind(adultsNew,adultsOld)
 o<-rbind(chicksNew,chicksOld)
@@ -1297,7 +1295,8 @@ by<-c("band","annee","jjulien","heure","sexe_gen","locus_sexe_gen")
 x<-merge(a,o,by.x=by,by.y=by,all=TRUE)
 x<-x[order(x$band,x$annee,x$jjulien,x$heure),c("idois","idadult",by)]
 l<-unlist(dlply(x,.(band),function(i){
-  all(c("M","F")%in%i$sexe_gen)
+  length(unique(i$sexe_gen))>1
+  #all(c("M","F")%in%i$sexe_gen)
 }))
 if(any(l)){
   res<-x[x$band%in%names(l)[l],]        
