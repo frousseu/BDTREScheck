@@ -1375,7 +1375,7 @@ msg<-"BROODS: checks if the nnich number is good assuming only one line per broo
 x<-broodsNew
 x<-x[order(x$ferme,x$nichoir,x$annee),]
 l<-ddply(x,.(ferme,nichoir,annee),function(i){
-  print(paste(nrow(i),paste(i$nnich,collapse=" "),sep=" _ "))
+  paste(nrow(i),paste(i$nnich,collapse=" "),sep=" _ ")
   if(nrow(i)<=1){
     if(!i$nnich%in%c(1,NA)){
       TRUE
