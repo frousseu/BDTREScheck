@@ -1283,7 +1283,7 @@ checks<-lappend(checks,x,msg)
 ### Adults which change sex
 ###############################################################
 
-msg<-"ADULTS/NESTLINGS: Check for individuals with changing sexe_gen and locus_sexe_gen across db"
+msg<-"ADULTS/NESTLINGS: Check for individuals with changing sexe_gen across db"
 
 # the code checks for more than one label for sex (NA, I, M, F)
 
@@ -1295,7 +1295,7 @@ by<-c("band","annee","jjulien","heure","sexe_gen","locus_sexe_gen")
 x<-merge(a,o,by.x=by,by.y=by,all=TRUE)
 x<-x[order(x$band,x$annee,x$jjulien,x$heure),c("idois","idadult",by)]
 l<-unlist(dlply(x,.(band),function(i){
-  length(unique(i$sexe_gen))>1
+  length(unique(i$sexe_gen))>1 #| length(unique(i$locus_sexe_gen))>1
   #all(c("M","F")%in%i$sexe_gen)
 }))
 if(any(l)){
