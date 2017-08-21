@@ -35,18 +35,15 @@ Run checks:
 
 library(BDTREScheck)
 
-
-path<-"C:/Users/rouf1703/Documents/UdeS/Consultation/ELefol/Doc/BD 2004-2015"
-
 x<-checkBD(
-  dsn=path,
+  dsn="//argus.dinf.fsci.usherbrooke.ca/DBio_Rech_Data/Projet_Hirondelle/1_Données/11_Principales",
   year=2015,
   adultsNew=NULL,
   broodsNew=NULL,
   chicksNew=NULL,
   adultsOld="Adultes_2004-2015.xlsx",
   broodsOld="Couvee_2004-2015.xlsx",
-  chicksOld="Oisillons_2004-2015.xls",
+  chicksOld="Oisillons_2004-2015.xlsx",
   sheet=1
 )
 
