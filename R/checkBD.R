@@ -634,7 +634,7 @@ checks<-lappend(checks,broodsNew[w,c("idcouvee","idM1","idM2","idM3", "Commentai
 
 msg<-"ADULTS: Sex/age incoherencies"
 
-x<-rbind(adultsNew,adultsOld)
+x<-adultsNew
 w<-which((x$sexe_morpho%in%c("F") & !x$age_morpho%in%c("SY","ASY",NA)) | (x$sexe_morpho%in%c("M") & !x$age_morpho%in%c("AHY",NA)) | (x$sexe_morpho%in%c(NA) & !x$age_morpho%in%c(NA)))
 checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","annee","jjulien","idadult","sexe_morpho","age_morpho","commentaire")],msg)
 
@@ -864,8 +864,8 @@ checks<-lappend(checks,x[w,c("ferme","nichoir","jjulien","idcouvee","idadult","s
 msg<-"ADULTS: Wrong Cause_capture status"
 
 x<-adultsNew
-w<-which(!x$Cause_recapt%in%c("0","RPCS","ACC","RPCM"))# & !x$plaqueincu%in%c(0,NA))
-checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","idadult","Cause_recapt","commentaire")],msg)
+w<-which(!x$Cause_recapt%in%c("0","RPCS","ACC","RPCM") | (!x$Cause_recapt%in%c("0") & x$condition%in%c(1)))# & !x$plaqueincu%in%c(0,NA))
+checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","idadult","condition","Cause_recapt","commentaire")],msg)
 
 ###############################################################
 ###
