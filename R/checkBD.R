@@ -395,7 +395,7 @@ checks<-lappend(checks,x[w,c("ferme","nichoir", "annee", "nnich", "idcouvee","co
 ### Check that prefixe columns include only possible values
 ##########################################################################################
 
-prefixe_names <- c("1881", "1921", "2221", "2311", "2351", "2490", "2511", "2521", "2591", "2621", "2181")
+prefixe_names <- c("1881", "1921", "2221", "2311", "2351", "2490", "2511", "2521", "2591", "2621", "2181", "2631")
 
 msg<-"ADULTS: Wrong prefixe name observed (is it a new prefixe?)"
 
