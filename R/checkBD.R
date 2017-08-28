@@ -871,7 +871,7 @@ checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","idadult","condition",
 ###
 ###############################################################
 
-msg<-"ADULTS: Visits are not all 2 days apart for the following farms"
+msg<-"ADULTS: Visits are not all 2 days apart for the following farms (maybe caused by presence of NAs)"
 
 checks<-lappend(checks,list(vis2days(adultsNew)),msg)
 
@@ -879,7 +879,7 @@ checks<-lappend(checks,list(vis2days(adultsNew)),msg)
 ###
 ###############################################################
 
-msg<-"NESTLINGS: Visits are not all 2 days apart for the following farms"
+msg<-"NESTLINGS: Visits are not all 2 days apart for the following farms (maybe caused by presence of NAs)"
 
 checks<-lappend(checks,list(vis2days(chicksNew)),msg)
 
@@ -1091,7 +1091,7 @@ checks<-lappend(checks,res,msg)
 ###
 ###############################################################
 
-msg<-"NESTLINGS: Nestlings which were followed for 12 days or more should have a band number as id and otherwise they should have a farm/brood id (maybe an exception, see comments)"
+msg<-"NESTLINGS: Nestlings which were followed for 12 days or more should have a band number as id and otherwise they should have a farm/brood id (maybe an exception, comments [Oisillon non bagué car trop petit à J12])"
 
 ### find chicks for which id is not the band number despite having been followed after their 12e days
 x<-chicksNew
