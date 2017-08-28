@@ -1085,7 +1085,7 @@ if(any(w)){
   res<-NULL  
 }
 
-checks<-lappend(checks,res,msg)
+checks<-lappend(checks,res[,c("ferme","nichoir","idcouvee","jour_suivi","idois","condition","numero_oisillon","commentaires")],msg)
 
 ###############################################################
 ###
