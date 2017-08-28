@@ -530,7 +530,7 @@ msg<-"ADULTS/BROODS: Females assigned to an idcouv in adults db but no female is
 
 x<-merge(broodsNew[!is.na(broodsNew$nnich),c("idcouvee","idF1","idF2","idF3", "dponte", "denvomax", "dabanmax", "Commentaires")],adultsNew[adultsNew$sexe_morpho=="F" | adultsNew$sexe_gen=="F" ,c("idcouvee", "idadult", "jjulien", "sexe_gen", "sexe_morpho", "commentaire")],by="idcouvee",all.x=TRUE)
 w<-which(is.na(x$idF1) & is.na(x$idF2) & is.na(x$idF3) & !is.na(x$idadult))
-checks<-lappend(checks,x[w,c("idcouvee",) ],msg)
+checks<-lappend(checks,x[w,],msg)
 
 
 ################################################
