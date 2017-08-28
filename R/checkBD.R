@@ -5,9 +5,9 @@ checkBD<-function(dsn="//argus.dinf.fsci.usherbrooke.ca/DBio_Rech_Data/Projet_Hi
            adultsNew=NULL,
            broodsNew=NULL,
            chicksNew=NULL,
-           adultsOld="Adultes_2004-2015.xlsx",
-           broodsOld="Couvee_2004-2015.xlsx",
-           chicksOld="Oisillons_2004-2015.xlsx",
+           adultsOld="Adultes_2004-2016.xlsx",
+           broodsOld="Couvee_2004-2016.xlsx",
+           chicksOld="Oisillons_2004-2016.xlsx",
            sheet=1,
            stop=FALSE)
 {
