@@ -1522,10 +1522,10 @@ x<-broodsNew
 w<-which(x$declomin - x$dponte > 28)
 checks<-lappend(checks,x[w,c("idcouvee","ferme","nichoir","noeufs","dponte","declomin","Commentaires")],msg)
 
-msg<-"BROODS: Very short time elapse between laying date and hatching date (< 2 weeks)"
+msg<-"BROODS: Very short time elapse between laying date and hatching date (< 10 days)"
 
 x<-broodsNew
-w<-which(x$declomin - x$dponte < 14)
+w<-which(x$declomin - x$dponte < 10)
 checks<-lappend(checks,x[w,c("idcouvee","ferme","nichoir","noeufs","dponte","declomin","Commentaires")],msg)
 
 ###############################################################
