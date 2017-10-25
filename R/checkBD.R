@@ -1503,13 +1503,13 @@ checks<-lappend(checks,x[w,c("idcouvee","ferme","nichoir","dabanmin","dabanmax",
 msg<-"BROODS: Very long time elapse between laying date and incubation initiation (> 2 weeks; 2 different broods?)"
 
 x<-broodsNew
-w<-which(x$dincub - x$dponte - x$noeufs > 14)
+w<-which(x$dincub - x$dponte > 14)
 checks<-lappend(checks,x[w,c("idcouvee","ferme","nichoir","noeufs","dponte","dincub","Commentaires")],msg)
 
 msg<-"BROODS: Very short time elapse between laying date and incubation initiation (< 5 days)"
 
 x<-broodsNew
-w<-which(x$dincub - x$dponte - x$noeufs < 5)
+w<-which(x$dincub - x$dponte < 5)
 checks<-lappend(checks,x[w,c("idcouvee","ferme","nichoir","noeufs","dponte","dincub","Commentaires")],msg)
 
 ###############################################################
@@ -1519,13 +1519,13 @@ checks<-lappend(checks,x[w,c("idcouvee","ferme","nichoir","noeufs","dponte","din
 msg<-"BROODS: Very long time elapse between laying date and hatching date (> 4 weeks; 2 different broods?)"
 
 x<-broodsNew
-w<-which(x$declomin - x$dponte + x$noeufs > 28)
+w<-which(x$declomin - x$dponte > 28)
 checks<-lappend(checks,x[w,c("idcouvee","ferme","nichoir","noeufs","dponte","declomin","Commentaires")],msg)
 
 msg<-"BROODS: Very short time elapse between laying date and hatching date (< 2 weeks)"
 
 x<-broodsNew
-w<-which(x$declomin - x$dponte + x$noeufs < 14)
+w<-which(x$declomin - x$dponte < 14)
 checks<-lappend(checks,x[w,c("idcouvee","ferme","nichoir","noeufs","dponte","declomin","Commentaires")],msg)
 
 ###############################################################
