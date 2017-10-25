@@ -1,6 +1,6 @@
 
 
-checkBD<-function(dsn="//argus.dinf.fsci.usherbrooke.ca/DBio_Rech_Data/Projet_Hirondelle/1_Donn�es/11_Principales",
+checkBD<-function(dsn="//argus.dinf.fsci.usherbrooke.ca/DBio_Rech_Data/Projet_Hirondelle/1_Données/11_Principales",
            year,
            adultsNew=NULL,
            broodsNew=NULL,
@@ -21,7 +21,7 @@ checkBD<-function(dsn="//argus.dinf.fsci.usherbrooke.ca/DBio_Rech_Data/Projet_Hi
 # x = initial list
 # a = thing to append
 # msg = the name of the check that will be used as a name
-# le premier if devrait être enlevé le problème vient du fait de c'er des liste qui ne marche pas comme le reste  
+# le premier if devrait Ãªtre enlevÃ© le problÃ¨me vient du fait de c'er des liste qui ne marche pas comme le reste  
 lappend<-function(x,a,msg){
   if(!is.list(a) || is.data.frame(a)){
     a<-list(a)  
@@ -123,7 +123,7 @@ couv_col  <- c(rep("text",4),rep("numeric",19),rep("text",6),"text")
 adul_col  <- c(rep("text",3),"numeric","numeric","text","date","numeric",rep("text",3),"numeric",rep("text",5),rep("numeric",10),rep("text",3))
 chick_col <- c(rep("text",3),rep("numeric",2), "text", "date", "numeric", rep("text", 6), rep("numeric", 8), rep("text",2))  
 
-### read_excel est sûrement utilisé temporairement et je supprime donc les warnings associés à la détection de caractères non-attendus
+### read_excel est sÃ»rement utilisÃ© temporairement et je supprime donc les warnings associÃ©s Ã  la dÃ©tection de caractÃ¨res non-attendus
 
 broodsOld<-suppressWarnings(as.data.frame(read_excel(file.path(dsn,broodsOld),sheet=sheet,na="NA",col_types=couv_col,guess_max=100000)))
 adultsOld<-suppressWarnings(as.data.frame(read_excel(file.path(dsn,adultsOld),sheet=sheet,na="NA",col_types=adul_col,guess_max=100000)))
@@ -1091,7 +1091,7 @@ checks<-lappend(checks,res[,c("ferme","nichoir","idcouvee","jour_suivi","idois",
 ###
 ###############################################################
 
-msg<-"NESTLINGS: Nestlings which were followed for 12 days or more should have a band number as id and otherwise they should have a farm/brood id (maybe an exception, comments [Oisillon non bagu� car trop petit � J12])"
+msg<-"NESTLINGS: Nestlings which were followed for 12 days or more should have a band number as id and otherwise they should have a farm/brood id (maybe an exception, comments [Oisillon non bagué car trop petit à J12])"
 
 ### find chicks for which id is not the band number despite having been followed after their 12e days
 x<-chicksNew
@@ -1503,13 +1503,13 @@ checks<-lappend(checks,x[w,c("idcouvee","ferme","nichoir","dabanmin","dabanmax",
 msg<-"BROODS: Very long time elapse between laying date and incubation initiation (> 2 weeks; 2 different broods?)"
 
 x<-broodsNew
-w<-which(x$dincub - x$dponte + x$noeufs > 14)
+w<-which(x$dincub - x$dponte - x$noeufs > 14)
 checks<-lappend(checks,x[w,c("idcouvee","ferme","nichoir","noeufs","dponte","dincub","Commentaires")],msg)
 
 msg<-"BROODS: Very short time elapse between laying date and incubation initiation (< 5 days)"
 
 x<-broodsNew
-w<-which(x$dincub - x$dponte + x$noeufs < 5)
+w<-which(x$dincub - x$dponte - x$noeufs < 5)
 checks<-lappend(checks,x[w,c("idcouvee","ferme","nichoir","noeufs","dponte","dincub","Commentaires")],msg)
 
 ###############################################################
