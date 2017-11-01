@@ -769,7 +769,7 @@ msg<-"ADULTS: Missing one wing measurement"
 
 x<-adultsNew
 if(year>=2007){
-   w<-which((!is.na(x$laile1) & is.na(x$laile2)) | (is.na(x$laile1) & !is.na(x$laile2) & x$condition == 0))
+   w<-which(x$condition == 0 & ((!is.na(x$laile1) & is.na(x$laile2)) | (is.na(x$laile1) & !is.na(x$laile2))))
    checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","idadult","laile1","laile2","commentaire")],msg)
    } else {
       checks<-lappend(checks,"Only one measurement was taken prior to 2007",msg)
