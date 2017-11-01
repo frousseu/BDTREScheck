@@ -21,7 +21,7 @@ checkBD<-function(dsn="//argus.dinf.fsci.usherbrooke.ca/DBio_Rech_Data/Projet_Hi
 # x = initial list
 # a = thing to append
 # msg = the name of the check that will be used as a name
-# le premier if devrait Ãªtre enlevÃ© le problÃ¨me vient du fait de c'er des liste qui ne marche pas comme le reste  
+# le premier if devrait �tre enlev� le probl�me vient du fait de ce sont des listes qui ne marche pas comme le reste  
 lappend<-function(x,a,msg){
   if(!is.list(a) || is.data.frame(a)){
     a<-list(a)  
@@ -123,7 +123,7 @@ couv_col  <- c(rep("text",4),rep("numeric",19),rep("text",6),"text")
 adul_col  <- c(rep("text",3),"numeric","numeric","text","date","numeric",rep("text",3),"numeric",rep("text",5),rep("numeric",10),rep("text",3))
 chick_col <- c(rep("text",3),rep("numeric",2), "text", "date", "numeric", rep("text", 6), rep("numeric", 8), rep("text",2))  
 
-### read_excel est sÃ»rement utilisÃ© temporairement et je supprime donc les warnings associÃ©s Ã  la dÃ©tection de caractÃ¨res non-attendus
+### read_excel est peut-�tre utilis� temporairement et je supprime donc les warnings associÃ©s Ã  la dÃ©tection de caractÃ¨res non-attendus
 
 broodsOld<-suppressWarnings(as.data.frame(read_excel(file.path(dsn,broodsOld),sheet=sheet,na="NA",col_types=couv_col,guess_max=100000)))
 adultsOld<-suppressWarnings(as.data.frame(read_excel(file.path(dsn,adultsOld),sheet=sheet,na="NA",col_types=adul_col,guess_max=100000)))
@@ -546,10 +546,11 @@ checks<-lappend(checks,x[w,],msg)
 ### Females not assign to an idcouv
 ################################################
 
+# Exception: TRSW female found dead in another species nestboxes (restrict to trsw couvee only)
 msg<-"ADULTS/BROODS: Females captured at a nestbox but not assigned to an idcouv in adults db (check nnich)"
 
-x<-merge(broodsNew[,c("id","idcouvee","idF1","idF2","idF3", "dponte", "denvomax", "dabanmax")],adultsNew[adultsNew$sexe_morpho=="F" | adultsNew$sexe_gen=="F" ,c("id","idcouvee", "nnich", "idadult", "jjulien", "sexe_gen", "sexe_morpho")],by="id",all.x=TRUE)
-w<-which(is.na(x$nnich) & !is.na(x$idadul) & !is.na(x$dponte) & x$dponte <= x$jjulien & (x$denvomax >= x$jjulien|x$dabanmax >= x$jjulien))
+x<-merge(broodsNew[,c("id","idcouvee","codesp","idF1","idF2","idF3", "dponte", "denvomax", "dabanmax")],adultsNew[adultsNew$sexe_morpho=="F" | adultsNew$sexe_gen=="F" ,c("id","idcouvee", "nnich", "idadult", "jjulien", "sexe_gen", "sexe_morpho")],by="id",all.x=TRUE)
+w<-which(x$codesp==1 & is.na(x$nnich) & !is.na(x$idadul) & !is.na(x$dponte) & x$dponte <= x$jjulien & (x$denvomax >= x$jjulien|x$dabanmax >= x$jjulien))
 checks<-lappend(checks,x[w,],msg)
 
 ################################################
@@ -763,11 +764,12 @@ checks<-lappend(checks,check_id_dup(rbind(adultsOld[adultsOld$idadult%in%unique(
 ### ADULTS: Two morphological measurements (wing and tarsus length)
 ###############################################################
 
+# Only for alive adults (condition == 1)
 msg<-"ADULTS: Missing one wing measurement"
 
 x<-adultsNew
 if(year>=2007){
-   w<-which((!is.na(x$laile1) & is.na(x$laile2)) | (is.na(x$laile1) & !is.na(x$laile2)))
+   w<-which((!is.na(x$laile1) & is.na(x$laile2)) | (is.na(x$laile1) & !is.na(x$laile2) & x$condition ==1))
    checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","idadult","laile1","laile2","commentaire")],msg)
    } else {
       checks<-lappend(checks,"Only one measurement was taken prior to 2007",msg)
