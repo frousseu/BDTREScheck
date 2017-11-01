@@ -785,10 +785,10 @@ checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","idadult","t
 ###
 ###############################################################
 
-msg<-"ADULTS: Wing measurement outside the range of likely values (105-125 mm)"
+msg<-"ADULTS: Wing measurement outside the range of likely values (105-128 mm)"
 
 x<-adultsNew
-val<-c(105,125)
+val<-c(105,128)
 w<-which(x$laile1<val[1] | x$laile2<val[1] | x$laile1>val[2] | x$laile2>val[2])
 checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","idadult","laile1","laile2","commentaire")],msg)
 
