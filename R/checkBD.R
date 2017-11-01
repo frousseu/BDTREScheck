@@ -1594,7 +1594,7 @@ y<-ddply(chicksNew,.(idcouvee),function(i){
 ### 
 ################################################
 
-msg<-"NESTLINGS/BROODS: Inconsistency in the number of nestlings between databases (NESTLINGS: Nois, Nenvol, Ndead, Ndispa)"
+msg<-"NESTLINGS/BROODS: Inconsistency in the number of nestlings between databases (NESTLINGS: Nois, Nenvol, Ndead, Ndispa - MAYBE some nestlings with num_ois = NA)"
 
 x<-merge(broodsNew[which(!is.na(broodsNew$nnich) & broodsNew$codesp == 1 & broodsNew$noisnes>=1),c("idcouvee","noisnes","noisenvol","noismort", "dispa_ois")],y,by="idcouvee",all.x=TRUE)
 w<-which(x$noisnes!=x$Nois | x$noisenvol!=x$Nenvol | x$noismort!=x$Ndead | x$dispa_ois!=x$Ndispa)
