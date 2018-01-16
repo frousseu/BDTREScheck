@@ -1512,13 +1512,13 @@ msg<-"BROODS: Very long time elapse between laying date and incubation initiatio
 
 x<-broodsNew
 w<-which(x$dincub - x$dponte > 14)
-checks<-lappend(checks,x[w,c("idcouvee","ferme","nichoir","noeufs","dponte","dincub","Commentaires")],msg)
+checks<-lappend(checks,x[w,c("idcouvee","ferme","nichoir","codesp","noeufs","dponte","dincub","Commentaires")],msg)
 
 msg<-"BROODS: Very short time elapse between laying date and incubation initiation (< 5 days)"
 
 x<-broodsNew
 w<-which(x$dincub - x$dponte < 5)
-checks<-lappend(checks,x[w,c("idcouvee","ferme","nichoir","noeufs","dponte","dincub","Commentaires")],msg)
+checks<-lappend(checks,x[w,c("idcouvee","ferme","nichoir", "codesp","noeufs","dponte","dincub","Commentaires")],msg)
 
 ###############################################################
 ### Too big difference between LD and HD
@@ -1528,13 +1528,13 @@ msg<-"BROODS: Very long time elapse between laying date and hatching date (> 4 w
 
 x<-broodsNew
 w<-which(x$declomin - x$dponte > 28)
-checks<-lappend(checks,x[w,c("idcouvee","ferme","nichoir","noeufs","dponte","declomin","Commentaires")],msg)
+checks<-lappend(checks,x[w,c("idcouvee","ferme","nichoir","codesp","noeufs","dponte","declomin","Commentaires")],msg)
 
 msg<-"BROODS: Very short time elapse between laying date and hatching date (< 10 days)"
 
 x<-broodsNew
 w<-which(x$declomin - x$dponte < 10)
-checks<-lappend(checks,x[w,c("idcouvee","ferme","nichoir","noeufs","dponte","declomin","Commentaires")],msg)
+checks<-lappend(checks,x[w,c("idcouvee","ferme","nichoir","codesp","noeufs","dponte","declomin","Commentaires")],msg)
 
 ###############################################################
 ### Too big difference between II and HD
@@ -1544,13 +1544,13 @@ msg<-"BROODS: Very long time elapse between incubation initiation and hatching d
 
 x<-broodsNew
 w<-which(x$declomin - x$dincub > 14)
-checks<-lappend(checks,x[w,c("idcouvee","ferme","nichoir","noeufs","dponte","dincub","declomin","Commentaires")],msg)
+checks<-lappend(checks,x[w,c("idcouvee","ferme","nichoir","codesp","noeufs","dponte","dincub","declomin","Commentaires")],msg)
 
 msg<-"BROODS: Very short time elapse between incubation initiation and hatching date (< 1 week)"
 
 x<-broodsNew
 w<-which(x$declomin - x$dincub < 7)
-checks<-lappend(checks,x[w,c("idcouvee","ferme","nichoir","noeufs","dponte","dincub","declomin","Commentaires")],msg)
+checks<-lappend(checks,x[w,c("idcouvee","ferme","nichoir","codesp","noeufs","dponte","dincub","declomin","Commentaires")],msg)
 
 ###############################################################
 ### Too big difference between eclo min and max
@@ -1560,7 +1560,7 @@ msg<-"BROODS: Too long time elapse between minimum and maximum hatching date (> 
 
 x<-broodsNew
 w<-which(x$declomax - x$declomin > 1)
-checks<-lappend(checks,x[w,c("idcouvee","ferme","nichoir","declomin","declomax","Commentaires")],msg)
+checks<-lappend(checks,x[w,c("idcouvee","ferme","nichoir","codesp","declomin","declomax","Commentaires")],msg)
 
 ###############################################################
 ### Too big difference between daban min and max
@@ -1570,7 +1570,7 @@ msg<-"BROODS: Too long time elapse between minimum and maximum abandon date (> 1
 
 x<-broodsNew
 w<-which(x$dabanmax - x$dabanmin > 1)
-checks<-lappend(checks,x[w,c("idcouvee","ferme","nichoir","dabanmin","dabanmax","Commentaires")],msg)
+checks<-lappend(checks,x[w,c("idcouvee","ferme","nichoir","codesp","dabanmin","dabanmax","Commentaires")],msg)
 
 ###############################################################
 ### Too big difference between denvo min and max
@@ -1580,7 +1580,7 @@ msg<-"BROODS: Too long time elapse between minimum and maximum fledging date (> 
 
 x<-broodsNew
 w<-which(x$denvomax - x$denvomin > 7)
-checks<-lappend(checks,x[w,c("idcouvee","ferme","nichoir","denvomin","denvomax","Commentaires")],msg)
+checks<-lappend(checks,x[w,c("idcouvee","ferme","nichoir","codesp","denvomin","denvomax","Commentaires")],msg)
 
 ##########################################################
 ### Summarize brood information
