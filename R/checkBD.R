@@ -572,14 +572,12 @@ x<-merge(broodsNew[!is.na(broodsNew$nnich),c("idcouvee","idM1","idM2","idM3")],a
 w<-which(is.na(x$idM1) & is.na(x$idM2) & is.na(x$idM3) & !is.na(x$idadult))
 checks<-lappend(checks,x[w,],msg)
 
-################################################
-### 
-################################################
 
 msg<-"ADULTS/BROODS: Males assigned to an idcouv in adults db but not referenced in broods db (idM2 or idM3)"
 
 w<-which((x$idM1!=x$idadult | is.na(x$idM1) == T) & (x$idM2!=x$idadult | is.na(x$idM2) == T) & (x$idM3!=x$idadult | is.na(x$idM3) == T) & !(is.na(x$idM1)==T & is.na(x$idM2)==T & is.na(x$idM3)==T) )
 checks<-lappend(checks,x[w,],msg)
+
 
 ################################################
 ### Males not assign to an idcouv
@@ -628,6 +626,18 @@ msg<-"BROODS: Two males captured in the same nestbox but not properly reported (
 
 w<-which(!is.na(broodsNew$idM1) & (!is.na(broodsNew$idM2) | !is.na(broodsNew$idM3)))
 checks<-lappend(checks,broodsNew[w,c("idcouvee","idM1","idM2","idM3", "Commentaires")],msg)
+
+################################################
+### Males to a brood without nestlings
+################################################
+
+msg<-"BROODS: Males (idM1) assigned to brood with no nestlings (not coherent)"
+
+w<-which(broodsNew$noisnes==0 & !is.na(broodsNew$idM1))
+
+checks<-lappend(checks,broodsNew[w,c("idcouvee","noisnes","idM1","idM2","idM3", "Commentaires")],msg)
+
+
 
 ###############################################################
 ###  Check for inconherencies in sex/age
