@@ -1367,11 +1367,11 @@ checks<-lappend(checks,x[w,],msg)
 ### Wrong codesp
 ###############################################################
 
-msg<-"BROODS: Wrong codesp"
+msg<-"BROODS: Wrong codesp (some other species were exceptionnally ringed)"
 
 x<-broodsNew
 w<-which(!x$codesp%in%c(1:5,NA) | (x$codesp != 1 & (!is.na(x$idF1) | !is.na(x$idF2) | !is.na(x$idF3) | !is.na(x$idM1) | !is.na(x$idM2) | !is.na(x$idM3))))
-checks<-lappend(checks,x[w,c("idcouvee","ferme","nichoir","codesp","Commentaires")],msg)
+checks<-lappend(checks,x[w,c("idcouvee","ferme","nichoir","codesp","idF1","idF2","idF3","Commentaires")],msg)
 
 ###############################################################
 ### Check nnich 1 vs 2 (2 = later)
