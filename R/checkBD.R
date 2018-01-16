@@ -673,10 +673,16 @@ if(year>=2010){
 ### Incoherencies with colour and  age
 ###############################################################
 
-msg<-"ADULTS: Individual with a couleur assigned, but without morpho_age (no check for condition != 0"
+msg<-"ADULTS: Individual with a couleur assigned, but without morpho_age (no check for condition != 0)"
 
 w<-which(!is.na(x$couleur) & is.na(x$age_morpho) & x$condition == 0 )
 checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","idadult","sexe_morpho","age_morpho","couleur","commentaire")],msg)
+
+msg<-"ADULTS: Dead individual with a couleur assigned, but without morpho_age (probably nothing to do)"
+
+w<-which(!is.na(x$couleur) & is.na(x$age_morpho) & x$condition != 0 )
+checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","idadult","sexe_morpho","age_morpho","couleur","commentaire")],msg)
+
 
 ###############################################################
 ### Capture time - Nestlings
