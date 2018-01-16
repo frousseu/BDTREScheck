@@ -664,7 +664,7 @@ x<-adultsNew
 if(year>=2010){
    w<-which(x$couleur%in%c("BR") & !x$age_morpho%in%c("SY"))
 } else {
-   w<-which(str_sub(x$couleur,1,3) == "BR5" & !x$age_morpho%in%c("SY"))
+   w<-which(str_sub(x$couleur,1,3) == "BR5" & !x$age_morpho%in%c("SY") & !is.na(x$sex_morpho))
 }  
    checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","idadult","sexe_morpho","age_morpho","couleur","commentaire")],msg)
 
