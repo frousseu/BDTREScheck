@@ -673,9 +673,9 @@ if(year>=2010){
 ### Incoherencies with colour and  age
 ###############################################################
 
-msg<-"ADULTS: Individual with a couleur assigned, but without morpho_age"
+msg<-"ADULTS: Individual with a couleur assigned, but without morpho_age (no check for condition != 0"
 
-w<-which(!is.na(x$couleur) & is.na(x$age_morpho))
+w<-which(!is.na(x$couleur) & is.na(x$age_morpho) & x$condition == 0 )
 checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","idadult","sexe_morpho","age_morpho","couleur","commentaire")],msg)
 
 ###############################################################
