@@ -566,7 +566,7 @@ checks<-lappend(checks,x[w,],msg)
 ### 
 ################################################
 
-msg<-"ADULTS/BROODS: Males assigned to an idcouv in adults db but no male is assigned to this idcouv in broods db (check capture dates)"
+msg<-"ADULTS/BROODS: Males assigned to an idcouv in adults db but no male is assigned to this idcouv in broods db (check capture dates or morpho/gen sex identity)"
 
 x<-merge(broodsNew[!is.na(broodsNew$nnich),c("idcouvee","idM1","idM2","idM3")],adultsNew[adultsNew$sexe_morpho=="M" | adultsNew$sexe_gen=="M" ,c("idcouvee", "idadult", "jjulien", "sexe_gen", "sexe_morpho")],by="idcouvee",all.x=TRUE)
 w<-which(is.na(x$idM1) & is.na(x$idM2) & is.na(x$idM3) & !is.na(x$idadult))
