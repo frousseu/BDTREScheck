@@ -464,7 +464,7 @@ msg<-"NESTLINGS: idois doesn't correspond to prefixe + suffixe"
 x<-chicksNew
 x$TEST <- paste0(x$prefixe, x$suffixe)
 w<-which(x$idois!=x$TEST & !is.na(x$prefixe))
-checks<-lappend(checks,x[w,c("ferme","nichoir", "annee", "nnich", "idcouvee","jjulien","prefixe","suffixe","idois")],msg)
+checks<-lappend(checks,x[w,c("ferme","nichoir", "annee", "nnich", "idcouvee","jjulien","prefixe","suffixe","idois", "commentaires")],msg)
 
 ##########################################################################################
 ### Check that not banded adults have a letter!
@@ -475,7 +475,7 @@ msg<-"NESTLINGS: idois doesn't correspond to idcouvee + numero_oisillon"
 x<-chicksNew
 x$TEST <- paste0(x$idcouvee, x$numero_oisillon)
 w<-which(x$idois!=x$TEST & is.na(x$prefixe))
-checks<-lappend(checks,x[w,c("ferme","nichoir", "annee", "nnich", "idcouvee","jjulien","prefixe","suffixe","idois","numero_oisillon")],msg)
+checks<-lappend(checks,x[w,c("ferme","nichoir", "annee", "nnich", "idcouvee","jjulien","prefixe","suffixe","idois","numero_oisillon", "commentaires")],msg)
 
 ##########################################################################################
 ### Check the number of characters which shoudl always be fixed in the different ids
