@@ -643,11 +643,11 @@ checks<-lappend(checks,broodsNew[w,c("idcouvee","noisnes","idM1","idM2","idM3", 
 ###  Check for inconherencies in sex/age
 ###############################################################
 
-msg<-"ADULTS: Sex/age incoherencies"
+msg<-"ADULTS: Sex/age incoherencies (few exceptions when condition !=0)"
 
 x<-adultsNew
 w<-which((x$sexe_morpho%in%c("F") & !x$age_morpho%in%c("SY","ASY",NA)) | (x$sexe_morpho%in%c("M") & !x$age_morpho%in%c("AHY",NA)) | (x$sexe_morpho%in%c(NA) & !x$age_morpho%in%c(NA)))
-checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","annee","jjulien","idadult","sexe_morpho","age_morpho","commentaire")],msg)
+checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","annee","condition","jjulien","idadult","sexe_morpho","age_morpho","commentaire")],msg)
 
 
 ###############################################################
@@ -738,7 +738,7 @@ checks<-lappend(checks,check_id_dup(adultsNew,col=c("idadult","sexe_morpho"))[,c
 ### Adults which change sex during across breeding season
 ###############################################################
 
-msg<-"ADULTS: Check for adults with changing sexe_morph (across seasons)"
+msg<-"ADULTS: Check for adults with changing sexe_morph (across seasons - MUST be concordant (see Données_Codes.docx))"
 
 checks<-lappend(checks,check_id_dup(rbind(adultsOld[adultsOld$idadult%in%unique(adultsNew$idadult),],adultsNew),col=c("idadult","sexe_morpho"))[,c("annee","ferme","nichoir","idcouvee","jjulien","idadult","sexe_morpho","sexe_gen","locus_sexe_gen","commentaire")],msg)
 
@@ -921,11 +921,11 @@ checks<-lappend(checks,check_dup(chicksNew),msg)
 ###
 ###############################################################
 
-msg<-"ADULTS: Check for adults with more than one entry for a single date"
+msg<-"ADULTS: Check for adults with more than one entry for a single date (probably duplicated lines - remove one)"
 
 checks<-lappend(checks,check_dup(adultsNew,col=c("idadult","jjulien"))[,c("ferme","nichoir","idcouvee","jjulien","idadult","condition","commentaire")],msg)
 
-msg<-"NESTLINGS: Check for chicks with more than one entry for a single date"
+msg<-"NESTLINGS: Check for chicks with more than one entry for a single date (probably duplicated lines - remove one)"
 
 checks<-lappend(checks,check_dup(chicksNew,col=c("idois","jjulien"))[,c("ferme","nichoir","idcouvee","jjulien","idois","jour_suivi","condition","commentaires")],msg)
 
@@ -1576,11 +1576,11 @@ checks<-lappend(checks,x[w,c("idcouvee","ferme","nichoir","codesp","declomin","d
 ### Too big difference between daban min and max
 ###############################################################
 
-msg<-"BROODS: Too long time elapse between minimum and maximum abandon date (> 1 day)"
+msg<-"BROODS: Too long time elapse between minimum and maximum abandon date (> 1 day) when nestlings >=1"
 
 x<-broodsNew
-w<-which(x$dabanmax - x$dabanmin > 1)
-checks<-lappend(checks,x[w,c("idcouvee","ferme","nichoir","codesp","dabanmin","dabanmax","Commentaires")],msg)
+w<-which(x$noisnes >=1 & x$dabanmax - x$dabanmin > 1)
+checks<-lappend(checks,x[w,c("idcouvee","ferme","nichoir","codesp", "noisnes","dabanmin","dabanmax","Commentaires")],msg)
 
 ###############################################################
 ### Too big difference between denvo min and max
@@ -1591,6 +1591,18 @@ msg<-"BROODS: Too long time elapse between minimum and maximum fledging date (> 
 x<-broodsNew
 w<-which(x$denvomax - x$denvomin > 7)
 checks<-lappend(checks,x[w,c("idcouvee","ferme","nichoir","codesp","denvomin","denvomax","Commentaires")],msg)
+
+###############################################################
+### Too short difference between denvo min and max
+###############################################################
+
+msg<-"BROODS: Too short time elapse between minimum and maximum fledging date (< 1 day; exception possible, see comments)"
+
+x<-broodsNew
+w<-which(x$denvomax - x$denvomin < 1)
+checks<-lappend(checks,x[w,c("idcouvee","ferme","nichoir","codesp","denvomin","denvomax","Commentaires")],msg)
+
+
 
 ##########################################################
 ### Summarize brood information
