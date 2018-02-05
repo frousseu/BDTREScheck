@@ -1,6 +1,6 @@
 
 
-checkBD<-function(dsn="//argus.dinf.fsci.usherbrooke.ca/DBio_Rech_Data/Projet_Hirondelle/1_Données/11_Principales",
+checkBD<-function(dsn="//argus.dinf.fsci.usherbrooke.ca/DBio_Rech_Data/Projet_Hirondelle/1_Donnees/11_Principales",
            year,
            adultsNew=NULL,
            broodsNew=NULL,
