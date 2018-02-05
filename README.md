@@ -36,7 +36,7 @@ Run checks:
 library(BDTREScheck)
 
 x<-checkBD(
-  dsn="//argus.dinf.fsci.usherbrooke.ca/DBio_Rech_Data/Projet_Hirondelle/1_Données/11_Principales",
+  dsn="//argus.dinf.fsci.usherbrooke.ca/DBio_Rech_Data/Projet_Hirondelle/1_Donnees/11_Principales",
   year=2015,
   adultsNew=NULL,
   broodsNew=NULL,
@@ -75,7 +75,7 @@ checkShow(html=FALSE)
 - make a few other checks already described, but not code
 - looking for more than one label for sex gives a lot of results (with M or F and I), so it may not be the thing to do
 
-## Current List Of Checks
+## Current List Of Checks (updated 2018-02-05)
 
 <table class='gmisc_table' style='border-collapse: collapse; margin-top: 1em; margin-bottom: 1em;' >
 <thead>
@@ -291,7 +291,7 @@ checkShow(html=FALSE)
 </tr>
 <tr>
 <td style='text-align: center;'>52</td>
-<td style='text-align: center;'> "ADULTS: Check for adults with changing sexe_morph (across seasons - MUST be concordant (see Donn???es_Codes.docx))"</td>
+<td style='text-align: center;'> "ADULTS: Check for adults with changing sexe_morph (across seasons - MUST be concordant (see Donnees_Codes.docx))"</td>
 </tr>
 <tr>
 <td style='text-align: center;'>53</td>
