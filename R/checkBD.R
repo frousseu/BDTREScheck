@@ -638,6 +638,11 @@ w<-which(broodsNew$noisnes==0 & !is.na(broodsNew$idM1))
 checks<-lappend(checks,broodsNew[w,c("idcouvee","noisnes","idM1","idM2","idM3", "Commentaires")],msg)
 
 
+################################################
+### Males captured only before minimum hatching dates
+################################################
+
+# To do! 
 
 ###############################################################
 ###  Check for inconherencies in sex/age
@@ -974,7 +979,7 @@ checks<-lappend(checks,x[w,],msg)
 msg<-"NESTLINGS/BROODS: jjulien of young that doesn't correspond to declomax + jour_suivi"
 
 w<-which(x$jjulien != (x$declomax + x$jour_suivi))
-checks<-lappend(checks,x[w,c("idcouvee","ferme","nichoir","idois","declomax","jjulien","jour_suivi")],msg)
+checks<-lappend(checks,x[w,c("idcouvee","ferme","nichoir","idois","declomax","jjulien","jour_suivi","commentaires")],msg)
 
 ###############################################################
 ### Genetic sex combination with loci in nestlings
