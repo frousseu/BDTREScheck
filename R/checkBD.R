@@ -267,7 +267,7 @@ msg<-"ADULTS: Wrong ferme id observed"
 
 x<-adultsNew
 w<-which(!x$ferme%in%ferme_names)
-checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","idadult")],msg)
+checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","idadult", "commentaire")],msg)
 
 ##########################################################################################
 ### 
@@ -277,7 +277,7 @@ msg<-"NESTLINGS: Wrong ferme id observed"
 
 x<-chicksNew
 w<-which(!x$ferme%in%ferme_names)
-checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","idois")],msg)
+checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee","jjulien","idois", "commentaires")],msg)
 
 ##########################################################################################
 ### 
@@ -287,7 +287,7 @@ msg<-"BROODS: Wrong ferme id observed"
 
 x<-broodsNew
 w<-which(!x$ferme%in%ferme_names)
-checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee")],msg)
+checks<-lappend(checks,x[w,c("ferme","nichoir","idcouvee", "Commentaires")],msg)
 
 
 ##########################################################################################
