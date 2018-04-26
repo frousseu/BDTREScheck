@@ -631,7 +631,7 @@ checks<-lappend(checks,broodsNew[w,c("idcouvee","idM1","idM2","idM3", "Commentai
 ### Males to a brood without nestlings
 ################################################
 
-msg<-"BROODS: Males (idM1) assigned to brood with no nestlings (not coherent)"
+msg<-"BROODS: Males (idM1) assigned to brood with no nestlings (not coherent - change to idM2 if necessary)"
 
 w<-which(broodsNew$noisnes==0 & !is.na(broodsNew$idM1))
 
