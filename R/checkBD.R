@@ -958,10 +958,16 @@ checks<-lappend(checks,check_id_dup(chicksNew,col=c("idois","ferme","nichoir"))[
 ### 
 ###############################################################
 
-msg<-"NESTLINGS/BROODS: Capture date of young is later than the minimal abandonment date if nest was abandoned"
+msg<-"NESTLINGS/BROODS: Capture date of young is later than the maximal abandonment date if nest was abandoned"
+x<-merge(chicksNew,broodsNew[broodsNew$codesp==1,c("idcouvee","dponte","dincub","declomin","declomax","dabanmin","dabanmax")],by="idcouvee",all.x=TRUE)
+w<-which(x$jjulien > (x$dabanmax))
+checks<-lappend(checks,x[w,c("idcouvee","ferme","nichoir","jjulien","idois","condition","dabanmin","dabanmax","commentaires")],msg)
+
+msg<-"NESTLINGS/BROODS: Capture date of young is later than the minimal abandonment date + 1 if nest was abandoned (check the delay between each visit, OK if >2)"
 x<-merge(chicksNew,broodsNew[broodsNew$codesp==1,c("idcouvee","dponte","dincub","declomin","declomax","dabanmin","dabanmax")],by="idcouvee",all.x=TRUE)
 w<-which(x$jjulien > (x$dabanmin + 1))
 checks<-lappend(checks,x[w,c("idcouvee","ferme","nichoir","jjulien","idois","condition","dabanmin","dabanmax","commentaires")],msg)
+
 
 ###############################################################
 ### 
