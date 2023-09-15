@@ -9,5 +9,6 @@ Description: A package for doing checks on the Tree Swallow DB.
 Depends: readxl, plyr, htmlTable, stringr
 License: GPL-2
 LazyLoad: yes
+Encoding: UTF-8
 
 
