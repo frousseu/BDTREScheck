@@ -21,7 +21,7 @@ checkBD<-function(dsn="//argus.dinf.fsci.usherbrooke.ca/DBio_Rech_Data/Projet_Hi
 # x = initial list
 # a = thing to append
 # msg = the name of the check that will be used as a name
-# le premier if devrait �tre enlev� le probl�me vient du fait de ce sont des listes qui ne marche pas comme le reste  
+# le premier if devrait être enlevé le problème vient du fait de ce sont des listes qui ne marche pas comme le reste  
 lappend<-function(x,a,msg){
   if(!is.list(a) || is.data.frame(a)){
     a<-list(a)  
@@ -123,7 +123,7 @@ couv_col  <- c(rep("text",4),rep("numeric",19),rep("text",6),"text")
 adul_col  <- c(rep("text",3),"numeric","numeric","text","date","numeric",rep("text",3),"numeric",rep("text",5),rep("numeric",10),rep("text",3))
 chick_col <- c(rep("text",3),rep("numeric",2), "text", "date", "numeric", rep("text", 6), rep("numeric", 8), rep("text",2))  
 
-### read_excel est peut-�tre utilis� temporairement et je supprime donc les warnings associÃ©s Ã  la dÃ©tection de caractÃ¨res non-attendus
+### read_excel est peut-être utilisé temporairement et je supprime donc les warnings associÃƒÂ©s ÃƒÂ  la dÃƒÂ©tection de caractÃƒÂ¨res non-attendus
 
 broodsOld<-suppressWarnings(as.data.frame(read_excel(file.path(dsn,broodsOld),sheet=sheet,na="NA",col_types=couv_col,guess_max=100000)))
 adultsOld<-suppressWarnings(as.data.frame(read_excel(file.path(dsn,adultsOld),sheet=sheet,na="NA",col_types=adul_col,guess_max=100000)))
@@ -743,7 +743,7 @@ checks<-lappend(checks,check_id_dup(adultsNew,col=c("idadult","sexe_morpho"))[,c
 ### Adults which change sex during across breeding season
 ###############################################################
 
-msg<-"ADULTS: Check for adults with changing sexe_morph (across seasons - MUST be concordant (see Donn�es_Codes.docx))"
+msg<-"ADULTS: Check for adults with changing sexe_morph (across seasons - MUST be concordant (see Donnees_Codes.docx))"
 
 checks<-lappend(checks,check_id_dup(rbind(adultsOld[adultsOld$idadult%in%unique(adultsNew$idadult),],adultsNew),col=c("idadult","sexe_morpho"))[,c("annee","ferme","nichoir","idcouvee","jjulien","idadult","sexe_morpho","sexe_gen","locus_sexe_gen","commentaire")],msg)
 
@@ -1120,7 +1120,7 @@ checks<-lappend(checks,res[,c("ferme","nichoir","idcouvee","jour_suivi","idois",
 ###
 ###############################################################
 
-msg<-"NESTLINGS: Nestlings which were followed for 12 days or more should have a band number as id and otherwise they should have a farm/brood id (maybe an exception, comments [Oisillon non bagué car trop petit à J12])"
+msg<-"NESTLINGS: Nestlings which were followed for 12 days or more should have a band number as id and otherwise they should have a farm/brood id (maybe an exception, comments [Oisillon non baguÃ© car trop petit Ã  J12])"
 
 ### find chicks for which id is not the band number despite having been followed after their 12e days
 x<-chicksNew
